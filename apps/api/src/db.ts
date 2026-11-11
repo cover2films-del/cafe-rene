@@ -11,7 +11,11 @@ export async function openDB(path = process.env.DATA_DIR || 'work/database'): Pr
   if (process.env.DATABASE_URL) {
     const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
     const wrap = (client: pg.Pool | pg.PoolClient): DB => ({
-      query: async (sql, p) => client.query(sql, p),
+      query: async (sql, p) =>
+        client.query(
+          sql,
+          p?.map((value) => (Array.isArray(value) ? JSON.stringify(value) : value)),
+        ),
       transaction: async (fn) => {
         const c = await pool.connect();
         try {

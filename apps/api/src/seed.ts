@@ -8,16 +8,15 @@ export const hashPassword = (password: string) => {
   return salt + ':' + scryptSync(password, salt, 64).toString('hex');
 };
 export async function seed(db: DB) {
-  if ((await db.query('SELECT id FROM users LIMIT 1')).rows.length) return;
+  return db.transaction(seedDefaults);
+}
+async function seedDefaults(db: DB) {
   for (const role of ['customer', 'staff', 'manager', 'admin'])
-    await db.query('INSERT INTO users(id,email,password,role,name) VALUES($1,$2,$3,$4,$5)', [
-      role,
-      `${role}@demo.rene`,
-      hashPassword('ReneDemo2026!'),
-      role,
-      `Demo ${role}`,
-    ]);
-  await db.query('INSERT INTO settings VALUES($1,$2)', [
+    await db.query(
+      'INSERT INTO users(id,email,password,role,name) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING',
+      [role, `${role}@demo.rene`, hashPassword('ReneDemo2026!'), role, `Demo ${role}`],
+    );
+  await db.query('INSERT INTO settings VALUES($1,$2) ON CONFLICT DO NOTHING', [
     'ordering',
     {
       open: true,
@@ -30,7 +29,10 @@ export async function seed(db: DB) {
     },
   ]);
   for (let n = 1; n <= 12; n++)
-    await db.query('INSERT INTO tables(id,label) VALUES($1,$2)', [`table-${n}`, `Table ${n}`]);
+    await db.query('INSERT INTO tables(id,label) VALUES($1,$2) ON CONFLICT DO NOTHING', [
+      `table-${n}`,
+      `Table ${n}`,
+    ]);
   const items = [
     [
       'burger',
@@ -119,7 +121,7 @@ export async function seed(db: DB) {
     ],
   ];
   for (const [id, name, description, category, price, dietary, modifiers] of items)
-    await db.query('INSERT INTO menu VALUES($1,$2)', [
+    await db.query('INSERT INTO menu VALUES($1,$2) ON CONFLICT DO NOTHING', [
       id,
       {
         id,
@@ -144,7 +146,7 @@ export async function seed(db: DB) {
   ] as const) {
     const d = new Date(base);
     d.setDate(d.getDate() + i);
-    await db.query('INSERT INTO events VALUES($1,$2)', [
+    await db.query('INSERT INTO events VALUES($1,$2) ON CONFLICT DO NOTHING', [
       `event-${i}`,
       {
         id: `event-${i}`,
@@ -157,7 +159,7 @@ export async function seed(db: DB) {
       },
     ]);
   }
-  await db.query('INSERT INTO offers VALUES($1,$2)', [
+  await db.query('INSERT INTO offers VALUES($1,$2) ON CONFLICT DO NOTHING', [
     'welcome',
     {
       id: 'welcome',
@@ -170,7 +172,7 @@ export async function seed(db: DB) {
       sample: true,
     },
   ]);
-  await db.query('INSERT INTO offers VALUES($1,$2)', [
+  await db.query('INSERT INTO offers VALUES($1,$2) ON CONFLICT DO NOTHING', [
     'regular-treat',
     {
       id: 'regular-treat',
@@ -183,7 +185,10 @@ export async function seed(db: DB) {
       sample: true,
     },
   ]);
-  await db.query('INSERT INTO settings VALUES($1,$2)', ['challenges', challenges]);
+  await db.query('INSERT INTO settings VALUES($1,$2) ON CONFLICT DO NOTHING', [
+    'challenges',
+    challenges,
+  ]);
   const manifest = JSON.parse(
     await readFile(
       fileURLToPath(new URL('../../../docs/content-sources.json', import.meta.url)),
@@ -191,7 +196,7 @@ export async function seed(db: DB) {
     ),
   );
   for (const [i, source] of manifest.sources.entries())
-    await db.query('INSERT INTO content(id,data,status) VALUES($1,$2,$3)', [
+    await db.query('INSERT INTO content(id,data,status) VALUES($1,$2,$3) ON CONFLICT DO NOTHING', [
       'source-' + i,
       { title: source.url, url: source.url, text: source.issues.join('\n'), ...source },
       'needs_review',

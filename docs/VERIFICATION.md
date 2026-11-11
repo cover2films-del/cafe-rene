@@ -6,7 +6,7 @@ Run in the managed Linux workspace using Node 24.22.1 / npm 11.9.0.
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `npm run typecheck`                             | Passed API/shared/browser and native TypeScript checks                                                  |
 | `npm run lint`                                  | Passed ESLint with no reported errors                                                                   |
-| `npm test`                                      | 13 tests passed, 0 failed                                                                               |
+| `npm test`                                      | 14 tests passed, 0 failed                                                                               |
 | `npm run build`                                 | Vite production build passed                                                                            |
 | `expo install --check`                          | Dependencies up to date for Expo SDK 54                                                                 |
 | `expo export --platform ios --platform android` | Both Metro/Hermes bundles exported, 925/924 modules on the initial full export                          |
@@ -40,3 +40,7 @@ The initial dependency install hit an unwritable home cache and a React types pe
 ## Remaining acceptance checks
 
 Use actual devices and browsers before operating the venue: phone/desktop layouts, all keyboard/empty/error states, focus/assistive technology, large text, camera denial, QR expiry, foreground location accuracy/dwell, slow/offline recovery and EAS installation. Validate real provider callback/retry/reconciliation behaviour against vendor sandboxes after provider selection. A successful JavaScript export does not prove native compilation, signing or installation.
+
+## Render/Neon compatibility repair
+
+The PostgreSQL adapter now encodes JSON-array parameters explicitly, covering challenge definitions and immutable modifier snapshots. Seed insertion is transactional and fills missing defaults without overwriting manager edits, so a partial prior setup can recover. A regression test exercises the actual pg adapter with pg wire-value conversion against embedded PostgreSQL. This is not a substitute for connecting to the real Neon project; Render logs and credentials remain unavailable in this workspace.
