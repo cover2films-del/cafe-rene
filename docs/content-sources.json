@@ -1,0 +1,174 @@
+{
+  "retrievedAt": "2026-11-11",
+  "venueTimezone": "Europe/London",
+  "sources": [
+    {
+      "url": "https://www.caferene.co.uk/",
+      "retrievedAt": "2026-11-11",
+      "importedFields": [
+        "name",
+        "address",
+        "phone",
+        "email",
+        "bar hours",
+        "kitchen hours",
+        "opened 2003",
+        "live music and annual blues festival context"
+      ],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "high for contact details, medium for operational hours",
+      "reviewStatus": "manager_review_required",
+      "issues": [
+        "User reports hours conflicts across pages; retrieved home and restaurant hours currently agree. Manager must confirm before live ordering.",
+        "24-hour licence is not 24-hour opening.",
+        "Official logo URL discovered but no reuse authorisation established; elegant text wordmark used.",
+        "Venue photography and logo not downloaded or displayed without permission."
+      ]
+    },
+    {
+      "url": "https://www.caferene.co.uk/restaurant",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["food service hours", "booking phone/email", "official menu PDF links"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "high",
+      "reviewStatus": "hours_and_menu_review",
+      "issues": [
+        "Mon–Sat 11–20, Sunday 11–17. Confirm current service and last-order time.",
+        "Restaurant bookings currently directed to email or phone. Demo requests are not sent to venue."
+      ]
+    },
+    {
+      "url": "https://www.caferene.co.uk/uploads/9Aj8gQwN/MainMenu26.pdf",
+      "retrievedAt": "2026-11-11",
+      "importedFields": [
+        "8 menu names",
+        "short original dish descriptions",
+        "GBP prices in integer pence",
+        "burger cheese/bacon modifiers",
+        "explicit vegetarian/vegan source labels"
+      ],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "medium",
+      "reviewStatus": "unapproved_demo_only",
+      "issues": [
+        "Filename suggests 2026; publication date not established.",
+        "Prices may be stale; every item starts approved=false.",
+        "All allergens are unknown (null), never inferred from dish descriptions.",
+        "Soft drink and guest ale are separately marked invented demonstration items, not sourced.",
+        "PDF retained only in ignored research workspace; no PDF redistribution in app."
+      ]
+    },
+    {
+      "url": "https://www.caferene.co.uk/events32897205y0w609734",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["events context", "official Facebook listing reference"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "medium",
+      "reviewStatus": "programme_unverified",
+      "issues": [
+        "Event calendar presented visually; no dated performance imported without reliable extraction and review.",
+        "All app event cards are explicit sample events seeded in the future relative to database creation; API excludes past events.",
+        "No social posts, comments or customer identities copied."
+      ]
+    },
+    {
+      "url": "https://www.caferene.co.uk/contact",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["address", "phone", "email"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "high",
+      "reviewStatus": "manager_confirmation_before_release",
+      "issues": [
+        "No precise coordinates inferred; manager must configure verified coordinates to enable arrival assistance."
+      ]
+    },
+    {
+      "url": "https://www.caferene.co.uk/live-musicadailfgadugoaehfougfe930570845ugd8f9p",
+      "retrievedAt": "2026-11-11",
+      "importedFields": [],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "low",
+      "reviewStatus": "no_new_content",
+      "issues": ["Retrieved content matched home page. No specific programme imported."]
+    },
+    {
+      "url": "https://www.facebook.com/thecaferene/?locale=en_GB",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["official social link, linked from official website"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "high for account link; no post content verified",
+      "reviewStatus": "access_restricted",
+      "issues": [
+        "Initial fetch throttled. User-supplied locale URL redirected to login/temporarily blocked page.",
+        "No bypass attempted. Manager can paste authorised posts or CSV into Content review."
+      ]
+    },
+    {
+      "url": "https://www.instagram.com/cafereneglos/?hl=en",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["user-supplied social discovery link"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "unverified profile ownership",
+      "reviewStatus": "access_restricted_ownership_review",
+      "issues": [
+        "Fetch throttled. Official home footer links an old pikore.com/cafereneglos reference, which does not establish current Instagram ownership.",
+        "User requested this link; app exposes it as an external link, not verified post content.",
+        "No posts imported or invented."
+      ]
+    },
+    {
+      "url": "https://www.caferene.co.uk/uploads/nld5L8AS/SundayMenuMay26.pdf",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["source link discovered"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "link verified from restaurant page",
+      "reviewStatus": "not_imported",
+      "issues": ["Sunday-specific ordering rules and menu need manager import and approval."]
+    },
+    {
+      "url": "https://www.caferene.co.uk/uploads/NnMcDvP1/XmasMenu26.pdf",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["source link discovered"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "link verified from restaurant page",
+      "reviewStatus": "not_imported",
+      "issues": ["Seasonal menu not offered by demo checkout."]
+    },
+    {
+      "url": "https://www.caferene.co.uk/uploads/DzM3Euye/XmasDAYMenu26.pdf",
+      "retrievedAt": "2026-11-11",
+      "importedFields": ["source link discovered"],
+      "assetPaths": [],
+      "publicationDate": null,
+      "confidence": "link verified from restaurant page",
+      "reviewStatus": "not_imported",
+      "issues": ["Christmas Day service requires explicit manager verification."]
+    }
+  ],
+  "localAssets": [
+    {
+      "path": "apps/web/public/atmosphere.svg",
+      "origin": "Original procedural vector illustration created for this demo",
+      "permission": "project-owned illustration; not a photograph of the venue",
+      "reviewStatus": "clearly labelled in UI"
+    }
+  ],
+  "releaseGates": [
+    "Confirm hours, Sunday menu rules and prices",
+    "Supply a reviewed allergen matrix",
+    "Authorise official logo/photography reuse",
+    "Verify Instagram account ownership",
+    "Import approved current events",
+    "Review privacy notice and data retention"
+  ]
+}
