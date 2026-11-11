@@ -116,12 +116,13 @@
       "importedFields": ["user-supplied social discovery link"],
       "assetPaths": [],
       "publicationDate": null,
-      "confidence": "unverified profile ownership",
+      "confidence": "Official November calendar explicitly prints @cafereneglos; account handle verified through venue-owned source. Post content not accessible.",
       "reviewStatus": "access_restricted_ownership_review",
       "issues": [
         "Fetch throttled. Official home footer links an old pikore.com/cafereneglos reference, which does not establish current Instagram ownership.",
         "User requested this link; app exposes it as an external link, not verified post content.",
-        "No posts imported or invented."
+        "No posts imported or invented.",
+        "Ownership link verified on 2026-11-11 via official November programme; fetch remains throttled."
       ]
     },
     {
@@ -153,6 +154,30 @@
       "confidence": "link verified from restaurant page",
       "reviewStatus": "not_imported",
       "issues": ["Christmas Day service requires explicit manager verification."]
+    },
+    {
+      "url": "https://www.caferene.co.uk/uploads/zXu9ZoDp/768x0_1200x0/LiveMusic26-11-Nov__msi___png.webp",
+      "retrievedAt": "2026-11-11",
+      "importedFields": [
+        "Alex Comaish, 11 November, 20:00",
+        "Baron Crâne, 13 November, 21:00",
+        "St. Fian, 18 November, 20:00",
+        "Kayco’, 20 November, 21:00",
+        "Luke Austin, 25 November, 20:00",
+        "Kingsley & The Allies, 27 November, 21:00",
+        "Free entry, Wednesday 8pm / Friday 9pm",
+        "Original concise paraphrased descriptions",
+        "Instagram handle @cafereneglos explicitly printed on official programme"
+      ],
+      "assetPaths": [],
+      "publicationDate": "2026-11 (day unknown)",
+      "confidence": "high: visually transcribed official venue calendar, filename26 and weekdays agree with 2026",
+      "reviewStatus": "factual_programme_imported_artwork_withheld",
+      "issues": [
+        "Poster and artist photography not redistributed; image reuse permission remains unknown. New local event cards are original typography/geometry artwork.",
+        "Past events on 4 and 6 November excluded. API also excludes any listed event once its start time passes.",
+        "No automated Facebook/Instagram scrape. Public sources still restricted. Authorised Meta imports are optional and require server credentials."
+      ]
     }
   ],
   "localAssets": [
@@ -161,6 +186,92 @@
       "origin": "Original procedural vector illustration created for this demo",
       "permission": "project-owned illustration; not a photograph of the venue",
       "reviewStatus": "clearly labelled in UI"
+    },
+    {
+      "path": "packages/assets/food/burger.webp",
+      "webPath": "apps/web/public/images/food/burger.webp",
+      "sourceUrl": "https://unsplash.com/photos/burger-with-lettuce-and-tomato-E94j3rMcxlw",
+      "downloadUrl": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90",
+      "author": "David Foodphototasty",
+      "retrievedAt": "2026-11-11",
+      "licence": "Unsplash License",
+      "licenceUrl": "https://unsplash.com/license",
+      "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+      "reviewStatus": "illustrative_stock_not_venue_dish",
+      "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+      "issues": [
+        "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+      ]
+    },
+    {
+      "path": "packages/assets/food/cod.webp",
+      "webPath": "apps/web/public/images/food/cod.webp",
+      "sourceUrl": "https://unsplash.com/photos/fried-fish-and-chips-on-a-dark-plate-z9WqMHjdQxg",
+      "downloadUrl": "https://images.unsplash.com/photo-1778449433152-17ebe1083b5b",
+      "author": "Shoeib Abolhassani",
+      "retrievedAt": "2026-11-11",
+      "licence": "Unsplash License",
+      "licenceUrl": "https://unsplash.com/license",
+      "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+      "reviewStatus": "illustrative_stock_not_venue_dish",
+      "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+      "issues": [
+        "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+      ]
+    },
+    {
+      "path": "packages/assets/food/fries.webp",
+      "webPath": "apps/web/public/images/food/fries.webp",
+      "sourceUrl": "https://unsplash.com/photos/french-fries-in-fry-basket-lv7H9OKj_f4",
+      "downloadUrl": "https://images.unsplash.com/photo-1534938665420-4193effeacc4",
+      "author": "Vera Cho",
+      "retrievedAt": "2026-11-11",
+      "licence": "Unsplash License",
+      "licenceUrl": "https://unsplash.com/license",
+      "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+      "reviewStatus": "illustrative_stock_not_venue_dish",
+      "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+      "issues": [
+        "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+      ]
+    },
+    {
+      "path": "packages/assets/food/brownie.webp",
+      "webPath": "apps/web/public/images/food/brownie.webp",
+      "sourceUrl": "https://unsplash.com/photos/sliced-baked-brownies-on-foiled-tray-WPRuXYLNY68",
+      "downloadUrl": "https://images.unsplash.com/photo-1461009312844-e80697a81cc7",
+      "author": "Toa Heftiba",
+      "retrievedAt": "2026-11-11",
+      "licence": "Unsplash License",
+      "licenceUrl": "https://unsplash.com/license",
+      "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+      "reviewStatus": "illustrative_stock_not_venue_dish",
+      "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+      "issues": [
+        "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+      ]
+    },
+    {
+      "path": "packages/assets/food/soup.webp",
+      "webPath": "apps/web/public/images/food/soup.webp",
+      "sourceUrl": "https://unsplash.com/photos/bowl-of-vegetable-soup-x4l4U-pHF9s",
+      "downloadUrl": "https://images.unsplash.com/photo-1578859318509-62790b079366",
+      "author": "Samee Anderson",
+      "retrievedAt": "2026-11-11",
+      "licence": "Unsplash License",
+      "licenceUrl": "https://unsplash.com/license",
+      "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+      "reviewStatus": "illustrative_stock_not_venue_dish",
+      "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+      "issues": [
+        "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+      ]
+    },
+    {
+      "path": "packages/assets/events/*.webp",
+      "origin": "Original typography/geometry compositions created for the six programme listings; no artist likenesses/photos copied.",
+      "permission": "project-created artwork",
+      "reviewStatus": "original illustrative event artwork"
     }
   ],
   "releaseGates": [

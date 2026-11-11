@@ -1,3 +1,4 @@
+import { officialProgramme } from '../../../packages/shared/src/content.ts';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { challenges } from '../../../packages/shared/src/index.ts';
@@ -185,6 +186,8 @@ async function seedDefaults(db: DB) {
       sample: true,
     },
   ]);
+  for (const event of officialProgramme)
+    await db.query('INSERT INTO events VALUES($1,$2) ON CONFLICT DO NOTHING', [event.id, event]);
   await db.query('INSERT INTO settings VALUES($1,$2) ON CONFLICT DO NOTHING', [
     'challenges',
     challenges,

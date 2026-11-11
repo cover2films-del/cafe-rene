@@ -15,14 +15,14 @@ This is a local demonstration, not an operational service. No publishing is auth
 
 - Confirm home/restaurant opening hours and Sunday ordering rules. The brief reports conflicts; the current retrieved text agreed, so the app flags uncertainty instead of inventing a conflict. The 24-hour licence is not used as an opening schedule.
 - Approve prices from MainMenu26.pdf; provide a current allergen matrix and item/modifier availability.
-- Confirm current official social ownership (Instagram remains unverified), upcoming performance dates, ticket policies and festival programme.
+- Instagram handle is corroborated by the official November poster. Authorise ongoing Meta access, verify future programme changes, and confirm ticket/festival policies.
 - Authorise reuse of the actual logo and photography. Supply original assets/permissions. The illustration is not a venue photograph.
 - Review pasted/imported content and associated provenance before making it public.
 
 ## Before operational release
 
 - Select the real payment provider, merchant account, webhooks, signing keys, refunds and wallet entitlements.
-- Identify existing POS vendor/API, sandbox access, menu mappings, acceptance/status callbacks and cancellation rules.
+- TouchOffice supplied by Eposbuddy is identified. Confirm its installed versions, supplier-approved order-entry API, sandbox access, menu mappings, acceptance/status callbacks and cancellation rules.
 - Use separate live/demo databases and credentials; remove seeded demo accounts and mock endpoints from any live deployment.
 - Implement real provider adapters, distributed outbox/reconciliation, partial refunds and provider failure runbooks. APP_MODE=live currently fails closed.
 - Deploy managed PostgreSQL with versioned migrations, backups, restore tests, logging/metrics and alert routing.

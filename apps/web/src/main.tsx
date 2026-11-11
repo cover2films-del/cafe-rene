@@ -1,3 +1,8 @@
+import {
+  foodPhotography,
+  programmeSource,
+  eventGenres,
+} from '../../../packages/shared/src/content';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -224,7 +229,7 @@ function App() {
     <div className={staff ? 'app staff-app' : 'app'}>
       <div className="demo-bar">
         <span className="demo-dot" /> PRIVATE DEMONSTRATION{' '}
-        <span className="demo-detail">· Sample prices & events · No real payments</span>
+        <span className="demo-detail">· Demo ordering · No real payments</span>
         <button
           onClick={() => {
             setStaff(!staff);
@@ -327,6 +332,24 @@ function App() {
                 <div className="art-caption">
                   Bottle-ceiling study · Original illustration, not venue photography
                 </div>
+                <div className="hero-food">
+                  <div className="hero-food-main">
+                    <img
+                      src="/images/food/burger.webp"
+                      alt="Illustrative burger photography"
+                      fetchPriority="high"
+                    />
+                    <span>Big appetite. Good company.</span>
+                  </div>
+                  <div className="hero-food-small">
+                    <img
+                      src="/images/food/cod.webp"
+                      alt="Illustrative fish and chips photography"
+                    />
+                    <span>Something worth settling in for.</span>
+                  </div>
+                  <small>Illustrative food photography · not René’s actual dishes</small>
+                </div>
                 <div className="hero-seal">
                   FOOD
                   <br />
@@ -365,12 +388,28 @@ function App() {
                   </button>
                 </div>
                 <div className="events-grid">
+                  {!upcoming.length && (
+                    <div className="empty-programme">
+                      <h3>The next chapter is coming.</h3>
+                      <p>Check René’s official programme for the latest nights.</p>
+                      <a
+                        className="text-link"
+                        href={programmeSource}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Official programme ↗
+                      </a>
+                    </div>
+                  )}
                   {upcoming.slice(0, 3).map((e: any, i: number) => (
                     <EventCard key={e.id} event={e} index={i} onClick={() => setEvent(e)} />
                   ))}
                 </div>
                 <p className="muted caption">
-                  Programme preview · These are sample events, not confirmed performances.{' '}
+                  {upcoming.some((e: any) => !e.sample)
+                    ? 'Current programme · event details link to reviewed venue sources.'
+                    : 'Programme preview · sample events are labelled.'}{' '}
                   <a href={boot.venue.facebook} target="_blank" rel="noreferrer">
                     Check René’s Facebook for official listings ↗
                   </a>
@@ -393,14 +432,17 @@ function App() {
                     Explore the menu <ArrowRight size={17} />
                   </button>
                 </div>
-                <div className="food-art">
-                  <UtensilsCrossed size={85} strokeWidth={0.7} />
-                  <span>
-                    MADE FOR
-                    <br />
-                    <strong>good times.</strong>
-                  </span>
-                  <small>MENU INSPIRED BY THE OFFICIAL 2026 PDF</small>
+                <div className="food-art food-photography">
+                  <img
+                    src="/images/food/cod.webp"
+                    alt="Illustrative fish and chips photography"
+                    loading="lazy"
+                  />
+                  <div>
+                    <span>AT THE TABLE</span>
+                    <strong>Stay for another bite.</strong>
+                    <small>Illustrative photography. Actual dishes may vary.</small>
+                  </div>
                 </div>
               </section>
               <section className="section rewards-teaser">
@@ -622,7 +664,23 @@ function App() {
                       className={'menu-card ' + (!m.available ? 'unavailable' : '')}
                       key={m.id}
                     >
-                      <div className={'dish-art ' + m.category.toLowerCase().split(' ')[0]}>
+                      <div
+                        className={
+                          'dish-art ' +
+                          (foodPhotography[m.id] ? 'has-photo ' : '') +
+                          m.category.toLowerCase().split(' ')[0]
+                        }
+                      >
+                        {foodPhotography[m.id] && (
+                          <img
+                            className="dish-photo"
+                            src={foodPhotography[m.id].path}
+                            alt={foodPhotography[m.id].alt}
+                            loading="lazy"
+                            width={1000}
+                            height={750}
+                          />
+                        )}
                         <span>
                           {m.category === 'Drinks'
                             ? '◈'
@@ -634,7 +692,9 @@ function App() {
                                   ? '☷'
                                   : '❦'}
                         </span>
-                        <small>{m.category}</small>
+                        <small>
+                          {foodPhotography[m.id] ? 'ILLUSTRATIVE PHOTOGRAPHY' : m.category}
+                        </small>
                       </div>
                       <div className="menu-copy">
                         <span className="micro">
@@ -689,7 +749,7 @@ function App() {
                 </button>
               </div>
               <div className="chips">
-                {['All', 'Blues', 'DJ', 'Acoustic'].map((g) => (
+                {['All', ...new Set<string>(upcoming.map((e: any) => e.genre))].map((g) => (
                   <button
                     key={g}
                     className={genre === g ? 'selected' : ''}
@@ -700,10 +760,23 @@ function App() {
                 ))}
               </div>
               <p className="allergen-note">
-                Demonstration programme. No confirmed upcoming events were imported from
-                inaccessible social listings.
+                Current programme from reviewed venue sources. Check event details for the source
+                and any late changes. Sample events are labelled.
               </p>
               <div className={calendar ? 'calendar-list' : 'events-grid'}>
+                {!upcoming.filter((e: any) => genre === 'All' || e.genre === genre).length && (
+                  <div className="empty-programme">
+                    <h3>No nights in this selection yet.</h3>
+                    <a
+                      className="text-link"
+                      href={programmeSource}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Check the official programme ↗
+                    </a>
+                  </div>
+                )}
                 {upcoming
                   .filter((e: any) => genre === 'All' || genre === e.genre)
                   .map((e: any, i: number) => (
@@ -921,11 +994,12 @@ function App() {
               <a href={boot.venue.instagram} target="_blank" rel="noreferrer">
                 Instagram ↗
               </a>
+              <a href="/photography.html">Photo credits</a>
               <button onClick={() => go('My René')}>Privacy & preferences</button>
             </div>
             <small>
-              Private demo · Independently built for review · Social content not imported · Prices,
-              hours and permissions await manager approval
+              Private demo · Food photography is illustrative · Programme details link to the source
+              · Menu prices and hours await review
             </small>
           </footer>
         </main>
@@ -1022,6 +1096,12 @@ function App() {
       {item && (
         <Modal title={item.name} onClose={() => setItem(null)}>
           <span className="pill">{item.category} · Demo price</span>
+          {foodPhotography[item.id] && (
+            <figure className="dish-detail">
+              <img src={foodPhotography[item.id].path} alt={foodPhotography[item.id].alt} />
+              <figcaption>Illustrative photography · actual dishes may vary.</figcaption>
+            </figure>
+          )}
           <p>{item.description}</p>
           <p className="allergen-note">
             Allergens unverified. Ask staff before ordering.{' '}
@@ -1181,7 +1261,16 @@ function App() {
       )}
       {event && (
         <Modal title={event.title} onClose={() => setEvent(null)}>
-          <span className="pill">SAMPLE EVENT · {event.genre}</span>
+          <span className="pill">
+            {event.sample ? 'SAMPLE EVENT' : 'OFFICIAL VENUE PROGRAMME'} · {event.genre}
+          </span>
+          {event.imageUrl && (
+            <img
+              className="event-detail-image"
+              src={event.imageUrl}
+              alt={event.title + ' · original event artwork'}
+            />
+          )}
           <p className="gold">
             {new Date(event.date).toLocaleString('en-GB', {
               timeZone: 'Europe/London',
@@ -1191,8 +1280,10 @@ function App() {
           </p>
           <p>{event.description}</p>
           <p className="allergen-note">
-            Not a confirmed listing. Tickets and reminders are demonstration records; no real
-            admission or notification is arranged.
+            {event.sample
+              ? 'Sample listing. No real admission is arranged.'
+              : 'Listed in the venue programme. Please check the official source for changes.'}{' '}
+            Reminder delivery is not connected.
           </p>
           <div className="button-row">
             <button
@@ -1213,15 +1304,17 @@ function App() {
             <button
               className="primary"
               onClick={() =>
-                user
-                  ? void run(async () =>
-                      toast((await api('/tickets/' + event.id, 'POST', {})).message),
-                    )
-                  : setLogin(true)
+                event.sample
+                  ? user
+                    ? void run(async () =>
+                        toast((await api('/tickets/' + event.id, 'POST', {})).message),
+                      )
+                    : setLogin(true)
+                  : window.open(event.sourceUrl || programmeSource, '_blank', 'noopener,noreferrer')
               }
             >
               <Ticket size={17} />
-              Demo ticket
+              {event.sample ? 'Demo ticket' : 'Official event information'}
             </button>
           </div>
         </Modal>
@@ -1286,9 +1379,23 @@ function EventCard({
   return (
     <button className="event-card" onClick={onClick}>
       <div className={'event-art art-' + (index % 3)}>
-        <span className="sample-tag">SAMPLE EVENT</span>
-        <div className="gig-type">
-          {e.genre === 'Blues' ? (
+        <span className="sample-tag">{e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'}</span>
+        {e.imageUrl && (
+          <img
+            className="event-image"
+            src={e.imageUrl}
+            alt={e.title + ' · original event artwork'}
+            loading="lazy"
+          />
+        )}
+        <div className={'gig-type ' + (e.imageUrl ? 'visually-hidden' : '')}>
+          {!e.sample ? (
+            <>
+              <span>{e.genre}</span>
+              <strong className="actual-event-name">{e.title}</strong>
+              <i>Live at René</i>
+            </>
+          ) : e.genre === 'Blues' ? (
             <>
               <span>FEEL THE</span>
               <strong>BLUES</strong>
@@ -1332,7 +1439,13 @@ function EventCard({
           {e.title}
           <ArrowUpRight size={20} />
         </h3>
-        <p>Sample programme · Free demo entry</p>
+        <p>
+          {e.sample
+            ? 'Sample programme · Free demo entry'
+            : e.free
+              ? 'Official programme · Free entry'
+              : 'Official programme · See event details'}
+        </p>
       </div>
     </button>
   );
@@ -1535,7 +1648,7 @@ function Account({
           ))}
           <h4>Your interests</h4>
           <div className="chips">
-            {['Blues', 'DJ', 'Acoustic', 'Food'].map((g) => (
+            {[...eventGenres, 'Food'].map((g) => (
               <button
                 key={g}
                 className={prefs.interests?.includes(g) ? 'selected' : ''}
@@ -2203,6 +2316,27 @@ function Staff({
         )}
         {view === 'Integrations' && overview && (
           <>
+            <div className="panel integration-plan">
+              <div className="eyebrow">YOUR VENUE’S EPOS</div>
+              <h3>TouchOffice Web · supplied by Eposbuddy</h3>
+              <p>
+                Supplier identified. Order delivery is still simulated; no credentials or live till
+                connection are configured.
+              </p>
+              <ul>
+                {overview.integrations.plan?.requirements.map((r: string) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+              <a
+                className="text-link"
+                href="https://www.eposbuddy.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Eposbuddy ↗
+              </a>
+            </div>
             <div className="metrics">
               <div className="metric">
                 <span>Payments</span>
@@ -2259,6 +2393,7 @@ function Staff({
         )}
         {view === 'Content review' && (
           <>
+            <SocialRefresh act={act} toast={toast} />
             <MediaUpload act={act} toast={toast} />
             <div className="panel">
               <h3>Bring the real René in.</h3>
@@ -2336,7 +2471,18 @@ function Staff({
                       style={{ maxWidth: 320, width: '100%', maxHeight: 250, objectFit: 'contain' }}
                     />
                   )}
+                  {c.data.type === 'image' &&
+                    c.status === 'approved' &&
+                    c.data.permission === 'authorised' && (
+                      <p className="source-note">
+                        Approved image URL: <code>{'/api/media/' + c.id}</code> · use as imageUrl on
+                        an event.
+                      </p>
+                    )}
                   <pre>{c.data.text}</pre>
+                  {['social', 'text'].includes(c.data.type) && (
+                    <PublishSocialEvent record={c} act={act} toast={toast} />
+                  )}
                   <div className="button-row">
                     <button
                       className="outline"
@@ -2405,7 +2551,7 @@ function Staff({
                     Audience interest
                     <select name="interest">
                       <option value="">All opted-in customers</option>
-                      {['Blues', 'DJ', 'Acoustic', 'Food'].map((g) => (
+                      {[...eventGenres, 'Food'].map((g) => (
                         <option key={g}>{g}</option>
                       ))}
                     </select>
@@ -2600,6 +2746,120 @@ function Staff({
   );
 }
 
+function SocialRefresh({ act, toast }: { act: any; toast: any }) {
+  const [status, setStatus] = useState<any>(null);
+  useEffect(() => {
+    api('/manager/social')
+      .then(setStatus)
+      .catch(() => {});
+  }, []);
+  return (
+    <div className="panel">
+      <div className="eyebrow">THE LATEST FROM RENÉ</div>
+      <h3>Social content, with a human eye.</h3>
+      <div className="social-tools">
+        <p>
+          Facebook: {status?.facebook ? 'connected' : 'awaiting authorised connection'} · Instagram:{' '}
+          {status?.instagram ? 'connected' : 'awaiting authorised connection'}. Imports read
+          venue-owned posts only and hold them for review.
+        </p>
+        <button
+          className="outline"
+          onClick={() =>
+            void act(async () => {
+              const r = await api('/manager/social/refresh', 'POST', {});
+              toast(
+                r.message +
+                  ' Imported: ' +
+                  r.imported +
+                  (r.errors.length ? ' · ' + r.errors.join('; ') : ''),
+              );
+            })
+          }
+        >
+          <RefreshCw size={16} />
+          Pull latest posts
+        </button>
+      </div>
+      <p className="source-note">
+        The official November programme is already imported. A connected Meta account is required
+        for ongoing social refresh; public login restrictions are respected. Post dates are never
+        treated as event dates.
+      </p>
+    </div>
+  );
+}
+function PublishSocialEvent({ record, act, toast }: { record: any; act: any; toast: any }) {
+  return (
+    <details>
+      <summary>Review this post and publish an event</summary>
+      <form
+        className="publication-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const d = new FormData(e.currentTarget);
+          void act(async () => {
+            await api('/manager/events/social-' + record.id, 'PUT', {
+              id: 'social-' + record.id,
+              title: d.get('title'),
+              genre: d.get('genre'),
+              date: new Date(String(d.get('date'))).toISOString(),
+              description: d.get('description'),
+              free: d.get('free') === 'on',
+              sample: false,
+              sourceUrl: record.data.url,
+              verifiedAt: new Date().toISOString(),
+              approvedReview: d.get('approved') === 'on',
+              ...(d.get('image')
+                ? { imageUrl: d.get('image'), imageKind: 'authorised-photo' }
+                : {}),
+            });
+            toast(
+              'Reviewed event published. Past event dates are excluded from upcoming listings.',
+            );
+          });
+        }}
+      >
+        <label>
+          Event title
+          <input name="title" required maxLength={100} />
+        </label>
+        <div className="form-grid">
+          <label>
+            Actual event date and time · your local time
+            <input name="date" type="datetime-local" required />
+          </label>
+          <label>
+            Genre
+            <select name="genre">
+              {eventGenres.map((g) => (
+                <option key={g}>{g}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <label>
+          Concise event description
+          <textarea name="description" required maxLength={500} />
+        </label>
+        <label>
+          Approved uploaded image URL (optional)
+          <input name="image" placeholder="/api/media/approved-image-id" />
+        </label>
+        <label className="check-row">
+          <input name="free" type="checkbox" />
+          The source explicitly confirms free entry
+        </label>
+        <label className="check-row">
+          <input name="approved" type="checkbox" required />I have verified the source, event date,
+          description and any image reuse permission.
+        </label>
+        <button className="primary">Publish reviewed event</button>
+      </form>
+    </details>
+  );
+}
+
 function MediaUpload({ act, toast }: { act: any; toast: any }) {
   return (
     <div className="panel">
@@ -2676,8 +2936,9 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
       <div className="panel">
         <h3>Events, offers & challenge definitions</h3>
         <p>
-          Manage demonstration records. Money values use integer pence. Events remain labelled as
-          samples; verified publication and live mode require a separate release.
+          Manage events, offers and challenge definitions. Verified events require a source URL and
+          approvedReview=true. Money values use integer pence; ordering and offers remain in demo
+          mode.
         </p>
         <div className="button-row">
           <select

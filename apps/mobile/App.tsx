@@ -1,3 +1,9 @@
+import { useFonts } from 'expo-font';
+import { Manrope_400Regular } from '@expo-google-fonts/manrope/400Regular';
+import { Manrope_600SemiBold } from '@expo-google-fonts/manrope/600SemiBold';
+import { Manrope_700Bold } from '@expo-google-fonts/manrope/700Bold';
+import { Image } from 'expo-image';
+import { programmeSource, customerInterests } from '../../packages/shared/src/content';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -26,6 +32,34 @@ import QRCode from 'react-native-qrcode-svg';
 import Constants from 'expo-constants';
 import * as Crypto from 'expo-crypto';
 import { money, type MenuItem, type BasketLine } from '../../packages/shared/src/index';
+/* eslint-disable @typescript-eslint/no-require-imports -- Metro requires static paths for bundled images. */
+const foodImages: Record<string, any> = {
+  burger: require('../../packages/assets/food/burger.webp'),
+  cod: require('../../packages/assets/food/cod.webp'),
+  fries: require('../../packages/assets/food/fries.webp'),
+  brownie: require('../../packages/assets/food/brownie.webp'),
+  soup: require('../../packages/assets/food/soup.webp'),
+};
+const eventImages: Record<string, any> = {
+  'nov26-alex-comaish': require('../../packages/assets/events/nov26-alex-comaish.webp'),
+  'nov26-baron-crane': require('../../packages/assets/events/nov26-baron-crane.webp'),
+  'nov26-st-fian': require('../../packages/assets/events/nov26-st-fian.webp'),
+  'nov26-kayco': require('../../packages/assets/events/nov26-kayco.webp'),
+  'nov26-luke-austin': require('../../packages/assets/events/nov26-luke-austin.webp'),
+  'nov26-kingsley-allies': require('../../packages/assets/events/nov26-kingsley-allies.webp'),
+};
+/* eslint-enable @typescript-eslint/no-require-imports */
+function eventImage(e: any) {
+  return (
+    eventImages[e.id] ||
+    (e.imageUrl
+      ? {
+          uri:
+            (process.env.EXPO_PUBLIC_API_URL || Constants.expoConfig?.extra?.apiUrl) + e.imageUrl,
+        }
+      : null)
+  );
+}
 const config = Constants.expoConfig?.extra || {};
 const apiUrl = process.env.EXPO_PUBLIC_API_URL || config.apiUrl;
 const webUrl = process.env.EXPO_PUBLIC_WEB_URL || config.webUrl;
@@ -49,6 +83,15 @@ const tabNames = ['Home', 'Order', 'What’s On', 'Rewards', 'My René'];
 const tabIcons = ['⌂', '♧', '♫', '✦', '○'];
 const clean = (s: string) => s.replaceAll('_', ' ');
 export default function App() {
+  const [loaded, error] = useFonts({ Manrope_400Regular, Manrope_600SemiBold, Manrope_700Bold });
+  if (!loaded && !error)
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#141714', justifyContent: 'center' }}>
+          <ActivityIndicator color="#d9bb83" />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
   return (
     <SafeAreaProvider>
       <AppContent />
@@ -413,7 +456,7 @@ function AppContent() {
               <Text style={s.eyebrow}>IN THE HEART OF GLOUCESTER</Text>
               <Text style={s.heroTitle}>
                 Good food.{'\n'}Live music.{'\n'}
-                <Text style={{ color: C.gold, fontStyle: 'italic' }}>Great company.</Text>
+                <Text style={{ color: C.gold }}>Great company.</Text>
               </Text>
               <Text style={[s.body, { marginVertical: 22 }]}>
                 Your favourite corner of the city.{'\n'}Make yourself at home at René.
@@ -442,7 +485,16 @@ function AppContent() {
                     ]}
                     onPress={() => setEvent(e)}
                   >
-                    <Text style={s.eyebrow}>SAMPLE EVENT · {e.genre.toUpperCase()}</Text>
+                    <Text style={s.eyebrow}>
+                      {e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'} · {e.genre.toUpperCase()}
+                    </Text>
+                    {eventImage(e) && (
+                      <Image
+                        source={eventImage(e)}
+                        style={s.eventPhoto}
+                        accessibilityLabel={e.title + ' original event artwork'}
+                      />
+                    )}
                     <Text style={[s.poster, { fontSize: 35 }]}>{e.title}</Text>
                     <Text style={s.small}>
                       {new Date(e.date).toLocaleDateString('en-GB', {
@@ -450,7 +502,7 @@ function AppContent() {
                         day: 'numeric',
                         month: 'long',
                       })}{' '}
-                      · Demo programme
+                      · {e.sample ? 'Demo programme' : 'Official venue programme'}
                     </Text>
                   </Pressable>
                 ))}
@@ -458,6 +510,11 @@ function AppContent() {
               {panel(
                 <>
                   <Text style={s.eyebrow}>PULL UP A CHAIR</Text>
+                  <Image
+                    source={foodImages.burger}
+                    style={s.featuredFood}
+                    accessibilityLabel="Illustrative burger photography"
+                  />
                   <Text style={s.title}>A proper appetite.{'\n'}A proper pub.</Text>
                   <Text style={s.body}>
                     From the Desperate Dan burger to comforting pub classics. Explore dishes
@@ -494,7 +551,7 @@ function AppContent() {
               {button('Book a table', () => setBooking(true), true)}
               {button('Call 01452 309340', () => void Linking.openURL('tel:01452309340'), true)}
               <Text style={s.small}>
-                No official photography is used until reuse permission is confirmed.
+                Food photography is illustrative, not a photograph of René’s actual dishes.
               </Text>
             </View>
           </>
@@ -646,6 +703,16 @@ function AppContent() {
                     setMods([]);
                   }}
                 >
+                  {foodImages[m.id] && (
+                    <View>
+                      <Image
+                        source={foodImages[m.id]}
+                        style={s.menuPhoto}
+                        accessibilityLabel={'Illustrative photo, not René’s actual dish'}
+                      />
+                      <Text style={s.photoLabel}>ILLUSTRATIVE</Text>
+                    </View>
+                  )}
                   <View style={{ flex: 1 }}>
                     <Text style={s.eyebrow}>
                       {m.category.toUpperCase()}
@@ -673,10 +740,10 @@ function AppContent() {
             {heading(
               'LIVE & IN GOOD COMPANY',
               'What’s on.',
-              'Demonstration programme. All events are samples.',
+              'From René’s official November calendar. Check with the venue for late changes.',
             )}
             <ScrollView horizontal style={{ marginBottom: 20 }}>
-              {['All', 'Blues', 'DJ', 'Acoustic'].map((g) => (
+              {['All', ...new Set<string>(boot.events.map((e: any) => e.genre))].map((g) => (
                 <Pressable
                   key={g}
                   style={[s.chip, genre === g && s.selected]}
@@ -697,11 +764,20 @@ function AppContent() {
                   key={e.id}
                   onPress={() => setEvent(e)}
                 >
-                  <Text style={s.eyebrow}>SAMPLE · {e.genre.toUpperCase()}</Text>
+                  <Text style={s.eyebrow}>
+                    {e.sample ? 'SAMPLE' : 'OFFICIAL PROGRAMME'} · {e.genre.toUpperCase()}
+                  </Text>
+                  {eventImage(e) && (
+                    <Image
+                      source={eventImage(e)}
+                      style={s.eventPhoto}
+                      accessibilityLabel={e.title + ' original event artwork'}
+                    />
+                  )}
                   <Text style={s.poster}>{e.title}</Text>
                   <Text style={s.small}>
-                    {new Date(e.date).toLocaleString('en-GB', { timeZone: 'Europe/London' })} · Free
-                    demo entry
+                    {new Date(e.date).toLocaleString('en-GB', { timeZone: 'Europe/London' })} ·{' '}
+                    {e.sample ? 'Free demo entry' : e.free ? 'Free entry' : 'See event details'}
                   </Text>
                 </Pressable>
               ))}
@@ -712,8 +788,8 @@ function AppContent() {
             )}
             {button('Instagram ↗', () => void Linking.openURL(boot.venue.instagram), true)}
             <Text style={s.small}>
-              Facebook required login; Instagram was throttled. No social posts were copied. Next
-              festival dates await confirmation.
+              Programme checked 11 November 2026 against the official venue calendar. Social posts
+              require an authorised account connection; festival dates await confirmation.
             </Text>
             {button('Festival passport →', () => setTab('Rewards'), true)}
           </View>
@@ -892,7 +968,7 @@ function AppContent() {
                     ))}
                     <Text style={s.eyebrow}>YOUR INTERESTS</Text>
                     <View style={s.wrap}>
-                      {['Blues', 'DJ', 'Acoustic', 'Food'].map((g) => (
+                      {customerInterests.map((g) => (
                         <Pressable
                           key={g}
                           style={[s.chip, user.preferences.interests?.includes(g) && s.selected]}
@@ -1112,7 +1188,19 @@ function AppContent() {
       <Sheet visible={!!item} title={item?.name || ''} close={() => setItem(null)}>
         {item && (
           <>
-            <Text style={s.body}>{item.description}</Text>
+            <>
+              {foodImages[item.id] && (
+                <>
+                  <Image
+                    source={foodImages[item.id]}
+                    style={s.featuredFood}
+                    accessibilityLabel="Illustrative food photography"
+                  />
+                  <Text style={s.small}>Illustrative photography · actual dish may vary.</Text>
+                </>
+              )}
+              <Text style={s.body}>{item.description}</Text>
+            </>
             <Text style={s.warning}>
               Allergens unverified. Ask staff before ordering.{' '}
               {item.alcohol ? 'Staff age check required.' : ''}
@@ -1258,14 +1346,25 @@ function AppContent() {
       <Sheet visible={!!event} title={event?.title || ''} close={() => setEvent(null)}>
         {event && (
           <>
-            <Text style={s.eyebrow}>SAMPLE EVENT · {event.genre}</Text>
+            <Text style={s.eyebrow}>
+              {event.sample ? 'SAMPLE EVENT' : 'OFFICIAL VENUE PROGRAMME'} · {event.genre}
+            </Text>
+            {eventImage(event) && (
+              <Image
+                source={eventImage(event)}
+                style={s.eventDetailPhoto}
+                accessibilityLabel={event.title + ' original event artwork'}
+              />
+            )}
             <Text style={s.body}>
               {new Date(event.date).toLocaleString('en-GB', { timeZone: 'Europe/London' })}
             </Text>
             <Text style={s.body}>{event.description}</Text>
             <Text style={s.warning}>
-              Not a confirmed listing. Demo tickets do not grant real admission. Reminder
-              preferences are stored; delivery is not connected.
+              {event.sample
+                ? 'Sample listing. Demo tickets do not grant real admission.'
+                : 'From the official venue programme; check the source for changes.'}{' '}
+              Reminder preferences are stored; delivery is not connected.
             </Text>
             {button(
               'Save & remind me',
@@ -1279,13 +1378,19 @@ function AppContent() {
                   : (setEvent(null), setLogin(true)),
               true,
             )}
-            {button('Save demo ticket', () =>
-              user
-                ? void run(async () =>
-                    notify((await api('/tickets/' + event.id, 'POST', {})).message),
-                  )
-                : (setEvent(null), setLogin(true)),
-            )}
+            {!event.sample &&
+              button(
+                'Official event information ↗',
+                () => void Linking.openURL(event.sourceUrl || programmeSource),
+              )}
+            {event.sample &&
+              button('Save demo ticket', () =>
+                user
+                  ? void run(async () =>
+                      notify((await api('/tickets/' + event.id, 'POST', {})).message),
+                    )
+                  : (setEvent(null), setLogin(true)),
+              )}
           </>
         )}
       </Sheet>
@@ -1391,18 +1496,31 @@ function Sheet({
   );
 }
 const C = {
-  bg: '#171714',
-  panel: '#25261f',
+  bg: '#141714',
+  panel: '#20261f',
   cream: '#f1eadd',
   muted: '#acae9b',
   gold: '#d9b875',
-  red: '#922f3d',
+  red: '#a73d4d',
   line: '#45483a',
 };
 const s = StyleSheet.create({
+  menuPhoto: { width: 95, height: 150, borderRadius: 8 },
+  photoLabel: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 5,
+    color: '#d9bb83',
+    marginTop: 7,
+    textAlign: 'center',
+    letterSpacing: 1,
+  },
+  featuredFood: { width: '100%', height: 195, borderRadius: 10, marginBottom: 18 },
+  eventPhoto: { width: '100%', height: 150, borderRadius: 8, marginBottom: 16 },
+  eventDetailPhoto: { width: '100%', height: 220, borderRadius: 10, marginBottom: 20 },
+
   safe: { flex: 1, backgroundColor: C.bg },
   demo: { backgroundColor: '#30251f', padding: 7, alignItems: 'center' },
-  demoText: { fontSize: 8, color: C.gold, letterSpacing: 1 },
+  demoText: { fontFamily: 'Manrope_400Regular', fontSize: 8, color: C.gold, letterSpacing: 1 },
   header: {
     paddingHorizontal: 24,
     paddingVertical: 18,
@@ -1418,8 +1536,14 @@ const s = StyleSheet.create({
     fontStyle: 'italic',
     color: C.cream,
   },
-  wordmarkSub: { fontSize: 6, color: C.gold, letterSpacing: 2.5, marginTop: 3 },
-  basketIcon: { borderWidth: 1, borderColor: C.line, padding: 12, borderRadius: 4 },
+  wordmarkSub: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 6,
+    color: C.gold,
+    letterSpacing: 2.5,
+    marginTop: 3,
+  },
+  basketIcon: { borderWidth: 1, borderColor: C.line, padding: 12, borderRadius: 10 },
   hero: {
     paddingHorizontal: 26,
     paddingTop: 45,
@@ -1439,47 +1563,71 @@ const s = StyleSheet.create({
     transform: [{ rotate: '-20deg' }],
   },
   heroTitle: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
-    fontSize: 49,
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 46,
     lineHeight: 56,
     color: C.cream,
-    letterSpacing: -1.5,
+    letterSpacing: -2,
   },
-  eyebrow: { fontSize: 8, letterSpacing: 1.7, color: C.gold, fontWeight: '600', marginBottom: 15 },
+  eyebrow: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 8,
+    letterSpacing: 1.7,
+    color: C.gold,
+    fontWeight: '600',
+    marginBottom: 15,
+  },
   heading: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
-    fontSize: 39,
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 36,
     lineHeight: 46,
     color: C.cream,
     marginBottom: 14,
     letterSpacing: -0.7,
   },
   title: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+    fontFamily: 'Manrope_600SemiBold',
     fontSize: 27,
     lineHeight: 34,
     color: C.cream,
     marginBottom: 14,
   },
-  body: { fontSize: 12, lineHeight: 20, color: '#bfc1ae', marginBottom: 12 },
-  small: { fontSize: 9, lineHeight: 16, color: C.muted, marginVertical: 10 },
+  body: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 12,
+    lineHeight: 20,
+    color: '#bfc1ae',
+    marginBottom: 12,
+  },
+  small: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 9,
+    lineHeight: 16,
+    color: C.muted,
+    marginVertical: 10,
+  },
   button: {
     backgroundColor: C.red,
     paddingVertical: 16,
     paddingHorizontal: 18,
-    borderRadius: 4,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
     marginVertical: 7,
   },
   secondary: { backgroundColor: '#ffffff04', borderWidth: 1, borderColor: '#cab47d44' },
-  buttonText: { color: C.cream, fontSize: 12, fontWeight: '600' },
+  buttonText: {
+    fontFamily: 'Manrope_600SemiBold',
+    color: C.cream,
+    fontSize: 12,
+    fontWeight: '600',
+  },
   content: { padding: 24 },
   panel: {
     backgroundColor: C.panel,
     padding: 24,
-    borderRadius: 5,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#cab47d25',
     marginBottom: 22,
@@ -1488,13 +1636,13 @@ const s = StyleSheet.create({
     padding: 25,
     borderWidth: 1,
     borderColor: '#d2b77433',
-    borderRadius: 4,
+    borderRadius: 10,
     minHeight: 210,
     justifyContent: 'space-between',
   },
   poster: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
-    fontSize: 39,
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 36,
     color: '#e9dfb8',
     lineHeight: 45,
     marginVertical: 20,
@@ -1502,9 +1650,10 @@ const s = StyleSheet.create({
   tabs: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 10, paddingBottom: 10 },
   tabSafe: { backgroundColor: '#20221b', borderTopWidth: 1, borderTopColor: '#d2b77444' },
   tab: { alignItems: 'center', gap: 4, minWidth: 58, minHeight: 43 },
-  tabIcon: { fontSize: 24, color: '#8f9981' },
-  tabText: { fontSize: 8, color: '#9da58f' },
+  tabIcon: { fontFamily: 'Manrope_400Regular', fontSize: 24, color: '#8f9981' },
+  tabText: { fontFamily: 'Manrope_400Regular', fontSize: 8, color: '#9da58f' },
   input: {
+    fontFamily: 'Manrope_400Regular',
     backgroundColor: '#1a1d16',
     borderColor: '#cabb8c44',
     borderWidth: 1,
@@ -1527,8 +1676,9 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   selected: { backgroundColor: '#d6b27620', borderColor: '#d6b27688' },
-  chipText: { fontSize: 10, color: C.gold },
+  chipText: { fontFamily: 'Manrope_400Regular', fontSize: 10, color: C.gold },
   warning: {
+    fontFamily: 'Manrope_400Regular',
     color: '#d4ba8e',
     fontSize: 10,
     lineHeight: 18,
@@ -1541,21 +1691,22 @@ const s = StyleSheet.create({
     padding: 20,
     borderWidth: 1,
     borderColor: '#cabb8c20',
-    borderRadius: 4,
+    borderRadius: 10,
     marginBottom: 15,
     flexDirection: 'row',
     gap: 18,
     alignItems: 'center',
   },
   menuTitle: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+    fontFamily: 'Manrope_600SemiBold',
     fontSize: 21,
     lineHeight: 26,
     color: C.cream,
     marginBottom: 9,
   },
-  price: { fontSize: 14, color: C.gold, marginTop: 8 },
+  price: { fontFamily: 'Manrope_600SemiBold', fontSize: 14, color: C.gold, marginTop: 8 },
   add: {
+    fontFamily: 'Manrope_400Regular',
     color: C.gold,
     fontSize: 26,
     borderWidth: 1,
@@ -1573,19 +1724,25 @@ const s = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
   },
-  errorText: { color: '#ffe0da', fontSize: 11, flexShrink: 1 },
+  errorText: { fontFamily: 'Manrope_400Regular', color: '#ffe0da', fontSize: 11, flexShrink: 1 },
   challenge: {
     padding: 20,
     borderWidth: 1,
     borderColor: '#cabb8c2a',
-    borderRadius: 4,
+    borderRadius: 10,
     marginBottom: 15,
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
     backgroundColor: C.panel,
   },
-  badge: { fontSize: 33, color: C.gold, width: 45, textAlign: 'center' },
+  badge: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 33,
+    color: C.gold,
+    width: 45,
+    textAlign: 'center',
+  },
   progress: { height: 4, backgroundColor: '#ffffff15', marginVertical: 5, width: '100%' },
   switchRow: {
     flexDirection: 'row',
@@ -1601,7 +1758,7 @@ const s = StyleSheet.create({
     backgroundColor: '#26281f',
     maxHeight: '90%',
     padding: 22,
-    borderRadius: 7,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#cab47d55',
   },

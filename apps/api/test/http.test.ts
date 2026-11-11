@@ -34,7 +34,7 @@ test('HTTP demonstration: guest ordering, account claim, staff fulfilment, rewar
     const boot = await call('/bootstrap');
     assert.equal(boot.mode, 'demo');
     assert.ok(boot.menu.length >= 8);
-    assert.ok(boot.events.every((e: any) => e.sample && new Date(e.date) > new Date()));
+    assert.ok(boot.events.every((e: any) => !e.sample && new Date(e.date) > new Date()));
     const badSession = await call('/bootstrap', 'GET', undefined, 'expired-token');
     assert.equal(badSession.mode, 'demo');
     const table = await call('/demo/table/2');
@@ -99,6 +99,21 @@ test('HTTP demonstration: guest ordering, account claim, staff fulfilment, rewar
     assert.equal(imageMeta.format, 'webp');
     assert.equal(imageMeta.width, 32);
     assert.equal((await fetch(origin + uploaded.previewUrl)).status, 403);
+    assert.equal((await fetch(origin + '/api/media/' + uploaded.id)).status, 404);
+    await call(
+      '/manager/content/' + uploaded.id + '/review',
+      'POST',
+      { status: 'approved' },
+      manager.token,
+    );
+    assert.equal((await fetch(origin + '/api/media/' + uploaded.id)).status, 200);
+    await call(
+      '/manager/content/' + uploaded.id + '/review',
+      'POST',
+      { status: 'needs_review' },
+      manager.token,
+    );
+    assert.equal((await fetch(origin + '/api/media/' + uploaded.id)).status, 404);
     const content = await call('/manager/content', 'GET', undefined, manager.token);
     assert.ok(content.length >= 10);
     const exported = await call('/privacy/export', 'GET', undefined, customer.token);

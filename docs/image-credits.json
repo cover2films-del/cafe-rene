@@ -1,0 +1,82 @@
+[
+  {
+    "path": "packages/assets/food/burger.webp",
+    "webPath": "apps/web/public/images/food/burger.webp",
+    "sourceUrl": "https://unsplash.com/photos/burger-with-lettuce-and-tomato-E94j3rMcxlw",
+    "downloadUrl": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90",
+    "author": "David Foodphototasty",
+    "retrievedAt": "2026-11-11",
+    "licence": "Unsplash License",
+    "licenceUrl": "https://unsplash.com/license",
+    "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+    "reviewStatus": "illustrative_stock_not_venue_dish",
+    "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+    "issues": [
+      "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+    ]
+  },
+  {
+    "path": "packages/assets/food/cod.webp",
+    "webPath": "apps/web/public/images/food/cod.webp",
+    "sourceUrl": "https://unsplash.com/photos/fried-fish-and-chips-on-a-dark-plate-z9WqMHjdQxg",
+    "downloadUrl": "https://images.unsplash.com/photo-1778449433152-17ebe1083b5b",
+    "author": "Shoeib Abolhassani",
+    "retrievedAt": "2026-11-11",
+    "licence": "Unsplash License",
+    "licenceUrl": "https://unsplash.com/license",
+    "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+    "reviewStatus": "illustrative_stock_not_venue_dish",
+    "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+    "issues": [
+      "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+    ]
+  },
+  {
+    "path": "packages/assets/food/fries.webp",
+    "webPath": "apps/web/public/images/food/fries.webp",
+    "sourceUrl": "https://unsplash.com/photos/french-fries-in-fry-basket-lv7H9OKj_f4",
+    "downloadUrl": "https://images.unsplash.com/photo-1534938665420-4193effeacc4",
+    "author": "Vera Cho",
+    "retrievedAt": "2026-11-11",
+    "licence": "Unsplash License",
+    "licenceUrl": "https://unsplash.com/license",
+    "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+    "reviewStatus": "illustrative_stock_not_venue_dish",
+    "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+    "issues": [
+      "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+    ]
+  },
+  {
+    "path": "packages/assets/food/brownie.webp",
+    "webPath": "apps/web/public/images/food/brownie.webp",
+    "sourceUrl": "https://unsplash.com/photos/sliced-baked-brownies-on-foiled-tray-WPRuXYLNY68",
+    "downloadUrl": "https://images.unsplash.com/photo-1461009312844-e80697a81cc7",
+    "author": "Toa Heftiba",
+    "retrievedAt": "2026-11-11",
+    "licence": "Unsplash License",
+    "licenceUrl": "https://unsplash.com/license",
+    "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+    "reviewStatus": "illustrative_stock_not_venue_dish",
+    "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+    "issues": [
+      "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+    ]
+  },
+  {
+    "path": "packages/assets/food/soup.webp",
+    "webPath": "apps/web/public/images/food/soup.webp",
+    "sourceUrl": "https://unsplash.com/photos/bowl-of-vegetable-soup-x4l4U-pHF9s",
+    "downloadUrl": "https://images.unsplash.com/photo-1578859318509-62790b079366",
+    "author": "Samee Anderson",
+    "retrievedAt": "2026-11-11",
+    "licence": "Unsplash License",
+    "licenceUrl": "https://unsplash.com/license",
+    "permission": "commercial/non-commercial reuse permitted by displayed free-photo licence",
+    "reviewStatus": "illustrative_stock_not_venue_dish",
+    "transform": "resized/cropped to1000×750 and WebP quality80; locally bundled, no hotlinks",
+    "issues": [
+      "Not an actual Café René dish. UI labels illustrative photography; no allergen or ingredient inference from images."
+    ]
+  }
+]

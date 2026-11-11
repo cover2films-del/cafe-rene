@@ -1,3 +1,10 @@
+import { socialStatus, refreshSocial } from './social.ts';
+import {
+  visibleEvents,
+  eventGenres,
+  customerInterests,
+  posPlan,
+} from '../../../packages/shared/src/content.ts';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -86,10 +93,7 @@ export function createApp(s: Service) {
     mode: 'demo',
     venue,
     menu: await s.menu(),
-    events: (await s.db.query('SELECT data FROM events')).rows
-      .map((r) => r.data)
-      .filter((e) => new Date(e.date).getTime() > Date.now())
-      .sort((a, b) => a.date.localeCompare(b.date)),
+    events: visibleEvents((await s.db.query('SELECT data FROM events')).rows.map((r) => r.data)),
     ordering: await s.settings(),
   }));
   app.post('/api/auth/login', async (req, res) => {
@@ -279,7 +283,7 @@ export function createApp(s: Service) {
           email: z.boolean(),
           push: z.boolean(),
           location: z.boolean(),
-          interests: z.array(z.enum(['Blues', 'DJ', 'Acoustic', 'Food'])).max(4),
+          interests: z.array(z.enum(customerInterests)).max(8),
         })
         .strict()
         .parse(req.body);
@@ -541,6 +545,7 @@ export function createApp(s: Service) {
       ).rows,
       bookings: (await s.db.query('SELECT * FROM bookings ORDER BY created_at DESC')).rows,
       integrations: {
+        plan: posPlan,
         payment: 'mock',
         pos: 'mock',
         jobs: (await s.db.query('SELECT * FROM jobs ORDER BY next_at')).rows,
@@ -662,6 +667,19 @@ export function createApp(s: Service) {
     },
     manager,
   );
+  app.get('/api/media/:id', async (req, res) => {
+    demand(/^[a-f0-9-]{36}$/.test(req.params.id), 'Image not found', 404);
+    const record = await s.one('SELECT * FROM content WHERE id=$1', [req.params.id]);
+    demand(
+      record?.data.type === 'image' &&
+        record.status === 'approved' &&
+        record.data.permission === 'authorised',
+      'Image not published',
+      404,
+    );
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.sendFile(req.params.id + '.webp', { root: mediaRoot });
+  });
   app.get('/api/manager/media/:id', async (req: any, res) => {
     s.role(req.user, manager);
     demand(/^[a-f0-9-]{36}$/.test(req.params.id), 'Image not found', 404);
@@ -670,6 +688,8 @@ export function createApp(s: Service) {
     res.setHeader('Cache-Control', 'private, max-age=300');
     res.sendFile(req.params.id + '.webp', { root: mediaRoot });
   });
+  route('get', '/api/manager/social', () => socialStatus(), manager);
+  route('post', '/api/manager/social/refresh', (req) => refreshSocial(s.db, req.user.id), manager);
   route(
     'get',
     '/api/manager/content',
@@ -732,7 +752,7 @@ export function createApp(s: Service) {
       const d = z
         .object({
           name: z.string().min(1).max(80),
-          interest: z.enum(['', 'Blues', 'DJ', 'Acoustic', 'Food']),
+          interest: z.enum(['', ...customerInterests]),
           channel: z.enum(['email', 'push']),
           offerId: z.string(),
           budget: z.number().min(0).max(100000),
@@ -806,15 +826,30 @@ export function createApp(s: Service) {
         .object({
           id: z.string(),
           title: z.string().min(1).max(100),
-          genre: z.enum(['Blues', 'DJ', 'Acoustic']),
+          genre: z.enum(eventGenres),
           date: z.string().datetime(),
           description: z.string().max(500),
-          sample: z.literal(true),
-          free: z.literal(true),
+          sample: z.boolean(),
+          free: z.boolean(),
+          sourceUrl: z
+            .url()
+            .refine((value) => value.startsWith('https://'), 'Use an HTTPS source URL')
+            .optional(),
+          verifiedAt: z.string().max(40).optional(),
+          approvedReview: z.boolean().optional(),
+          imageUrl: z
+            .string()
+            .regex(/^\/(?:images\/events\/[a-z0-9-]+\.webp|api\/media\/[a-f0-9-]{36})$/)
+            .optional(),
+          imageKind: z.enum(['original-artwork', 'authorised-photo']).optional(),
         })
         .strict()
         .parse(req.body);
       demand(d.id === req.params.id, 'Identifier mismatch');
+      demand(
+        d.sample || (d.sourceUrl && d.approvedReview),
+        'Review the source before publishing a real event',
+      );
       await s.db.query('INSERT INTO events VALUES($1,$2) ON CONFLICT(id) DO UPDATE SET data=$2', [
         d.id,
         d,
