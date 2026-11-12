@@ -7,6 +7,12 @@ export default {
     orientation: 'portrait',
     userInterfaceStyle: 'dark',
     newArchEnabled: true,
+    runtimeVersion: { policy: 'fingerprint' },
+    updates: {
+      url: 'https://u.expo.dev/77d77412-91fc-4ac2-aa57-16abb1aeff1c',
+      checkAutomatically: 'ON_LOAD',
+      fallbackToCacheTimeout: 3000,
+    },
     ios: {
       supportsTablet: true,
       bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER || 'uk.co.caferene.gloucester',
@@ -46,8 +52,8 @@ export default {
     ],
     extra: {
       eas: { projectId: '77d77412-91fc-4ac2-aa57-16abb1aeff1c' },
-      apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001',
-      webUrl: process.env.EXPO_PUBLIC_WEB_URL || 'http://localhost:5173',
+      apiUrl: process.env.EXPO_PUBLIC_API_URL || 'https://cafe-rene.onrender.com',
+      webUrl: process.env.EXPO_PUBLIC_WEB_URL || 'https://cafe-rene.onrender.com',
     },
     experiments: { autolinkingModuleResolution: true },
   },

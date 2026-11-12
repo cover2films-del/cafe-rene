@@ -9,6 +9,10 @@ export type Fulfilment =
   | 'completed'
   | 'cancelled';
 export type MenuItem = {
+  menuEdition?: string;
+  sourceUrl?: string;
+  sourceChecked?: string;
+  imageKey?: string;
   id: string;
   name: string;
   description: string;

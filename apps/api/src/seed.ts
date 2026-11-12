@@ -1,3 +1,4 @@
+import { publishedMenu } from '../../../packages/shared/src/venue-menu.ts';
 import { seedDaniel } from './demo-daniel.ts';
 import { officialProgramme } from '../../../packages/shared/src/content.ts';
 import { readFile } from 'node:fs/promises';
@@ -35,110 +36,47 @@ async function seedDefaults(db: DB) {
       `table-${n}`,
       `Table ${n}`,
     ]);
-  const items = [
-    [
-      'burger',
-      'Desperate Dan Burger',
-      'An 8oz British beef burger. A René favourite.',
-      'Burgers',
-      1495,
-      [],
+  for (const item of publishedMenu) {
+    await db.query('INSERT INTO menu VALUES($1,$2) ON CONFLICT DO NOTHING', [item.id, item]);
+    // Attach published provenance to existing items, preserving manager-edited names/prices.
+    await db.query(
+      "UPDATE menu SET data=data || $2::jsonb WHERE id=$1 AND NOT (data ? 'sourceUrl')",
       [
-        { id: 'cheese', name: 'Add cheese', price: 200 },
-        { id: 'bacon', name: 'Add smoked bacon', price: 250 },
+        item.id,
+        {
+          sourceUrl: item.sourceUrl,
+          sourceChecked: item.sourceChecked,
+          menuEdition: item.menuEdition,
+          imageKey: item.imageKey,
+        },
       ],
-    ],
-    [
-      'veggie',
-      'Homemade Veggie Burger',
-      'A hearty plant-based choice from the official menu.',
-      'Burgers',
-      1395,
-      ['Vegan (menu label)'],
-      [],
-    ],
-    [
-      'cod',
-      'Beer-Battered Cod & Chips',
-      'With chunky chips, mushy peas and tartare sauce.',
-      'Pub classics',
-      1895,
-      [],
-      [],
-    ],
-    [
-      'beef',
-      'Beef Bourguignon',
-      'Slow-braised beef, mash and seasonal vegetables.',
-      'Pub classics',
-      1695,
-      [],
-      [],
-    ],
-    [
-      'chilli',
-      'Black Bean Chilli',
-      'Sweet potato and black beans, rice and avocado.',
-      'Pub classics',
-      1495,
-      ['Vegan (menu label)'],
-      [],
-    ],
-    [
-      'soup',
-      'Soup of the Day',
-      'Bread and butter on the side. Ask the team about today’s soup.',
-      'Light bites',
-      625,
-      ['Vegetarian (menu label)'],
-      [],
-    ],
-    [
-      'fries',
-      'Skinny Fries',
-      'A little something for the table.',
-      'Sides',
-      445,
-      ['Vegan (menu label)'],
-      [],
-    ],
-    ['brownie', 'Chocolate Brownie', 'Something sweet to finish.', 'Desserts', 745, [], []],
-    [
-      'soft',
-      'Sparkling soft drink',
-      'Demonstration drink, not imported from a verified drinks menu.',
-      'Drinks',
-      300,
-      [],
-      [],
-    ],
-    [
-      'ale',
-      'Guest ale',
-      'Demonstration alcohol item. Staff age verification required.',
-      'Drinks',
-      500,
-      [],
-      [],
-    ],
-  ];
-  for (const [id, name, description, category, price, dietary, modifiers] of items)
+    );
+  }
+  // Existing history fixtures reference these IDs; no published drinks prices were found.
+  for (const [id, name] of [
+    ['soft', 'Soft drink'],
+    ['ale', 'Guest ale'],
+  ])
     await db.query('INSERT INTO menu VALUES($1,$2) ON CONFLICT DO NOTHING', [
       id,
       {
         id,
         name,
-        description,
-        category,
-        price,
-        dietary,
-        modifiers,
-        available: true,
+        description: 'Ask the bar team for the current selection and price.',
+        category: 'Drinks',
+        price: id === 'ale' ? 500 : 300,
+        dietary: [],
+        modifiers: [],
+        available: false,
         approved: false,
         alcohol: id === 'ale',
         allergens: null,
       },
     ]);
+  await db.query(
+    "UPDATE menu SET data=data || $1::jsonb WHERE id IN ('soft','ale') AND NOT (data ? 'sourceUrl') AND NOT (data ? 'menuEdition')",
+    [{ menuEdition: 'bar', available: false }],
+  );
   const base = new Date();
   base.setUTCHours(21, 0, 0, 0);
   for (const [i, title, genre, description] of [
@@ -166,7 +104,7 @@ async function seedDefaults(db: DB) {
     {
       id: 'welcome',
       name: 'A little welcome back',
-      description: '£2 off a demo food order of £10 or more.',
+      description: '£2 off an eligible food order of £10 or more.',
       discount: 200,
       min: 1000,
       points: 0,
@@ -210,4 +148,26 @@ async function seedDefaults(db: DB) {
       'needs_review',
     ]);
   await seedDaniel(db);
+  for (const [before, after] of [
+    ['Demo Alex', 'Alex (sample)'],
+    ['Demo Sam', 'Sam (sample)'],
+  ]) {
+    await db.query('UPDATE users SET name=$2 WHERE name=$1', [before, after]);
+    await db.query('UPDATE social_profiles SET display_name=$2 WHERE display_name=$1', [
+      before,
+      after,
+    ]);
+  }
+  await db.query(
+    "UPDATE circles SET title='Friday at René' WHERE id='demo-friday-circle' AND title='Demo · Friday at René'",
+  );
+  await db.query(
+    "UPDATE circle_plans SET title='Food & live music', notes='A sample plan with fictional members. No table or tickets booked.' WHERE id='demo-friday-plan' AND title='Demo · Food & live music'",
+  );
+  await db.query(
+    "UPDATE circle_messages SET body=replace(body,'[Demo]','[Sample]') WHERE id IN ('demo-message-1','demo-message-2','demo-message-3') AND body LIKE '[Demo]%'",
+  );
+  await db.query(
+    "UPDATE offers SET data=jsonb_set(data,'{description}',to_jsonb(replace(data->>'description','demo food order','eligible food order'))) WHERE id IN ('welcome','kitchen-six') AND data->>'description' LIKE '%demo food order%'",
+  );
 }

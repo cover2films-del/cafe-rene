@@ -261,7 +261,7 @@ export function createApp(s: Service) {
         'INSERT INTO tickets(id,user_id,event_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',
         [id, req.user.id, req.params.id],
       );
-      return { message: 'Demo ticket saved. No real admission booked.' };
+      return { message: 'Example ticket saved. No admission booked.' };
     },
     customer,
   );
@@ -296,7 +296,7 @@ export function createApp(s: Service) {
       return {
         id,
         status: 'requested',
-        message: 'Demo request only. Call the venue for a real reservation.',
+        message: 'Request recorded. Call the venue to confirm your reservation.',
       };
     },
     customer,

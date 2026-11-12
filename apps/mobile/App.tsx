@@ -1,3 +1,6 @@
+import Svg, { Path } from 'react-native-svg';
+import { socialIconPaths } from '../../packages/shared/src/social-icons';
+import { menuSources, seasonalMenu, menuChecked } from '../../packages/shared/src/venue-menu';
 import { CircleNative } from './CircleNative';
 import { useFonts } from 'expo-font';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
@@ -36,11 +39,86 @@ import * as Crypto from 'expo-crypto';
 import { money, type MenuItem, type BasketLine } from '../../packages/shared/src/index';
 /* eslint-disable @typescript-eslint/no-require-imports -- Metro requires static paths for bundled images. */
 const foodImages: Record<string, any> = {
-  burger: require('../../packages/assets/food/burger.webp'),
-  cod: require('../../packages/assets/food/cod.webp'),
-  fries: require('../../packages/assets/food/fries.webp'),
-  brownie: require('../../packages/assets/food/brownie.webp'),
-  soup: require('../../packages/assets/food/soup.webp'),
+  soup: require('../../packages/assets/food/generated/soup.webp'),
+  'garlic-mushrooms': require('../../packages/assets/food/generated/garlic-mushrooms.webp'),
+  goujons: require('../../packages/assets/food/generated/goujons.webp'),
+  whitebait: require('../../packages/assets/food/generated/whitebait.webp'),
+  'pork-bites': require('../../packages/assets/food/generated/pork-bites.webp'),
+  'loaded-fries': require('../../packages/assets/food/generated/loaded-fries.webp'),
+  'dirty-fries': require('../../packages/assets/food/generated/dirty-fries.webp'),
+  'loaded-garlic': require('../../packages/assets/food/generated/loaded-garlic.webp'),
+  'cajun-wrap': require('../../packages/assets/food/generated/cajun-wrap.webp'),
+  'brie-bacon': require('../../packages/assets/food/generated/brie-bacon.webp'),
+  'ham-cheddar': require('../../packages/assets/food/generated/ham-cheddar.webp'),
+  'fish-fingers': require('../../packages/assets/food/generated/fish-fingers.webp'),
+  tuna: require('../../packages/assets/food/generated/tuna.webp'),
+  avocado: require('../../packages/assets/food/generated/avocado.webp'),
+  falafel: require('../../packages/assets/food/generated/falafel.webp'),
+  club: require('../../packages/assets/food/generated/club.webp'),
+  beef: require('../../packages/assets/food/generated/beef.webp'),
+  tarragon: require('../../packages/assets/food/generated/tarragon.webp'),
+  cod: require('../../packages/assets/food/generated/cod.webp'),
+  sausage: require('../../packages/assets/food/generated/sausage.webp'),
+  chilli: require('../../packages/assets/food/generated/chilli.webp'),
+  curry: require('../../packages/assets/food/generated/curry.webp'),
+  lasagne: require('../../packages/assets/food/generated/lasagne.webp'),
+  'squid-scampi': require('../../packages/assets/food/generated/squid-scampi.webp'),
+  'earth-bowl': require('../../packages/assets/food/generated/earth-bowl.webp'),
+  'steak-pie': require('../../packages/assets/food/generated/steak-pie.webp'),
+  burger: require('../../packages/assets/food/generated/burger.webp'),
+  'very-dan': require('../../packages/assets/food/generated/very-dan.webp'),
+  'chicken-burger': require('../../packages/assets/food/generated/chicken-burger.webp'),
+  veggie: require('../../packages/assets/food/generated/veggie.webp'),
+  rump: require('../../packages/assets/food/generated/rump.webp'),
+  gammon: require('../../packages/assets/food/generated/gammon.webp'),
+  'pork-loin': require('../../packages/assets/food/generated/pork-loin.webp'),
+  'grilled-chicken': require('../../packages/assets/food/generated/grilled-chicken.webp'),
+  chips: require('../../packages/assets/food/generated/chips.webp'),
+  fries: require('../../packages/assets/food/generated/fries.webp'),
+  'onion-rings': require('../../packages/assets/food/generated/onion-rings.webp'),
+  'cheesy-garlic': require('../../packages/assets/food/generated/cheesy-garlic.webp'),
+  icecream: require('../../packages/assets/food/generated/icecream.webp'),
+  crumble: require('../../packages/assets/food/generated/crumble.webp'),
+  toffee: require('../../packages/assets/food/generated/toffee.webp'),
+  brownie: require('../../packages/assets/food/generated/brownie.webp'),
+  cheesecake: require('../../packages/assets/food/generated/cheesecake.webp'),
+  cheeseboard: require('../../packages/assets/food/generated/cheeseboard.webp'),
+  'roast-beef': require('../../packages/assets/food/generated/roast-beef.webp'),
+  turkey: require('../../packages/assets/food/generated/turkey.webp'),
+  prawn: require('../../packages/assets/food/generated/prawn.webp'),
+  breakfast: require('../../packages/assets/food/generated/breakfast.webp'),
+  mash: require('../../packages/assets/food/generated/mash.webp'),
+  'new-potatoes': require('../../packages/assets/food/generated/new-potatoes.webp'),
+  'garlic-bread': require('../../packages/assets/food/generated/garlic-bread.webp'),
+  vegetables: require('../../packages/assets/food/generated/vegetables.webp'),
+  olives: require('../../packages/assets/food/generated/olives.webp'),
+  'cheesy-chips': require('../../packages/assets/food/generated/cheesy-chips.webp'),
+  'side-salad': require('../../packages/assets/food/generated/side-salad.webp'),
+  mozzarella: require('../../packages/assets/food/generated/mozzarella.webp'),
+  'veggie-breakfast': require('../../packages/assets/food/generated/veggie-breakfast.webp'),
+  'breakfast-bap': require('../../packages/assets/food/generated/breakfast-bap.webp'),
+  'roast-pork': require('../../packages/assets/food/generated/roast-pork.webp'),
+  wellington: require('../../packages/assets/food/generated/wellington.webp'),
+  salmon: require('../../packages/assets/food/generated/salmon.webp'),
+  caesar: require('../../packages/assets/food/generated/caesar.webp'),
+  'roast-potatoes': require('../../packages/assets/food/generated/roast-potatoes.webp'),
+  yorkshire: require('../../packages/assets/food/generated/yorkshire.webp'),
+  cauliflower: require('../../packages/assets/food/generated/cauliflower.webp'),
+  'tomato-soup': require('../../packages/assets/food/generated/tomato-soup.webp'),
+  parfait: require('../../packages/assets/food/generated/parfait.webp'),
+  arancini: require('../../packages/assets/food/generated/arancini.webp'),
+  brisket: require('../../packages/assets/food/generated/brisket.webp'),
+  'christmas-pudding': require('../../packages/assets/food/generated/christmas-pudding.webp'),
+  'winter-cheesecake': require('../../packages/assets/food/generated/winter-cheesecake.webp'),
+  'chocolate-tart': require('../../packages/assets/food/generated/chocolate-tart.webp'),
+  dippers: require('../../packages/assets/food/generated/dippers.webp'),
+  'croque-garlic': require('../../packages/assets/food/generated/croque-garlic.webp'),
+  'chicken-pie': require('../../packages/assets/food/generated/chicken-pie.webp'),
+  'mushroom-pie': require('../../packages/assets/food/generated/mushroom-pie.webp'),
+  'kids-fish': require('../../packages/assets/food/generated/kids-fish.webp'),
+  'kids-sausage': require('../../packages/assets/food/generated/kids-sausage.webp'),
+  'kids-chicken': require('../../packages/assets/food/generated/kids-chicken.webp'),
+  sirloin: require('../../packages/assets/food/generated/sirloin.webp'),
 };
 const eventImages: Record<string, any> = {
   'nov26-alex-comaish': require('../../packages/assets/events/nov26-alex-comaish.webp'),
@@ -51,6 +129,7 @@ const eventImages: Record<string, any> = {
   'nov26-kingsley-allies': require('../../packages/assets/events/nov26-kingsley-allies.webp'),
 };
 const officialLogo = require('../../packages/assets/brand/logo.png');
+const venueInterior = require('../../packages/assets/brand/venue-interior.webp');
 const officialPoster = require('../../packages/assets/brand/november-2026.webp');
 /* eslint-enable @typescript-eslint/no-require-imports */
 function eventImage(e: any) {
@@ -114,13 +193,14 @@ function AppContent() {
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [login, setLogin] = useState(false),
-    [email, setEmail] = useState('daniel@demo.rene'),
-    [password, setPassword] = useState('ReneDemo2026!'),
+    [email, setEmail] = useState(''),
+    [password, setPassword] = useState(''),
     [register, setRegister] = useState(false),
     [name, setName] = useState(''),
     [table, setTable] = useState<any>(null),
     [collection, setCollection] = useState(false),
     [category, setCategory] = useState('All'),
+    [menuEdition, setMenuEdition] = useState('main'),
     [query, setQuery] = useState(''),
     [basket, setBasket] = useState<BasketLine[]>([]),
     [item, setItem] = useState<MenuItem | null>(null),
@@ -421,7 +501,15 @@ function AppContent() {
       onPress={onPress}
       style={[s.button, secondary && s.secondary, (disabled || busy) && { opacity: 0.45 }]}
     >
-      <Text style={[s.buttonText, secondary && { color: C.gold }]}>{text}</Text>
+      <View
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 }}
+      >
+        {/facebook/i.test(text) && <NativeSocialLogo platform="facebook" />}
+        {/instagram/i.test(text) && <NativeSocialLogo platform="instagram" />}
+        <Text style={[s.buttonText, secondary && { color: C.gold }, { flexShrink: 1 }]}>
+          {text}
+        </Text>
+      </View>
     </Pressable>
   );
   const heading = (eyebrow: string, title: string, sub?: string) => (
@@ -436,7 +524,7 @@ function AppContent() {
     if (!permission?.granted) {
       const p = await requestPermission();
       if (!p.granted) {
-        notify('Camera permission denied. Select a demo table or ask staff to verify a visit.');
+        notify('Camera permission denied. Select your table or ask staff to verify a visit.');
         return;
       }
     }
@@ -461,13 +549,13 @@ function AppContent() {
     <SafeAreaView style={s.safe} edges={['top', 'left', 'right']}>
       <StatusBar style="light" />
       <View style={s.demo}>
-        <Text style={s.demoText}>PRIVATE DEMO · NO REAL PAYMENTS OR ORDERS</Text>
+        <Text style={s.demoText}>FOOD · LIVE MUSIC · GOOD COMPANY</Text>
       </View>
       <View style={s.header}>
         <Pressable onPress={() => setTab('Home')} accessibilityRole="button">
           <Image
             source={boot.content?.logo?.id ? { uri: apiUrl + boot.content.logo.url } : officialLogo}
-            style={{ width: 165, height: 56 }}
+            style={{ width: 195, height: 82 }}
             contentFit="contain"
             accessibilityLabel="Café René Gloucester"
           />
@@ -538,13 +626,7 @@ function AppContent() {
                     <Text style={s.eyebrow}>
                       {e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'} · {e.genre.toUpperCase()}
                     </Text>
-                    {eventImage(e) && (
-                      <Image
-                        source={eventImage(e)}
-                        style={s.eventPhoto}
-                        accessibilityLabel={e.title + ' official venue graphic'}
-                      />
-                    )}
+                    <NativeEventArtwork event={e} />
                     <Text style={[s.poster, { fontSize: 35 }]}>{e.title}</Text>
                     <Text style={s.small}>
                       {new Date(e.date).toLocaleDateString('en-GB', {
@@ -552,7 +634,7 @@ function AppContent() {
                         day: 'numeric',
                         month: 'long',
                       })}{' '}
-                      · {e.sample ? 'Demo programme' : 'Official venue programme'}
+                      · {e.sample ? 'Programme preview' : 'Official venue programme'}
                     </Text>
                   </Pressable>
                 ))}
@@ -564,7 +646,7 @@ function AppContent() {
                   <Image
                     source={foodImages.burger}
                     style={s.featuredFood}
-                    accessibilityLabel="Illustrative burger photography"
+                    accessibilityLabel="AI-generated burger illustration"
                   />
                   <Text style={s.title}>A proper appetite.{'\n'}A proper pub.</Text>
                   <Text style={s.body}>
@@ -601,9 +683,7 @@ function AppContent() {
               )}
               {button('Book a table', () => setBooking(true), true)}
               {button('Call 01452 309340', () => void Linking.openURL('tel:01452309340'), true)}
-              <Text style={s.small}>
-                Food photography is illustrative, not a photograph of René’s actual dishes.
-              </Text>
+              <Text style={s.small}>Food images are illustrations; actual dishes may vary.</Text>
             </View>
           </>
         )}
@@ -644,7 +724,7 @@ function AppContent() {
             {order &&
               panel(
                 <>
-                  <Text style={s.eyebrow}>DEMO ORDER #{order.id.slice(0, 8)}</Text>
+                  <Text style={s.eyebrow}>ORDER PREVIEW #{order.id.slice(0, 8)}</Text>
                   <Text style={s.title}>{clean(order.status)}</Text>
                   <Text style={s.body}>
                     {money(order.total)} · Payment {order.payment}
@@ -672,7 +752,7 @@ function AppContent() {
                       false,
                     )}
                   {button(
-                    'Share demo receipt',
+                    'Share receipt',
                     () =>
                       void run(async () => {
                         const r = await api(
@@ -722,9 +802,62 @@ function AppContent() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
+              style={{ marginBottom: 16 }}
+            >
+              {menuSources.map((source) => (
+                <Pressable
+                  key={source.id}
+                  style={[s.chip, menuEdition === source.id && s.selected]}
+                  onPress={() => {
+                    setMenuEdition(source.id);
+                    setCategory('All');
+                  }}
+                >
+                  <Text style={s.chipText}>{source.name}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+            <Text style={s.body}>
+              {menuSources.find((source) => source.id === menuEdition)?.note}
+            </Text>
+            {button(
+              'Read original menu ↗',
+              () =>
+                void Linking.openURL(menuSources.find((source) => source.id === menuEdition)!.url),
+              true,
+            )}
+            <Text style={s.small}>
+              Published menu checked {menuChecked}. Ask the team about availability and allergens.
+              Meal deals are arranged with staff.
+            </Text>
+            {['festive', 'christmas-day', 'christmas-children'].includes(menuEdition) &&
+              seasonalMenu(menuEdition).map((dish) => (
+                <View key={dish.name} style={s.panel}>
+                  <Image
+                    source={foodImages[dish.imageKey]}
+                    style={s.featuredFood}
+                    contentFit="cover"
+                    accessibilityLabel={'AI illustration of ' + dish.name}
+                  />
+                  <Text style={s.eyebrow}>{dish.course}</Text>
+                  <Text style={s.title}>{dish.name}</Text>
+                  <Text style={s.body}>{dish.description}</Text>
+                  <Text style={s.small}>Included in the set menu · AI illustration</Text>
+                </View>
+              ))}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
               style={{ marginVertical: 15 }}
             >
-              {['All', ...new Set<string>(boot.menu.map((m: MenuItem) => m.category))].map((c) => (
+              {[
+                'All',
+                ...new Set<string>(
+                  boot.menu
+                    .filter((m: MenuItem) => (m.menuEdition || 'main') === menuEdition)
+                    .map((m: MenuItem) => m.category),
+                ),
+              ].map((c) => (
                 <Pressable
                   key={c}
                   style={[s.chip, category === c && s.selected]}
@@ -741,6 +874,7 @@ function AppContent() {
             {boot.menu
               .filter(
                 (m: MenuItem) =>
+                  (m.menuEdition || 'main') === menuEdition &&
                   (category === 'All' || m.category === category) &&
                   m.name.toLowerCase().includes(query.toLowerCase()),
               )
@@ -754,14 +888,16 @@ function AppContent() {
                     setMods([]);
                   }}
                 >
-                  {foodImages[m.id] && (
+                  {foodImages[m.imageKey || m.id] && (
                     <View>
                       <Image
-                        source={foodImages[m.id]}
+                        source={foodImages[m.imageKey || m.id]}
                         style={s.menuPhoto}
-                        accessibilityLabel={'Illustrative photo, not René’s actual dish'}
+                        accessibilityLabel={
+                          'AI-generated illustration, not a photograph of René’s actual dish'
+                        }
                       />
-                      <Text style={s.photoLabel}>ILLUSTRATIVE</Text>
+                      <Text style={s.photoLabel}>AI ILLUSTRATION</Text>
                     </View>
                   )}
                   <View style={{ flex: 1 }}>
@@ -773,7 +909,7 @@ function AppContent() {
                     <Text style={s.body}>{m.description}</Text>
                     <Text style={s.small}>{m.dietary.join(' · ')}</Text>
                     <Text style={s.price}>
-                      {money(m.price)} <Text style={s.small}>demo price</Text>
+                      {money(m.price)} <Text style={s.small}>published price</Text>
                     </Text>
                   </View>
                   <Text style={s.add}>+</Text>
@@ -819,17 +955,11 @@ function AppContent() {
                   <Text style={s.eyebrow}>
                     {e.sample ? 'SAMPLE' : 'OFFICIAL PROGRAMME'} · {e.genre.toUpperCase()}
                   </Text>
-                  {eventImage(e) && (
-                    <Image
-                      source={eventImage(e)}
-                      style={s.eventPhoto}
-                      accessibilityLabel={e.title + ' official venue graphic'}
-                    />
-                  )}
+                  <NativeEventArtwork event={e} />
                   <Text style={s.poster}>{e.title}</Text>
                   <Text style={s.small}>
                     {new Date(e.date).toLocaleString('en-GB', { timeZone: 'Europe/London' })} ·{' '}
-                    {e.sample ? 'Free demo entry' : e.free ? 'Free entry' : 'See event details'}
+                    {e.sample ? 'Entry information' : e.free ? 'Free entry' : 'See event details'}
                   </Text>
                 </Pressable>
               ))}
@@ -865,12 +995,26 @@ function AppContent() {
                   <>
                     {panel(
                       <>
-                        <Text style={s.eyebrow}>THE RENÉ CIRCLE · DEMO</Text>
+                        <Image
+                          source={venueInterior}
+                          style={StyleSheet.absoluteFillObject}
+                          contentFit="cover"
+                          accessible={false}
+                        />
+                        <View
+                          style={[
+                            StyleSheet.absoluteFillObject,
+                            { backgroundColor: '#073b53', opacity: 0.94 },
+                          ]}
+                        />
+                        <Text style={s.eyebrow}>THE RENÉ CIRCLE ✦ YOUR LOCAL, YOUR PEOPLE</Text>
                         <Image
                           source={officialLogo}
                           style={{
-                            width: 165,
-                            height: 65,
+                            width: '100%',
+                            height: 150,
+                            marginBottom: 20,
+                            transform: [{ rotate: '-2deg' }],
                             backgroundColor: '#faf7ed',
                             borderRadius: 5,
                           }}
@@ -879,7 +1023,7 @@ function AppContent() {
                         />
                         <Text style={s.body}>{user.name}</Text>
                         <Text style={[s.heading, { color: C.gold }]}>
-                          {rewards.points} <Text style={s.small}>René Points · demo balance</Text>
+                          {rewards.points} <Text style={s.small}>René Points · member balance</Text>
                         </Text>
                         <View
                           style={{
@@ -978,7 +1122,7 @@ function AppContent() {
             {heading('YOUR LITTLE CORNER', 'My René.')}
             {user?.id !== 'daniel' &&
               button(
-                'Explore Daniel Woolf’s demo',
+                'Explore Daniel Woolf’s René',
                 () =>
                   void run(async () => {
                     const d = await api('/auth/login', 'POST', {
@@ -1001,7 +1145,7 @@ function AppContent() {
                 {panel(
                   <>
                     <Text style={s.title}>{user.name}</Text>
-                    <Text style={s.body}>{user.role} · Demo account</Text>
+                    <Text style={s.body}>{user.role} · Member account</Text>
                     {button(
                       'Sign out',
                       () =>
@@ -1020,7 +1164,9 @@ function AppContent() {
                 {panel(
                   <>
                     <Text style={s.title}>Make it yours.</Text>
-                    <Text style={s.body}>No marketing messages are sent in this demo.</Text>
+                    <Text style={s.body}>
+                      Your preferences are saved. Marketing delivery is not connected.
+                    </Text>
                     {[
                       ['personalisation', 'Personalised recommendations'],
                       ['email', 'Email marketing'],
@@ -1075,7 +1221,7 @@ function AppContent() {
                 {panel(
                   <>
                     <Text style={s.title}>What you ate & drank</Text>
-                    <Text style={s.small}>Demo history only — these are not actual purchases.</Text>
+                    <Text style={s.small}>Sample history — these are not actual purchases.</Text>
                     {myHistory?.orders.map((o: any) => (
                       <View key={o.id} style={s.listRow}>
                         <Text style={s.price}>
@@ -1141,7 +1287,7 @@ function AppContent() {
                     {myBookings?.tickets.map((t: any) => (
                       <View key={t.id}>
                         <Text style={s.body}>
-                          Demo ticket · {t.event_id} · {t.used_at ? 'Used' : 'Not used'}
+                          Example ticket · {t.event_id} · {t.used_at ? 'Used' : 'Not used'}
                         </Text>
                         <Text selectable style={s.small}>
                           {t.id}
@@ -1149,7 +1295,7 @@ function AppContent() {
                       </View>
                     ))}
                     <Text style={s.small}>
-                      Demo requests and tickets do not arrange real reservations or admission.
+                      Requests and saved event information do not confirm reservations or admission.
                     </Text>
                     {button('Request a table', () => setBooking(true), true)}
                   </>,
@@ -1219,8 +1365,8 @@ function AppContent() {
               </>
             )}
             <Text style={s.small}>
-              Private demo. Source content, hours and menu prices await manager review. All payments
-              and POS submissions are mocked.
+              Menu availability is confirmed by the team. Payments and till submission are not
+              connected.
             </Text>
           </View>
         )}
@@ -1246,7 +1392,9 @@ function AppContent() {
         title={register ? 'Your René starts here.' : 'Welcome to René.'}
         close={() => setLogin(false)}
       >
-        <Text style={s.body}>Seeded account: daniel@demo.rene{`\n`}Password: ReneDemo2026!</Text>
+        <Text style={s.body}>
+          Sign in to your René Circle, or explore Daniel’s sample account from My René.
+        </Text>
         {register && (
           <TextInput
             style={s.input}
@@ -1276,7 +1424,7 @@ function AppContent() {
         />
         {button(register ? 'Create account' : 'Sign in', () => void signin())}
         {button(
-          register ? 'Already a regular? Sign in' : 'Create a demo account',
+          register ? 'Already a regular? Sign in' : 'Create an account',
           () => setRegister(!register),
           true,
         )}
@@ -1286,14 +1434,14 @@ function AppContent() {
         {item && (
           <>
             <>
-              {foodImages[item.id] && (
+              {foodImages[item.imageKey || item.id] && (
                 <>
                   <Image
-                    source={foodImages[item.id]}
+                    source={foodImages[item.imageKey || item.id]}
                     style={s.featuredFood}
-                    accessibilityLabel="Illustrative food photography"
+                    accessibilityLabel="AI-generated dish illustration"
                   />
-                  <Text style={s.small}>Illustrative photography · actual dish may vary.</Text>
+                  <Text style={s.small}>AI-generated illustration · actual dish may vary.</Text>
                 </>
               )}
               <Text style={s.body}>{item.description}</Text>
@@ -1427,7 +1575,7 @@ function AppContent() {
               Server validates prices, table, availability and discounts. Simulation only.
               Connection required.
             </Text>
-            {button('Create demo order', () => void placeOrder(), false, !collection && !table)}
+            {button('Preview order', () => void placeOrder(), false, !collection && !table)}
             {!user && (
               <Text style={s.small}>
                 Guest receipt secret is stored securely on this device. Optional account creation is
@@ -1459,7 +1607,7 @@ function AppContent() {
             <Text style={s.body}>{event.description}</Text>
             <Text style={s.warning}>
               {event.sample
-                ? 'Sample listing. Demo tickets do not grant real admission.'
+                ? 'Sample listing. Example tickets do not grant real admission.'
                 : 'From the official venue programme; check the source for changes.'}{' '}
               Reminder preferences are stored; delivery is not connected.
             </Text>
@@ -1481,7 +1629,7 @@ function AppContent() {
                 () => void Linking.openURL(event.sourceUrl || programmeSource),
               )}
             {event.sample &&
-              button('Save demo ticket', () =>
+              button('Save example ticket', () =>
                 user
                   ? void run(async () =>
                       notify((await api('/tickets/' + event.id, 'POST', {})).message),
@@ -1492,7 +1640,7 @@ function AppContent() {
         )}
       </Sheet>
       <Sheet visible={booking} title="A table for your people." close={() => setBooking(false)}>
-        <Text style={s.body}>Demo request only. Call 01452 309340 for a real reservation.</Text>
+        <Text style={s.body}>Call 01452 309340 to confirm your reservation.</Text>
         <Text style={s.small}>
           Date/time with timezone, for example 2026-12-10T19:00:00Z. UK winter = UTC; summer =
           UTC+1.
@@ -1512,7 +1660,7 @@ function AppContent() {
           keyboardType="number-pad"
           placeholder="Party size"
         />
-        {button(user ? 'Make demo request' : 'Sign in to request', () => {
+        {button(user ? 'Request a table' : 'Sign in to request', () => {
           if (!user) {
             setBooking(false);
             setLogin(true);
@@ -1561,8 +1709,14 @@ function NativeSnapshot({ rewards }: { rewards: any }) {
   if (!rewards) return null;
   return (
     <View style={{ marginBottom: 24 }}>
-      <View style={[s.panel, { backgroundColor: '#28325a' }]}>
-        <Text style={s.eyebrow}>YOUR RENÉ POINTS · DEMO</Text>
+      <View style={[s.panel, { backgroundColor: '#28325a', overflow: 'hidden', borderRadius: 20 }]}>
+        <Image
+          source={foodImages.brownie}
+          style={[StyleSheet.absoluteFillObject, { opacity: 0.1 }]}
+          contentFit="cover"
+          accessible={false}
+        />
+        <Text style={s.eyebrow}>YOUR RENÉ POINTS</Text>
         <Text style={[s.heading, { fontSize: 54, color: '#f0ed80' }]}>{rewards.points}</Text>
         <Text style={s.title}>René Points</Text>
         <Text style={s.small}>
@@ -1570,6 +1724,12 @@ function NativeSnapshot({ rewards }: { rewards: any }) {
         </Text>
       </View>
       <View style={[s.panel, { backgroundColor: '#e9ed7c' }]}>
+        <Image
+          source={foodImages.soup}
+          style={[StyleSheet.absoluteFillObject, { opacity: 0.06 }]}
+          contentFit="cover"
+          accessible={false}
+        />
         <Text style={[s.title, { color: '#17485b' }]}>The Kitchen Club</Text>
         <View style={{ flexDirection: 'row', gap: 8, marginBottom: 18 }}>
           {Array.from({ length: 6 }, (_, i) => (
@@ -1646,8 +1806,9 @@ function NativeVenueBoard({ content }: { content: any }) {
           key={p.id}
           style={[s.panel, { borderColor: p.platform === 'instagram' ? '#e74f9a' : '#05c5ec' }]}
         >
+          <NativeSocialLogo platform={p.platform === 'instagram' ? 'instagram' : 'facebook'} />
           <Text style={s.eyebrow}>
-            {p.platform === 'instagram' ? '◎ INSTAGRAM' : 'f FACEBOOK'} · CAFÉ RENÉ
+            {p.platform === 'instagram' ? 'INSTAGRAM' : 'FACEBOOK'} · CAFÉ RENÉ
           </Text>
           {p.imageUrl && (
             <Image
@@ -1667,16 +1828,18 @@ function NativeVenueBoard({ content }: { content: any }) {
           <Text style={s.title}>Don’t miss a beat.</Text>
           <Text style={s.body}>Follow the nights, the music and what’s happening at René.</Text>
           <Pressable
-            style={s.button}
+            style={[s.button, { flexDirection: 'row', gap: 10 }]}
             onPress={() => void Linking.openURL('https://www.instagram.com/cafereneglos/')}
           >
-            <Text style={s.buttonText}>◎ Follow @cafereneglos ↗</Text>
+            <NativeSocialLogo platform="instagram" />
+            <Text style={s.buttonText}>Follow @cafereneglos ↗</Text>
           </Pressable>
           <Pressable
-            style={[s.button, { backgroundColor: '#194fba' }]}
+            style={[s.button, { backgroundColor: '#194fba', flexDirection: 'row', gap: 10 }]}
             onPress={() => void Linking.openURL('https://www.facebook.com/thecaferene')}
           >
-            <Text style={s.buttonText}>f Café René on Facebook ↗</Text>
+            <NativeSocialLogo platform="facebook" />
+            <Text style={s.buttonText}>Café René on Facebook ↗</Text>
           </Pressable>
         </View>
       )}
@@ -1858,6 +2021,7 @@ const s = StyleSheet.create({
   },
   content: { padding: 24 },
   panel: {
+    overflow: 'hidden',
     backgroundColor: C.panel,
     padding: 24,
     borderRadius: 12,
@@ -1866,7 +2030,8 @@ const s = StyleSheet.create({
     marginBottom: 22,
   },
   eventCard: {
-    padding: 25,
+    padding: 16,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#d2b77433',
     borderRadius: 10,
@@ -2012,3 +2177,40 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+function NativeSocialLogo({ platform }: { platform: 'facebook' | 'instagram' }) {
+  return (
+    <Svg width={24} height={24} viewBox="0 0 24 24" accessible={false}>
+      <Path d={socialIconPaths[platform]} fill="#ffffff" />
+    </Svg>
+  );
+}
+function NativeEventArtwork({ event }: { event: any }) {
+  const source = eventImage(event);
+  if (!source) return null;
+  return (
+    <View
+      style={{
+        width: '100%',
+        aspectRatio: 1.15,
+        overflow: 'hidden',
+        borderRadius: 12,
+        marginBottom: 16,
+      }}
+    >
+      <Image
+        source={source}
+        style={[StyleSheet.absoluteFillObject, { opacity: 0.5 }]}
+        contentFit="cover"
+        blurRadius={18}
+        accessible={false}
+      />
+      <Image
+        source={source}
+        style={StyleSheet.absoluteFillObject}
+        contentFit="contain"
+        accessibilityLabel={event.title + ' official programme artwork'}
+      />
+    </View>
+  );
+}

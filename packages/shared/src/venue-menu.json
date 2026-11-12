@@ -1,0 +1,1429 @@
+[
+  {
+    "id": "soup",
+    "name": "Soup of the Day",
+    "category": "Light bites",
+    "price": 625,
+    "description": "Served with your choice of white or granary bread and butter.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "soup",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "garlic-mushrooms",
+    "name": "Garlic Mushrooms",
+    "category": "Light bites",
+    "price": 745,
+    "description": "Wild mushrooms sautéed in garlic butter and cream, served on sourdough toast.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "garlic-mushrooms",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "goujons",
+    "name": "Crispy Chicken Goujons",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Homemade crispy chicken breast goujons with garlic mayonnaise and homemade salsa dips.",
+    "dietary": [],
+    "imageKey": "goujons",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "whitebait",
+    "name": "Whitebait",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Breaded whitebait with garden salad garnish, tartare sauce and a lemon wedge.",
+    "dietary": [],
+    "imageKey": "whitebait",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "pork-bites",
+    "name": "Bourbon Glazed Sticky Belly Pork Bites",
+    "category": "Light bites",
+    "price": 895,
+    "description": "Slow-roasted belly pork bites glazed with homemade bourbon marinade; sour cream and chive dip.",
+    "dietary": [],
+    "imageKey": "pork-bites",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "loaded-fries",
+    "name": "Loaded Fries",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Skinny fries topped with cheese, bacon, pepperoni, salsa, jalapeños and sour cream.",
+    "dietary": [],
+    "imageKey": "loaded-fries",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "dirty-fries",
+    "name": "Dirty Fries",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Skinny fries topped with BBQ pulled pork, cheese, onions and sriracha mayo.",
+    "dietary": [],
+    "imageKey": "dirty-fries",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "loaded-garlic",
+    "name": "Loaded Garlic Bread",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Homemade cheesy garlic bread with bacon and pepperoni, open sandwich style; salsa and sour cream on the side.",
+    "dietary": [],
+    "imageKey": "loaded-garlic",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "croque-garlic",
+    "name": "Croque Monsieur Garlic Bread",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Home-roasted honey and mustard ham and cheese on homemade garlic bread, open sandwich style.",
+    "dietary": [],
+    "imageKey": "croque-garlic",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "cajun-wrap",
+    "name": "Cajun Chicken",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "Fried peppers, red onion, baby gem lettuce and Caesar dressing; served warm. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": [],
+    "imageKey": "cajun-wrap",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "brie-bacon",
+    "name": "Brie & Bacon",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "Cranberry and fried red onion; served warm. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": [],
+    "imageKey": "brie-bacon",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "ham-cheddar",
+    "name": "Roasted Ham & Mature Cheddar",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "Home-roasted honey and mustard ham, mature cheddar and pickle. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": [],
+    "imageKey": "ham-cheddar",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "fish-fingers",
+    "name": "Homemade Fish Fingers",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "Baby gem lettuce and tartare sauce; served warm. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": [],
+    "imageKey": "fish-fingers",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "tuna",
+    "name": "Tuna Mayonnaise",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "With baby gem lettuce. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": [],
+    "imageKey": "tuna",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "avocado",
+    "name": "Avocado & Sliced Tomato",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "With red pepper hummus. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "avocado",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "falafel",
+    "name": "Falafel Wrap",
+    "category": "Sandwiches & wraps",
+    "price": 995,
+    "description": "Falafel, pickled onion, lettuce, hummus and chilli jam. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "falafel",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "club",
+    "name": "The René Club",
+    "category": "Sandwiches & wraps",
+    "price": 1595,
+    "description": "Lightly toasted triple stack: bacon, lettuce, tomato, grilled chicken, cheese and garlic mayo; served warm. Choose white or granary bread or a flour tortilla wrap, with a few chunky chips or fries and salad garnish. Gluten-free on request; Monday–Saturday.",
+    "dietary": [],
+    "imageKey": "club",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "beef",
+    "name": "Beef Bourguignon",
+    "category": "Pub classics",
+    "price": 1695,
+    "description": "Slow-braised British beef in red wine with onions, mushrooms and bacon, mash and seasonal vegetables.",
+    "dietary": [],
+    "imageKey": "beef",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "tarragon",
+    "name": "Tarragon Chicken Casserole",
+    "category": "Pub classics",
+    "price": 1495,
+    "description": "Slow-cooked chicken with mushrooms, tarragon and white wine; mashed potatoes and vegetables.",
+    "dietary": [],
+    "imageKey": "tarragon",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "cod",
+    "name": "Traditional Beer-Battered Cod and Chips",
+    "category": "Pub classics",
+    "price": 1895,
+    "description": "Chunky chips, mushy peas, tartare sauce and a lemon wedge.",
+    "dietary": [],
+    "imageKey": "cod",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "sausage",
+    "name": "Gloucester Sausage & Mash",
+    "category": "Pub classics",
+    "price": 1395,
+    "description": "Two Gloucester sausages on creamed potatoes with roasted onion gravy and garden peas.",
+    "dietary": [],
+    "imageKey": "sausage",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "extra-sausage",
+        "name": "Extra sausage",
+        "price": 300
+      }
+    ]
+  },
+  {
+    "id": "chilli",
+    "name": "Black Bean Chilli",
+    "category": "Pub classics",
+    "price": 1495,
+    "description": "Sweet potato and black bean chilli with steamed rice and avocado.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "chilli",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "curry",
+    "name": "Caribbean Lamb Curry",
+    "category": "Pub classics",
+    "price": 1695,
+    "description": "Homemade British lamb curry with rice and peas and garlic flatbread.",
+    "dietary": [],
+    "imageKey": "curry",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "lasagne",
+    "name": "Homemade Lasagne",
+    "category": "Pub classics",
+    "price": 1495,
+    "description": "100% British beef lasagne with garlic bread and fresh salad.",
+    "dietary": [],
+    "imageKey": "lasagne",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "squid-scampi",
+    "name": "Squid & Scampi",
+    "category": "Pub classics",
+    "price": 1295,
+    "description": "Breaded scampi and lightly battered squid with skinny fries.",
+    "dietary": [],
+    "imageKey": "squid-scampi",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "earth-bowl",
+    "name": "René Earth Bowl Salad",
+    "category": "Pub classics",
+    "price": 1395,
+    "description": "Falafel, tomato, salad leaves, red onion, olives, roasted peppers, avocado, cucumber and salad dressing.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "earth-bowl",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "chicken",
+        "name": "Add chicken",
+        "price": 350
+      },
+      {
+        "id": "feta",
+        "name": "Add feta",
+        "price": 250
+      }
+    ]
+  },
+  {
+    "id": "steak-pie",
+    "name": "Steak & Ale Pie",
+    "category": "Handmade pies",
+    "price": 1695,
+    "description": "Shortcrust pastry, vegetables, gravy and your choice of mash, chips or pan-fried new potatoes.",
+    "dietary": [],
+    "imageKey": "steak-pie",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "chicken-pie",
+    "name": "Chicken, Chestnut and Portobello Mushroom Pie",
+    "category": "Handmade pies",
+    "price": 1695,
+    "description": "Shortcrust pastry, vegetables, gravy and your choice of mash, chips or pan-fried new potatoes.",
+    "dietary": [],
+    "imageKey": "chicken-pie",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "mushroom-pie",
+    "name": "Mushroom “Steak” & Ale Pie",
+    "category": "Handmade pies",
+    "price": 1595,
+    "description": "Shortcrust pastry, vegetables, gravy and your choice of mash, chips or pan-fried new potatoes.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "mushroom-pie",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "kids-fish",
+    "name": "Fish Fingers & Chips",
+    "category": "Children’s menu",
+    "price": 795,
+    "description": "Smaller portion with your choice of peas or baked beans.",
+    "dietary": [],
+    "imageKey": "kids-fish",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "kids-sausage",
+    "name": "Sausage & Chips",
+    "category": "Children’s menu",
+    "price": 795,
+    "description": "Smaller portion with your choice of peas or baked beans.",
+    "dietary": [],
+    "imageKey": "kids-sausage",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "kids-chicken",
+    "name": "Chicken Dippers & Chips",
+    "category": "Children’s menu",
+    "price": 795,
+    "description": "Smaller portion with your choice of peas or baked beans.",
+    "dietary": [],
+    "imageKey": "kids-chicken",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "burger",
+    "name": "Desperate Dan Burger",
+    "category": "Burgers",
+    "price": 1495,
+    "description": "Homemade 8oz British beef burger in a toasted bun, gherkins and salad; chunky chips or skinny fries.",
+    "dietary": [],
+    "imageKey": "burger",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "cheese",
+        "name": "Add cheese",
+        "price": 200
+      },
+      {
+        "id": "stilton",
+        "name": "Add Stilton",
+        "price": 250
+      },
+      {
+        "id": "bacon",
+        "name": "Add smoked bacon",
+        "price": 250
+      },
+      {
+        "id": "pulled-pork",
+        "name": "Add BBQ pulled pork",
+        "price": 250
+      },
+      {
+        "id": "pineapple",
+        "name": "Add pineapple",
+        "price": 150
+      },
+      {
+        "id": "jalapenos",
+        "name": "Add jalapeños",
+        "price": 150
+      },
+      {
+        "id": "onions",
+        "name": "Add fried red onions",
+        "price": 0
+      },
+      {
+        "id": "mayo",
+        "name": "Mayonnaise",
+        "price": 0
+      },
+      {
+        "id": "bbq",
+        "name": "Barbeque sauce",
+        "price": 0
+      },
+      {
+        "id": "sriracha",
+        "name": "Sriracha mayo",
+        "price": 0
+      },
+      {
+        "id": "vegan-mayo",
+        "name": "Vegan mayo",
+        "price": 0
+      },
+      {
+        "id": "rene-sauce",
+        "name": "René burger sauce",
+        "price": 0
+      }
+    ]
+  },
+  {
+    "id": "very-dan",
+    "name": "The Very Desperate Dan",
+    "category": "Burgers",
+    "price": 1895,
+    "description": "A full pound of British beef in a toasted bun, gherkins and salad; chunky chips or skinny fries.",
+    "dietary": [],
+    "imageKey": "very-dan",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "cheese",
+        "name": "Add cheese",
+        "price": 200
+      },
+      {
+        "id": "stilton",
+        "name": "Add Stilton",
+        "price": 250
+      },
+      {
+        "id": "bacon",
+        "name": "Add smoked bacon",
+        "price": 250
+      },
+      {
+        "id": "pulled-pork",
+        "name": "Add BBQ pulled pork",
+        "price": 250
+      },
+      {
+        "id": "pineapple",
+        "name": "Add pineapple",
+        "price": 150
+      },
+      {
+        "id": "jalapenos",
+        "name": "Add jalapeños",
+        "price": 150
+      },
+      {
+        "id": "onions",
+        "name": "Add fried red onions",
+        "price": 0
+      },
+      {
+        "id": "mayo",
+        "name": "Mayonnaise",
+        "price": 0
+      },
+      {
+        "id": "bbq",
+        "name": "Barbeque sauce",
+        "price": 0
+      },
+      {
+        "id": "sriracha",
+        "name": "Sriracha mayo",
+        "price": 0
+      },
+      {
+        "id": "vegan-mayo",
+        "name": "Vegan mayo",
+        "price": 0
+      },
+      {
+        "id": "rene-sauce",
+        "name": "René burger sauce",
+        "price": 0
+      }
+    ]
+  },
+  {
+    "id": "chicken-burger",
+    "name": "Homemade Crispy Buttermilk Chicken Burger",
+    "category": "Burgers",
+    "price": 1495,
+    "description": "Toasted bun, gherkins and salad; chunky chips or skinny fries.",
+    "dietary": [],
+    "imageKey": "chicken-burger",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "cheese",
+        "name": "Add cheese",
+        "price": 200
+      },
+      {
+        "id": "stilton",
+        "name": "Add Stilton",
+        "price": 250
+      },
+      {
+        "id": "bacon",
+        "name": "Add smoked bacon",
+        "price": 250
+      },
+      {
+        "id": "pulled-pork",
+        "name": "Add BBQ pulled pork",
+        "price": 250
+      },
+      {
+        "id": "pineapple",
+        "name": "Add pineapple",
+        "price": 150
+      },
+      {
+        "id": "jalapenos",
+        "name": "Add jalapeños",
+        "price": 150
+      },
+      {
+        "id": "onions",
+        "name": "Add fried red onions",
+        "price": 0
+      },
+      {
+        "id": "mayo",
+        "name": "Mayonnaise",
+        "price": 0
+      },
+      {
+        "id": "bbq",
+        "name": "Barbeque sauce",
+        "price": 0
+      },
+      {
+        "id": "sriracha",
+        "name": "Sriracha mayo",
+        "price": 0
+      },
+      {
+        "id": "vegan-mayo",
+        "name": "Vegan mayo",
+        "price": 0
+      },
+      {
+        "id": "rene-sauce",
+        "name": "René burger sauce",
+        "price": 0
+      }
+    ]
+  },
+  {
+    "id": "veggie",
+    "name": "Homemade Veggie Burger",
+    "category": "Burgers",
+    "price": 1395,
+    "description": "Toasted bun, gherkins and salad; chunky chips or skinny fries.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "veggie",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "cheese",
+        "name": "Add cheese",
+        "price": 200
+      },
+      {
+        "id": "stilton",
+        "name": "Add Stilton",
+        "price": 250
+      },
+      {
+        "id": "bacon",
+        "name": "Add smoked bacon",
+        "price": 250
+      },
+      {
+        "id": "pulled-pork",
+        "name": "Add BBQ pulled pork",
+        "price": 250
+      },
+      {
+        "id": "pineapple",
+        "name": "Add pineapple",
+        "price": 150
+      },
+      {
+        "id": "jalapenos",
+        "name": "Add jalapeños",
+        "price": 150
+      },
+      {
+        "id": "onions",
+        "name": "Add fried red onions",
+        "price": 0
+      },
+      {
+        "id": "mayo",
+        "name": "Mayonnaise",
+        "price": 0
+      },
+      {
+        "id": "bbq",
+        "name": "Barbeque sauce",
+        "price": 0
+      },
+      {
+        "id": "sriracha",
+        "name": "Sriracha mayo",
+        "price": 0
+      },
+      {
+        "id": "vegan-mayo",
+        "name": "Vegan mayo",
+        "price": 0
+      },
+      {
+        "id": "rene-sauce",
+        "name": "René burger sauce",
+        "price": 0
+      }
+    ]
+  },
+  {
+    "id": "rump",
+    "name": "8oz British Rump",
+    "category": "From the grill",
+    "price": 1945,
+    "description": "28-day aged rump, chunky chips, roasted tomato, mushrooms and salad garnish.",
+    "dietary": [],
+    "imageKey": "rump",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "sirloin",
+    "name": "8oz British Sirloin",
+    "category": "From the grill",
+    "price": 2295,
+    "description": "28-day aged sirloin, chunky chips, roasted tomato, mushrooms and salad garnish.",
+    "dietary": [],
+    "imageKey": "sirloin",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "gammon",
+    "name": "8oz Gammon Steak",
+    "category": "From the grill",
+    "price": 1595,
+    "description": "Two fried eggs, pineapple, chunky chips and salad garnish.",
+    "dietary": [],
+    "imageKey": "gammon",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "pork-loin",
+    "name": "Grilled Pork Loin Steak",
+    "category": "From the grill",
+    "price": 1595,
+    "description": "Butcher-prepared pork loin chop, mashed potatoes, vegetables and Stilton sauce.",
+    "dietary": [],
+    "imageKey": "pork-loin",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "grilled-chicken",
+    "name": "Grilled Chicken Breast",
+    "category": "From the grill",
+    "price": 1495,
+    "description": "Plain or Cajun spiced, choice of potatoes and salad garnish.",
+    "dietary": [],
+    "imageKey": "grilled-chicken",
+    "menuEdition": "main",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "chips",
+    "name": "Chunky Chips",
+    "category": "Sides",
+    "price": 445,
+    "description": "Chunky Chips.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "chips",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "mash",
+    "name": "Mashed Potatoes",
+    "category": "Sides",
+    "price": 445,
+    "description": "Mashed Potatoes.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "mash",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "new-potatoes",
+    "name": "Herby Pan Fried New Potatoes",
+    "category": "Sides",
+    "price": 445,
+    "description": "Herby Pan Fried New Potatoes.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "new-potatoes",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "garlic-bread",
+    "name": "Garlic Bread",
+    "category": "Sides",
+    "price": 395,
+    "description": "Garlic Bread.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "garlic-bread",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "vegetables",
+    "name": "Seasonal Veg",
+    "category": "Sides",
+    "price": 395,
+    "description": "Seasonal Veg.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "vegetables",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "olives",
+    "name": "Olives",
+    "category": "Sides",
+    "price": 395,
+    "description": "Olives.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "olives",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "cheesy-chips",
+    "name": "Cheesy Chips",
+    "category": "Sides",
+    "price": 545,
+    "description": "Cheesy Chips.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "cheesy-chips",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "fries",
+    "name": "Skinny Fries",
+    "category": "Sides",
+    "price": 445,
+    "description": "Skinny Fries.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "fries",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "onion-rings",
+    "name": "Onion Rings",
+    "category": "Sides",
+    "price": 395,
+    "description": "Onion Rings.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "onion-rings",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "cheesy-garlic",
+    "name": "Cheesy Garlic Bread",
+    "category": "Sides",
+    "price": 545,
+    "description": "Cheesy Garlic Bread.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "cheesy-garlic",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "side-salad",
+    "name": "Side Salad",
+    "category": "Sides",
+    "price": 445,
+    "description": "Side Salad.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "side-salad",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "mozzarella",
+    "name": "Mozzarella Sticks and Chilli Jam",
+    "category": "Sides",
+    "price": 495,
+    "description": "Mozzarella Sticks and Chilli Jam.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "mozzarella",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "icecream",
+    "name": "Trio of Ice Creams",
+    "category": "Desserts",
+    "price": 595,
+    "description": "Three scoops: choose vanilla, chocolate, honeycomb or strawberry.",
+    "dietary": [],
+    "imageKey": "icecream",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "crumble",
+    "name": "Homemade Fruit Crumble",
+    "category": "Desserts",
+    "price": 745,
+    "description": "Custard or vanilla ice cream; ask the team for today’s fruit.",
+    "dietary": [],
+    "imageKey": "crumble",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "toffee",
+    "name": "Sticky Toffee Pudding",
+    "category": "Desserts",
+    "price": 745,
+    "description": "Served warm with salted caramel sauce and ice cream.",
+    "dietary": [],
+    "imageKey": "toffee",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "brownie",
+    "name": "Chocolate Brownie",
+    "category": "Desserts",
+    "price": 745,
+    "description": "Served warm with chocolate sauce, ice cream and fruit garnish.",
+    "dietary": [],
+    "imageKey": "brownie",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "cheesecake",
+    "name": "Vanilla Cheesecake with Berry Compote",
+    "category": "Desserts",
+    "price": 745,
+    "description": "With vegan ice cream.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "cheesecake",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "cheeseboard",
+    "name": "Cheeseboard",
+    "category": "Desserts",
+    "price": 995,
+    "description": "Soft and hard cheeses with crackers, chutney and salad.",
+    "dietary": [],
+    "imageKey": "cheeseboard",
+    "menuEdition": "main",
+    "modifiers": []
+  },
+  {
+    "id": "rene-breakfast",
+    "name": "René Breakfast",
+    "price": 1095,
+    "description": "Gloucester Old Spot sausage, two bacon, two hash browns, two fried eggs, grilled tomato, mushrooms, baked beans and toast. Monday–Saturday, 11am–3pm. No substitutions.",
+    "category": "Brunch",
+    "dietary": [],
+    "imageKey": "breakfast",
+    "menuEdition": "brunch",
+    "modifiers": []
+  },
+  {
+    "id": "veggie-breakfast",
+    "name": "Veggie Breakfast",
+    "price": 795,
+    "description": "Two hash browns, two fried eggs, grilled tomato, mushrooms, baked beans and toast. Monday–Saturday, 11am–3pm. No substitutions.",
+    "category": "Brunch",
+    "dietary": [],
+    "imageKey": "veggie-breakfast",
+    "menuEdition": "brunch",
+    "modifiers": []
+  },
+  {
+    "id": "breakfast-bap",
+    "name": "Big Breakfast Bap",
+    "price": 895,
+    "description": "Two bacon, Gloucester Old Spot sausage, fried egg and hash brown in a bap; sauce of your choice. Monday–Saturday, 11am–3pm. No substitutions.",
+    "category": "Brunch",
+    "dietary": [],
+    "imageKey": "breakfast-bap",
+    "menuEdition": "brunch",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-soup",
+    "name": "Soup of the Day",
+    "category": "Light bites",
+    "price": 625,
+    "description": "Served with your choice of white or granary bread and butter.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "soup",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-garlic-mushrooms",
+    "name": "Garlic Mushrooms",
+    "category": "Light bites",
+    "price": 745,
+    "description": "Wild mushrooms sautéed in garlic butter and cream, served on sourdough toast.",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "garlic-mushrooms",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-goujons",
+    "name": "Crispy Chicken Goujons",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Homemade crispy chicken breast goujons with garlic mayonnaise and homemade salsa dips.",
+    "dietary": [],
+    "imageKey": "goujons",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-whitebait",
+    "name": "Whitebait",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Breaded whitebait with garden salad garnish, tartare sauce and a lemon wedge.",
+    "dietary": [],
+    "imageKey": "whitebait",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-pork-bites",
+    "name": "Bourbon Glazed Sticky Belly Pork Bites",
+    "category": "Light bites",
+    "price": 895,
+    "description": "Slow-roasted belly pork bites glazed with homemade bourbon marinade; sour cream and chive dip.",
+    "dietary": [],
+    "imageKey": "pork-bites",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-loaded-fries",
+    "name": "Loaded Fries",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Skinny fries topped with cheese, bacon, pepperoni, salsa, jalapeños and sour cream.",
+    "dietary": [],
+    "imageKey": "loaded-fries",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-dirty-fries",
+    "name": "Dirty Fries",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Skinny fries topped with BBQ pulled pork, cheese, onions and sriracha mayo.",
+    "dietary": [],
+    "imageKey": "dirty-fries",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-loaded-garlic",
+    "name": "Loaded Garlic Bread",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Homemade cheesy garlic bread with bacon and pepperoni, open sandwich style; salsa and sour cream on the side.",
+    "dietary": [],
+    "imageKey": "loaded-garlic",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-croque-garlic",
+    "name": "Croque Monsieur Garlic Bread",
+    "category": "Light bites",
+    "price": 845,
+    "description": "Home-roasted honey and mustard ham and cheese on homemade garlic bread, open sandwich style.",
+    "dietary": [],
+    "imageKey": "croque-garlic",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-curry",
+    "name": "Caribbean Lamb Curry",
+    "category": "Pub classics",
+    "price": 1695,
+    "description": "Homemade British lamb curry with rice and peas and garlic flatbread.",
+    "dietary": [],
+    "imageKey": "curry",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-chilli",
+    "name": "Black Bean Chilli",
+    "category": "Pub classics",
+    "price": 1495,
+    "description": "Sweet potato and black bean chilli with steamed rice and avocado.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "chilli",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-earth-bowl",
+    "name": "René Earth Bowl Salad",
+    "category": "Pub classics",
+    "price": 1395,
+    "description": "Falafel, tomato, salad leaves, red onion, olives, roasted peppers, avocado, cucumber and salad dressing.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "earth-bowl",
+    "menuEdition": "sunday",
+    "modifiers": [
+      {
+        "id": "chicken",
+        "name": "Add chicken",
+        "price": 350
+      },
+      {
+        "id": "feta",
+        "name": "Add feta",
+        "price": 250
+      }
+    ]
+  },
+  {
+    "id": "sunday-steak-pie",
+    "name": "Steak & Ale Pie",
+    "category": "Handmade pies",
+    "price": 1695,
+    "description": "Shortcrust pastry, vegetables, gravy and your choice of mash, chips or pan-fried new potatoes.",
+    "dietary": [],
+    "imageKey": "steak-pie",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-mushroom-pie",
+    "name": "Mushroom “Steak” & Ale Pie",
+    "category": "Handmade pies",
+    "price": 1595,
+    "description": "Shortcrust pastry, vegetables, gravy and your choice of mash, chips or pan-fried new potatoes.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "mushroom-pie",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-rump",
+    "name": "8oz British Rump",
+    "category": "From the grill",
+    "price": 1945,
+    "description": "28-day aged rump, chunky chips, roasted tomato, mushrooms and salad garnish.",
+    "dietary": [],
+    "imageKey": "rump",
+    "menuEdition": "sunday",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "sunday-sirloin",
+    "name": "8oz British Sirloin",
+    "category": "From the grill",
+    "price": 2195,
+    "description": "28-day aged sirloin, chunky chips, roasted tomato, mushrooms and salad garnish.",
+    "dietary": [],
+    "imageKey": "sirloin",
+    "menuEdition": "sunday",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "sunday-gammon",
+    "name": "8oz Gammon Steak",
+    "category": "From the grill",
+    "price": 1495,
+    "description": "Two fried eggs, pineapple, chunky chips and salad garnish.",
+    "dietary": [],
+    "imageKey": "gammon",
+    "menuEdition": "sunday",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "sunday-grilled-chicken",
+    "name": "Grilled Chicken Breast",
+    "category": "From the grill",
+    "price": 1495,
+    "description": "Plain or Cajun spiced, choice of potatoes and salad garnish.",
+    "dietary": [],
+    "imageKey": "grilled-chicken",
+    "menuEdition": "sunday",
+    "modifiers": [
+      {
+        "id": "peppercorn",
+        "name": "Peppercorn sauce",
+        "price": 350
+      },
+      {
+        "id": "stilton-sauce",
+        "name": "Stilton sauce",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "id": "sunday-icecream",
+    "name": "Trio of Ice Creams",
+    "category": "Desserts",
+    "price": 595,
+    "description": "Three scoops: choose vanilla, chocolate, honeycomb or strawberry.",
+    "dietary": [],
+    "imageKey": "icecream",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-crumble",
+    "name": "Homemade Fruit Crumble",
+    "category": "Desserts",
+    "price": 745,
+    "description": "Custard or vanilla ice cream; ask the team for today’s fruit.",
+    "dietary": [],
+    "imageKey": "crumble",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-toffee",
+    "name": "Sticky Toffee Pudding",
+    "category": "Desserts",
+    "price": 745,
+    "description": "Served warm with salted caramel sauce and ice cream.",
+    "dietary": [],
+    "imageKey": "toffee",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-brownie",
+    "name": "Chocolate Brownie",
+    "category": "Desserts",
+    "price": 745,
+    "description": "Served warm with chocolate sauce, ice cream and fruit garnish.",
+    "dietary": [],
+    "imageKey": "brownie",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-cheesecake",
+    "name": "Vanilla Cheesecake with Berry Compote",
+    "category": "Desserts",
+    "price": 745,
+    "description": "With vegan ice cream.",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "cheesecake",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-roast-week",
+    "name": "Chef’s Roast of the Week",
+    "price": 1595,
+    "description": "A different choice every Sunday; ask your server. Roast potatoes, roast carrot and parsnip, seasonal vegetables, Yorkshire pudding and René gravy. Sunday 12–5pm.",
+    "category": "Sunday roasts",
+    "dietary": [],
+    "imageKey": "roast-beef",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-roast-beef",
+    "name": "Beef Roast",
+    "price": 1595,
+    "description": "Roast beef. Roast potatoes, roast carrot and parsnip, seasonal vegetables, Yorkshire pudding and René gravy. Sunday 12–5pm.",
+    "category": "Sunday roasts",
+    "dietary": [],
+    "imageKey": "roast-beef",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-roast-pork",
+    "name": "Pork Belly Roast",
+    "price": 1595,
+    "description": "Roast pork belly. Roast potatoes, roast carrot and parsnip, seasonal vegetables, Yorkshire pudding and René gravy. Sunday 12–5pm.",
+    "category": "Sunday roasts",
+    "dietary": [],
+    "imageKey": "roast-pork",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-wellington",
+    "name": "Squash Wellington",
+    "price": 1495,
+    "description": "Available vegetarian or vegan; ask the team. Roast potatoes, roast carrot and parsnip, seasonal vegetables, Yorkshire pudding and René gravy. Sunday 12–5pm.",
+    "category": "Sunday roasts",
+    "dietary": [],
+    "imageKey": "wellington",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-kids-roast",
+    "name": "Children’s Roast",
+    "price": 995,
+    "description": "Choose any of the roasts in a smaller portion. Roast potatoes, roast carrot and parsnip, seasonal vegetables, Yorkshire pudding and René gravy. Sunday 12–5pm.",
+    "category": "Sunday roasts",
+    "dietary": [],
+    "imageKey": "roast-beef",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-fish-special",
+    "name": "Chef’s Fish of the Day",
+    "price": 1655,
+    "description": "Weekly fish special, freshly prepared; ask your server for details.",
+    "category": "Pub classics",
+    "dietary": [],
+    "imageKey": "salmon",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-caesar",
+    "name": "Chicken & Bacon Caesar Salad",
+    "price": 1495,
+    "description": "Grilled chicken, smoked bacon, croutons, romaine lettuce, Parmesan and Caesar dressing.",
+    "category": "Pub classics",
+    "dietary": [],
+    "imageKey": "caesar",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-roast-potatoes",
+    "name": "Roast Potatoes",
+    "price": 395,
+    "description": "Extra roast potatoes.",
+    "category": "Sunday extras",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "roast-potatoes",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-yorkshire",
+    "name": "Extra Yorkie",
+    "price": 150,
+    "description": "Extra Yorkshire pudding.",
+    "category": "Sunday extras",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "yorkshire",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-veg",
+    "name": "Seasonal Vegetables",
+    "price": 345,
+    "description": "Seasonal vegetables.",
+    "category": "Sunday extras",
+    "dietary": ["Vegan (menu label)"],
+    "imageKey": "vegetables",
+    "menuEdition": "sunday",
+    "modifiers": []
+  },
+  {
+    "id": "sunday-cauliflower",
+    "name": "Cauliflower Cheese",
+    "price": 395,
+    "description": "Cauliflower in cheese sauce.",
+    "category": "Sunday extras",
+    "dietary": ["Vegetarian (menu label)"],
+    "imageKey": "cauliflower",
+    "menuEdition": "sunday",
+    "modifiers": []
+  }
+]

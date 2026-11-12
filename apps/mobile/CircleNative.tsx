@@ -15,7 +15,7 @@ export function CircleNative({ user, api, run }: { user: any; api: any; run: any
     [id, setId] = useState(''),
     [detail, setDetail] = useState<any>(null),
     [title, setTitle] = useState(''),
-    [query, setQuery] = useState('Demo'),
+    [query, setQuery] = useState('Alex'),
     [people, setPeople] = useState<any[]>([]),
     [body, setBody] = useState(''),
     [planTitle, setPlanTitle] = useState(''),
@@ -317,7 +317,7 @@ export function CircleNative({ user, api, run }: { user: any; api: any; run: any
         </View>
       )}
       <Text style={c.small}>
-        Demo Alex and Demo Sam are fictional. Plans and invitations stay inside the app.
+        Alex and Sam are fictional. Plans and invitations stay inside the app.
       </Text>
     </View>
   );

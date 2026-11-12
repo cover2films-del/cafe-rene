@@ -160,6 +160,8 @@ test('marketing opt-outs and interest/channel preferences are respected', async 
   assert.deepEqual(await s.campaignAudience({ interest: 'Blues', channel: 'email' }), []);
 });
 test('alcohol requires staff age verification and does not earn alcohol points', async () => {
+  // No published drinks list exists: explicitly enable the test product to exercise age checks.
+  await db.query("UPDATE menu SET data=jsonb_set(data,'{available}','true') WHERE id='ale'");
   const r = await s.checkout(
     { ...basket(), items: [{ itemId: 'ale', quantity: 1, modifierIds: [] }] },
     customer,

@@ -5,7 +5,7 @@ export function CircleHub({ user, run, toast }: { user: any; run: any; toast: an
     [selected, setSelected] = useState(''),
     [detail, setDetail] = useState<any>(null),
     [people, setPeople] = useState<any[]>([]),
-    [query, setQuery] = useState('Demo'),
+    [query, setQuery] = useState('Alex'),
     [body, setBody] = useState(''),
     [profile, setProfile] = useState<any>(null);
   const clientId = useRef<string | null>(null);
@@ -197,7 +197,7 @@ export function CircleHub({ user, run, toast }: { user: any; run: any; toast: an
             </label>
           )}
           <small>
-            Demo Alex and Demo Sam are fictional members. No external notifications or bookings are
+            Alex and Sam are fictional sample members. No external notifications or bookings are
             made.
           </small>
         </div>

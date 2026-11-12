@@ -1,4 +1,4 @@
-# Verification record — 11 November 2026
+# Verification record — 12 November 2026
 
 Run in the managed Linux workspace using Node 24.22.1 / npm 11.9.0.
 
@@ -6,7 +6,7 @@ Run in the managed Linux workspace using Node 24.22.1 / npm 11.9.0.
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `npm run typecheck`                             | Passed API/shared/browser and native TypeScript checks                                                  |
 | `npm run lint`                                  | Passed ESLint with no reported errors                                                                   |
-| `npm test`                                      | 20 tests passed, 0 failed                                                                               |
+| `npm test`                                      | 21 tests passed, 0 failed                                                                               |
 | `npm run build`                                 | Vite production build passed                                                                            |
 | `expo install --check`                          | Dependencies up to date for Expo SDK 54                                                                 |
 | `expo export --platform ios --platform android` | Both Metro/Hermes bundles exported, 925/924 modules on the initial full export                          |
@@ -58,3 +58,11 @@ The official logo/programme and website Roboto/Roboto Slab/Bree Serif fonts now 
 The preview EAS profile points at the actual hosted demo URL. Native exports include four official-site font-family weights and locally bundled official logo/programme fallbacks. No EAS signing, actual iPhone installation or live Meta connection has been performed. Interactive browser screenshots remain unavailable in this environment; server/asset HTTP and React cold-start rendering are checked separately.
 
 A live read of the official public website succeeded using the managed environment’s inherited network proxy: the current programme and logo were decoded and cached into an isolated PostgreSQL-compatible test database with no source errors. No real Neon, EPOS or Meta credentials were used for that check.
+
+## Menu, visuals and EAS Update changes — 12 November
+
+Full suite passed 20 existing tests; the added source-menu test passed after correcting its asset-path assertion. It verifies 96 unique entries, main/Sunday price differences, brunch prices, modifiers, all source dishes’ web/native assets, set-menu course counts, disabled unverified bar items, preservation of manager price edits, and legacy sample copy migration. Final type checking, lint, web production build and both Expo exports are recorded in the latest workspace logs.
+
+The native project now includes expo-updates, its real EAS project URL, preview/production channels and fingerprint runtime compatibility. Launch checks download compatible updates without forced mid-session reload. The GitHub publishing workflow requires the owner’s EXPO_TOKEN secret and EAS environment setup. No cloud update, signed binary, real-device update, rollback, payment or EPOS transaction was performed.
+
+Visual assets and generated sheets were inspected; interactive browser/device checks remain unavailable. Reduced-motion CSS disables decorative movement. Actual EAS Update delivery and first-launch/offline behaviour must be checked on the newly installed binary.

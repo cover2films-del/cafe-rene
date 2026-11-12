@@ -50,7 +50,7 @@ test('Daniel demo points/stamps and private circles enforce membership, invitati
     assert.ok(history.orders.some((o: any) => o.items.some((i: any) => i.item_id === 'ale')));
     await call('/circles/demo-friday-circle', 'GET', undefined, customer, 403);
     await call('/circles/demo-friday-circle', 'GET', undefined, staff, 403);
-    const directory = await call('/circles/directory?q=Demo', 'GET', undefined, daniel);
+    const directory = await call('/circles/directory?q=Alex', 'GET', undefined, daniel);
     assert.ok(directory.some((p: any) => p.id === 'demo-alex'));
     assert.ok(directory.every((p: any) => !('email' in p) && !('points' in p)));
     const direct = await call('/circles/direct', 'POST', { userId: 'demo-alex' }, daniel);

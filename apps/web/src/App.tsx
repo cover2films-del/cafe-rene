@@ -1,3 +1,5 @@
+import { socialIconPaths } from '../../../packages/shared/src/social-icons';
+import { menuSources, seasonalMenu, menuChecked } from '../../../packages/shared/src/venue-menu';
 import { CircleHub } from './CircleHub';
 import {
   foodPhotography,
@@ -85,6 +87,7 @@ export function App() {
     [event, setEvent] = useState<any>(null),
     [rewards, setRewards] = useState<any>(null),
     [category, setCategory] = useState('All'),
+    [menuEdition, setMenuEdition] = useState('main'),
     [query, setQuery] = useState(''),
     [genre, setGenre] = useState('All'),
     [calendar, setCalendar] = useState(false),
@@ -253,8 +256,8 @@ export function App() {
   return (
     <div className={staff ? 'app staff-app' : 'app'}>
       <div className="demo-bar">
-        <span className="demo-dot" /> PRIVATE DEMONSTRATION{' '}
-        <span className="demo-detail">· Demo ordering · No real payments</span>
+        <span className="demo-dot" /> FOOD · LIVE MUSIC · GOOD COMPANY{' '}
+        <span className="demo-detail">· GLOUCESTER</span>
         <button
           onClick={() => {
             setStaff(!staff);
@@ -572,7 +575,7 @@ export function App() {
                 </div>
                 <span className="pill">
                   <span className="demo-dot" />
-                  Demo kitchen {boot.ordering.open ? 'open' : 'paused'}
+                  Kitchen {boot.ordering.open ? 'open' : 'paused'}
                 </span>
               </div>
               <div className="ordering-context">
@@ -584,7 +587,7 @@ export function App() {
                   <small>
                     {table && !collection
                       ? 'Signed table reference verified by the server'
-                      : 'Choose a demo table or scan the QR on your table'}
+                      : 'Choose your table or scan the QR on your table'}
                   </small>
                 </div>
                 <select
@@ -615,7 +618,9 @@ export function App() {
               {order && (
                 <div className="order-status">
                   <div>
-                    <div className="eyebrow">DEMO ORDER · {order.id.slice(0, 8).toUpperCase()}</div>
+                    <div className="eyebrow">
+                      ORDER PREVIEW · {order.id.slice(0, 8).toUpperCase()}
+                    </div>
                     <h3>{nice(order.status)}</h3>
                     <p>
                       {money(order.total)} · Payment: {order.payment}{' '}
@@ -671,7 +676,7 @@ export function App() {
                           undefined,
                           r.secret,
                         );
-                        download('rene-demo-receipt.json', receipt);
+                        download('rene-receipt.json', receipt);
                       })
                     }
                   >
@@ -680,19 +685,75 @@ export function App() {
                   </button>
                 </div>
               )}
+              <div className="published-menus">
+                <div className="eyebrow">FROM THE RENÉ KITCHEN · PUBLISHED MENUS</div>
+                <div className="chips menu-editions" aria-label="Choose a menu">
+                  {menuSources.map((source) => (
+                    <button
+                      key={source.id}
+                      className={menuEdition === source.id ? 'selected' : ''}
+                      onClick={() => {
+                        setMenuEdition(source.id);
+                        setCategory('All');
+                      }}
+                    >
+                      {source.name}
+                    </button>
+                  ))}
+                </div>
+                <p>{menuSources.find((source) => source.id === menuEdition)?.note}</p>
+                <a
+                  href={menuSources.find((source) => source.id === menuEdition)?.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read the original menu ↗
+                </a>
+                <small>
+                  Published prices checked {menuChecked}. Availability and dietary requirements:
+                  please ask the team. Meal deals are arranged with staff.
+                </small>
+              </div>
+              {['festive', 'christmas-day', 'christmas-children'].includes(menuEdition) && (
+                <div className="seasonal-courses">
+                  {seasonalMenu(menuEdition).map((dish) => (
+                    <article className="seasonal-dish" key={dish.name}>
+                      <img
+                        src={'/images/generated/' + dish.imageKey + '.webp'}
+                        alt={'AI illustration of ' + dish.name}
+                        loading="lazy"
+                      />
+                      <div>
+                        <span className="eyebrow">{dish.course}</span>
+                        <h3>{dish.name}</h3>
+                        <p>{dish.description}</p>
+                        <small>Included in the set menu · AI illustration</small>
+                      </div>
+                    </article>
+                  ))}
+                  <a className="primary" href="mailto:info@caferene.co.uk">
+                    Book your festive meal ↗
+                  </a>
+                </div>
+              )}
               <div className="menu-toolbar">
                 <div className="chips">
-                  {['All', ...new Set<string>(boot.menu.map((m: MenuItem) => m.category))].map(
-                    (c) => (
-                      <button
-                        key={c}
-                        className={category === c ? 'selected' : ''}
-                        onClick={() => setCategory(c)}
-                      >
-                        {c}
-                      </button>
+                  {[
+                    'All',
+                    ...new Set<string>(
+                      boot.menu
+                        .filter((m: MenuItem) => (m.menuEdition || 'main') === menuEdition)
+                        .map((m: MenuItem) => m.category),
                     ),
-                  )}
+                  ].map((c) => (
+                    <button
+                      key={c}
+                      className={category === c ? 'selected' : ''}
+                      onClick={() => setCategory(c)}
+                    >
+                      {c}
+                    </button>
+                  ))}
                 </div>
                 <label className="search">
                   <Search size={17} />
@@ -706,15 +767,16 @@ export function App() {
               <div className="allergen-note">
                 <Leaf size={17} />
                 <span>
-                  Menu prices are unapproved demo prices. Allergen data is unavailable — ask staff
-                  before ordering. Dietary labels are transcribed from the source menu and await
-                  review.
+                  Menu prices are unapproved published prices. Allergen data is unavailable — ask
+                  staff before ordering. Dietary labels are transcribed from the source menu and
+                  await review.
                 </span>
               </div>
               <div className="menu-grid">
                 {boot.menu
                   .filter(
                     (m: MenuItem) =>
+                      (m.menuEdition || 'main') === menuEdition &&
                       (category === 'All' || m.category === category) &&
                       m.name.toLowerCase().includes(query.toLowerCase()),
                   )
@@ -726,15 +788,15 @@ export function App() {
                       <div
                         className={
                           'dish-art ' +
-                          (foodPhotography[m.id] ? 'has-photo ' : '') +
+                          (foodPhotography[m.imageKey || m.id] ? 'has-photo ' : '') +
                           m.category.toLowerCase().split(' ')[0]
                         }
                       >
-                        {foodPhotography[m.id] && (
+                        {foodPhotography[m.imageKey || m.id] && (
                           <img
                             className="dish-photo"
-                            src={foodPhotography[m.id].path}
-                            alt={foodPhotography[m.id].alt}
+                            src={foodPhotography[m.imageKey || m.id].path}
+                            alt={foodPhotography[m.imageKey || m.id].alt}
                             loading="lazy"
                             width={1000}
                             height={750}
@@ -752,7 +814,9 @@ export function App() {
                                   : '❦'}
                         </span>
                         <small>
-                          {foodPhotography[m.id] ? 'ILLUSTRATIVE PHOTOGRAPHY' : m.category}
+                          {foodPhotography[m.imageKey || m.id]
+                            ? 'AI DISH ILLUSTRATION'
+                            : m.category}
                         </small>
                       </div>
                       <div className="menu-copy">
@@ -782,6 +846,7 @@ export function App() {
               </div>
               {boot.menu.filter(
                 (m: MenuItem) =>
+                  (m.menuEdition || 'main') === menuEdition &&
                   (category === 'All' || m.category === category) &&
                   m.name.toLowerCase().includes(query.toLowerCase()),
               ).length === 0 && <div className="empty">No dishes found. Try another search.</div>}
@@ -875,7 +940,7 @@ export function App() {
                 <div className="empty">
                   <Gift size={45} />
                   <h2>Make yourself a regular.</h2>
-                  <p>Sign in to earn demo rewards and keep track of your visits.</p>
+                  <p>Sign in to collect René Points and keep track of your visits.</p>
                   <button className="primary" onClick={() => setLogin(true)}>
                     Sign in to rewards <ArrowRight size={16} />
                   </button>
@@ -886,18 +951,20 @@ export function App() {
                     <RenéSnapshot rewards={rewards} user={user} />
                     <div className="reward-top">
                       <div className="membership">
-                        <div className="eyebrow">THE RENÉ CIRCLE · DEMO</div>
-                        <div className="wordmark">
+                        <div className="eyebrow">
+                          THE RENÉ CIRCLE <span aria-hidden="true">✦</span> YOUR LOCAL, YOUR PEOPLE
+                        </div>
+                        <div className="wordmark loyalty-brand">
                           <img
                             className="official-logo"
                             src={boot?.content?.logo?.url || '/brand/logo.png'}
                             alt="Café René Gloucester"
                           />
                         </div>
-                        <p>{user.name}</p>
-                        <div>
+                        <p className="member-name">{user.name}</p>
+                        <div className="member-points">
                           <strong>{rewards.points}</strong>
-                          <span>René Points · demo balance</span>
+                          <span>René Points · member balance</span>
                         </div>
                         <QR value={rewards.membership} />
                         <small>Membership reference · refreshes on reload</small>
@@ -1011,10 +1078,8 @@ export function App() {
               {user?.id !== 'daniel' && (
                 <div className="daniel-demo-banner">
                   <div>
-                    <b>Meet Daniel Woolf’s demo René.</b>
-                    <p>
-                      Sample food & drink history, 100 René Points, stamps and a private demo group.
-                    </p>
+                    <b>Daniel’s René Circle.</b>
+                    <p>Sample food & drink history, 100 René Points, stamps and a private group.</p>
                   </div>
                   <button
                     className="primary"
@@ -1025,11 +1090,11 @@ export function App() {
                           password: 'ReneDemo2026!',
                         });
                         setUser(r.user);
-                        toast('Viewing Daniel Woolf’s demo account');
+                        toast('Viewing Daniel Woolf’s account');
                       })
                     }
                   >
-                    Explore Daniel’s demo
+                    Explore Daniel’s René
                   </button>
                 </div>
               )}
@@ -1092,17 +1157,17 @@ export function App() {
                 Official website ↗
               </a>
               <a href={boot.venue.facebook} target="_blank" rel="noreferrer">
-                Facebook ↗
+                <SocialLogo platform="facebook" /> Facebook ↗
               </a>
               <a href={boot.venue.instagram} target="_blank" rel="noreferrer">
-                Instagram ↗
+                <SocialLogo platform="instagram" /> Instagram ↗
               </a>
               <a href="/photography.html">Photo credits</a>
               <button onClick={() => go('My René')}>Privacy & preferences</button>
             </div>
             <small>
-              Private demo · Food photography is illustrative · Programme details link to the source
-              · Menu prices and hours await review
+              Food images are illustrations · Programme details link to the venue · Menu prices and
+              hours await review
             </small>
           </footer>
         </main>
@@ -1119,22 +1184,15 @@ export function App() {
       )}
       {login && (
         <Modal title="Welcome to René." onClose={() => setLogin(false)}>
-          <p className="muted">
-            Demo accounts · password: <code>ReneDemo2026!</code>
-          </p>
+          <p className="muted">Sign in to your René Circle.</p>
           <form onSubmit={signIn}>
             <label>
               Email
-              <input
-                name="email"
-                type="email"
-                required
-                defaultValue={staff ? 'manager@demo.rene' : 'daniel@demo.rene'}
-              />
+              <input name="email" type="email" required placeholder="you@example.com" />
             </label>
             <label>
               Password
-              <input name="password" type="password" required defaultValue="ReneDemo2026!" />
+              <input name="password" type="password" required autoComplete="current-password" />
             </label>
             <button className="primary full" disabled={busy}>
               Sign in <ArrowRight size={17} />
@@ -1153,17 +1211,17 @@ export function App() {
                       });
                       setUser(d.user);
                       setLogin(false);
-                      toast('Signed in as demo ' + r);
+                      toast('Signed in as ' + ({ 'demo-alex': 'Alex', 'demo-sam': 'Sam' }[r] || r));
                     })
                   }
                 >
-                  {r}
+                  {{ 'demo-alex': 'Alex', 'demo-sam': 'Sam' }[r] || r}
                 </button>
               ),
             )}
           </div>
           <details>
-            <summary>Create a demo account</summary>
+            <summary>Create an account</summary>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -1200,11 +1258,17 @@ export function App() {
       )}
       {item && (
         <Modal title={item.name} onClose={() => setItem(null)}>
-          <span className="pill">{item.category} · Demo price</span>
-          {foodPhotography[item.id] && (
+          <span className="pill">{item.category} · Published menu</span>
+          {foodPhotography[item.imageKey || item.id] && (
             <figure className="dish-detail">
-              <img src={foodPhotography[item.id].path} alt={foodPhotography[item.id].alt} />
-              <figcaption>Illustrative photography · actual dishes may vary.</figcaption>
+              <img
+                src={foodPhotography[item.imageKey || item.id].path}
+                alt={foodPhotography[item.imageKey || item.id].alt}
+              />
+              <figcaption>
+                AI-generated illustration based on the menu description. Actual presentation may
+                vary.
+              </figcaption>
             </figure>
           )}
           <p>{item.description}</p>
@@ -1338,7 +1402,7 @@ export function App() {
                 disabled={busy || (!table && !collection)}
                 onClick={() => void checkout()}
               >
-                Create demo order <ArrowRight size={18} />
+                Preview order <ArrowRight size={18} />
               </button>
               {!user && (
                 <p className="muted">
@@ -1419,7 +1483,7 @@ export function App() {
               }
             >
               <Ticket size={17} />
-              {event.sample ? 'Demo ticket' : 'Official event information'}
+              {event.sample ? 'Example ticket' : 'Official event information'}
             </button>
           </div>
         </Modal>
@@ -1427,7 +1491,7 @@ export function App() {
       {booking && (
         <Modal title="A table for your people." onClose={() => setBooking(false)}>
           <p>
-            Demo requests are not sent to the venue. For a real booking, call{' '}
+            Requests need confirmation from the venue. To book, call{' '}
             <a href="tel:01452309340">01452 309340</a>.
           </p>
           <form
@@ -1462,7 +1526,7 @@ export function App() {
               <textarea name="notes" maxLength={300} />
             </label>
             <button className="primary" disabled={busy}>
-              {user ? 'Make demo request' : 'Sign in to request'}
+              {user ? 'Request a table' : 'Sign in to request'}
               <ArrowRight size={17} />
             </button>
           </form>
@@ -1525,7 +1589,10 @@ function VenueBoard({
             posts.slice(0, 6).map((p: any) => (
               <article className={'social-post ' + p.platform} key={p.id}>
                 <div className="social-byline">
-                  <b>{p.platform === 'instagram' ? '◎ INSTAGRAM' : 'f FACEBOOK'}</b>
+                  <b>
+                    <SocialLogo platform={p.platform === 'instagram' ? 'instagram' : 'facebook'} />
+                    {p.platform === 'instagram' ? 'INSTAGRAM' : 'FACEBOOK'}
+                  </b>
                   <span>CAFÉ RENÉ</span>
                 </div>
                 {p.imageUrl && (
@@ -1550,7 +1617,7 @@ function VenueBoard({
                 target="_blank"
                 rel="noreferrer"
               >
-                <span>◎</span>
+                <SocialLogo platform="instagram" />
                 <div>
                   <small>BEHIND THE SCENES / ON THE STAGE</small>
                   <h3>The René feed.</h3>
@@ -1559,7 +1626,7 @@ function VenueBoard({
                 </div>
               </a>
               <a className="follow-card facebook" href={facebook} target="_blank" rel="noreferrer">
-                <span>f</span>
+                <SocialLogo platform="facebook" />
                 <div>
                   <small>KEEP THE GOOD NIGHTS COMING</small>
                   <h3>Don’t miss a beat.</h3>
@@ -1607,6 +1674,15 @@ function EventCard({
   return (
     <button className="event-card" onClick={onClick}>
       <div className={'event-art art-' + (index % 3)}>
+        {e.imageUrl && (
+          <img
+            className="event-backdrop"
+            src={e.imageUrl}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+          />
+        )}
         <span className="sample-tag">{e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'}</span>
         {e.imageUrl && (
           <img
@@ -1669,7 +1745,7 @@ function EventCard({
         </h3>
         <p>
           {e.sample
-            ? 'Sample programme · Free demo entry'
+            ? 'Sample programme · Entry information'
             : e.free
               ? 'Official programme · Free entry'
               : 'Official programme · See event details'}
@@ -1764,7 +1840,7 @@ function RenéSnapshot({ rewards, user }: { rewards: any; user: any }) {
         <strong>{rewards.points}</strong>
         <span>René Points</span>
         <small>
-          {user.id === 'daniel' ? 'Daniel Woolf · sample member balance' : 'Demo rewards balance'} ·
+          {user.id === 'daniel' ? 'Daniel Woolf · sample member balance' : 'Rewards balance'} ·
           eligible food only
         </small>
       </div>
@@ -1840,14 +1916,14 @@ function Account({
         <div className="panel">
           <div className="eyebrow">WELCOME BACK</div>
           <h2>{user.name}</h2>
-          <p className="muted">{nice(user.role)} account · Demo data</p>
+          <p className="muted">{nice(user.role)} account · Sample history</p>
         </div>
         <div className="panel">
           <h3>What you ate & drank</h3>
           <p className="muted">
             {user.id === 'daniel'
-              ? 'Demonstration history — these are sample purchases, not Daniel’s actual transactions.'
-              : 'Your order history. Demo transactions only.'}
+              ? 'Sample history — these are examples, not Daniel’s actual purchases.'
+              : 'Your order history. Sample transactions are labelled.'}
           </p>
           {history?.orders.map((o: any) => (
             <details className="history-visit" key={o.id}>
@@ -1883,7 +1959,7 @@ function Account({
                   className="text-link"
                   onClick={() =>
                     void run(async () =>
-                      download('rene-demo-receipt.json', await api('/orders/' + o.id)),
+                      download('rene-receipt.json', await api('/orders/' + o.id)),
                     )
                   }
                 >
@@ -1920,7 +1996,7 @@ function Account({
           {bookings?.tickets.map((t: any) => (
             <div key={t.id} className="list-row">
               <span>
-                Demo ticket · {t.event_id}
+                Example ticket · {t.event_id}
                 <small>Single use · {t.used_at ? 'Checked in' : 'Not used'}</small>
               </span>
               <code>{t.id}</code>
@@ -1938,7 +2014,7 @@ function Account({
         <div className="panel">
           <h3>Make it yours</h3>
           <p className="muted">
-            You choose what you hear from us. No messages are sent in this demo.
+            You choose what you hear from us. Marketing delivery is not connected.
           </p>
           {[
             ['personalisation', 'Personalised recommendations'],
@@ -2127,7 +2203,7 @@ function Staff({
           <ShieldCheck size={18} />
           <div>
             {user.name}
-            <small>{user.role} · Demo workspace</small>
+            <small>{user.role} · Staff workspace</small>
           </div>
         </div>
       </aside>
@@ -2146,15 +2222,15 @@ function Staff({
           <>
             <div className="metrics">
               {[
-                ['Demo sales', money(Number(overview.sales.sales))],
-                ['Demo refunds', money(Number(overview.sales.refunds))],
+                ['Recorded sales', money(Number(overview.sales.sales))],
+                ['Recorded refunds', money(Number(overview.sales.refunds))],
                 ['Orders', overview.sales.orders],
                 ['Need attention', queue.alerts.length],
               ].map(([name, val]) => (
                 <div className="metric" key={name}>
                   <span>{name}</span>
                   <strong>{val}</strong>
-                  <small>Demonstration records only</small>
+                  <small>Sample records</small>
                 </div>
               ))}
             </div>
@@ -2193,7 +2269,7 @@ function Staff({
                   </div>
                 ))
               ) : (
-                <p className="muted">Place your first demo order in the customer app.</p>
+                <p className="muted">Place your first order preview in the customer app.</p>
               )}
             </div>
           </>
@@ -2254,7 +2330,7 @@ function Staff({
                           </span>
                         </div>
                         <small>
-                          #{o.id.slice(0, 8)} · {money(o.total)} · DEMO PAID
+                          #{o.id.slice(0, 8)} · {money(o.total)} · SIMULATED PAYMENT
                         </small>
                         {o.alcohol && (
                           <p className="gold">
@@ -2286,7 +2362,7 @@ function Staff({
               <div className="empty">
                 <UtensilsCrossed size={35} />
                 <h2>A quiet moment.</h2>
-                <p>New paid demo orders appear here automatically.</p>
+                <p>New simulated paid orders appear here automatically.</p>
               </div>
             )}
           </>
@@ -2322,8 +2398,8 @@ function Staff({
                     ))}
                   </div>
                   <p className="muted">
-                    Kitchen hours: Mon–Sat 11–20; Sun 11–17, Europe/London. Demo defaults to all-day
-                    ordering. Published venue hours require review.
+                    Kitchen hours: Mon–Sat 11–20; Sun 11–17, Europe/London. Ordering currently uses
+                    all-day ordering. Published venue hours require review.
                   </p>
                   <details>
                     <summary>Location-assisted arrival settings</summary>
@@ -2522,7 +2598,7 @@ function Staff({
                 <input
                   value={customerQuery}
                   onChange={(e) => setCustomerQuery(e.target.value)}
-                  placeholder="Search demo customer"
+                  placeholder="Search customer"
                 />
                 <button className="primary">
                   <Search size={17} />
@@ -2577,7 +2653,7 @@ function Staff({
                   });
                 }}
               >
-                <input name="ticket" placeholder="Demo ticket ID" required />
+                <input name="ticket" placeholder="Example ticket ID" required />
                 <button className="primary">Check in</button>
               </form>
             </div>
@@ -2585,9 +2661,9 @@ function Staff({
         )}
         {view === 'Bookings' && overview && (
           <div className="panel">
-            <h3>Demo reservation requests</h3>
+            <h3>Reservation requests</h3>
             <p className="muted">
-              No booking system is connected. Confirming here updates the demonstration record only.
+              No booking system is connected. Confirming here updates the request record only.
             </p>
             {overview.bookings.map((b: any) => (
               <div className="list-row" key={b.id}>
@@ -2608,7 +2684,7 @@ function Staff({
                     )
                   }
                 >
-                  Confirm demo
+                  Confirm request
                 </button>
                 <button
                   className="text-link"
@@ -2908,7 +2984,7 @@ function Staff({
                 </div>
                 <label className="check-row">
                   <input type="checkbox" name="approved" required />I have reviewed the audience,
-                  offer and limits. Approve demo scheduling.
+                  offer and limits. Approve scheduling.
                 </label>
                 <button className="primary">
                   Save & preview audience <ArrowRight size={16} />
@@ -3047,7 +3123,7 @@ function Staff({
               })
             }
           >
-            Schedule demo campaign
+            Schedule campaign preview
           </button>
         </Modal>
       )}
@@ -3261,8 +3337,8 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
         <h3>Events, offers & challenge definitions</h3>
         <p>
           Manage events, offers and challenge definitions. Verified events require a source URL and
-          approvedReview=true. Money values use integer pence; ordering and offers remain in demo
-          mode.
+          approvedReview=true. Money values use integer pence; ordering and offers remain in
+          simulation mode.
         </p>
         <div className="button-row">
           <select
@@ -3309,7 +3385,7 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
                   : {
                       id: 'offer-' + crypto.randomUUID().slice(0, 8),
                       name: 'New sample food offer',
-                      description: 'Demo offer, single use.',
+                      description: 'Single-use offer.',
                       discount: 200,
                       min: 1000,
                       points: 0,
@@ -3355,7 +3431,7 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
         <h3>Loyalty adjustment</h3>
         <p>
           Manager-only, audited. Find the customer ID through customer lookup or use customer for
-          the seeded demonstration account.
+          the sample account.
         </p>
         <form
           onSubmit={(e) => {
@@ -3424,5 +3500,13 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
         ))}
       </div>
     </>
+  );
+}
+
+function SocialLogo({ platform }: { platform: 'facebook' | 'instagram' }) {
+  return (
+    <svg className="social-logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d={socialIconPaths[platform]} />
+    </svg>
   );
 }
