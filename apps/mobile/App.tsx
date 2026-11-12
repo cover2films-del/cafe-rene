@@ -1,3 +1,4 @@
+import { DiscoveryNative } from './DiscoveryNative';
 import Svg, { Path } from 'react-native-svg';
 import { socialIconPaths } from '../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../packages/shared/src/venue-menu';
@@ -1264,6 +1265,23 @@ function AppContent() {
                   </>,
                 )}
                 <NativeSnapshot rewards={rewards} />
+                <DiscoveryNative
+                  key={'picks-' + user.id}
+                  user={user}
+                  setUser={setUser}
+                  request={api}
+                  run={run}
+                  images={foodImages}
+                  barImage={venueInterior}
+                  onSelect={(id) => {
+                    const dish = boot.menu.find((m: MenuItem) => m.id === id);
+                    if (dish?.available) {
+                      setTab('Order');
+                      setMods([]);
+                      setItem(dish);
+                    }
+                  }}
+                />
                 <CircleNative key={user.id} user={user} api={api} run={run} />
                 {panel(
                   <>

@@ -1,3 +1,4 @@
+import { seedDiscovery } from './discovery.ts';
 import { publishedMenu } from '../../../packages/shared/src/venue-menu.ts';
 import { seedDaniel } from './demo-daniel.ts';
 import { officialProgramme } from '../../../packages/shared/src/content.ts';
@@ -148,6 +149,7 @@ async function seedDefaults(db: DB) {
       'needs_review',
     ]);
   await seedDaniel(db);
+  await seedDiscovery(db);
   for (const [before, after] of [
     ['Demo Alex', 'Alex (sample)'],
     ['Demo Sam', 'Sam (sample)'],

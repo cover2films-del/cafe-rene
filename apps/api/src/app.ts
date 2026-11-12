@@ -1,3 +1,4 @@
+import { foodTastes, memberDiscovery } from './discovery.ts';
 import { circleRoutes } from './circles.ts';
 import { publicVenueContent } from './venue-content.ts';
 import { refreshContent } from './content-refresh.ts';
@@ -217,6 +218,7 @@ export function createApp(s: Service) {
     },
     customer,
   );
+  route('get', '/api/my-rene/discovery', (req) => memberDiscovery(s.db, req.user.id), customer);
   route('get', '/api/rewards', (req) => s.rewards(req.user), customer);
   route(
     'post',
@@ -308,6 +310,7 @@ export function createApp(s: Service) {
       const d = z
         .object({
           personalisation: z.boolean(),
+          tastes: z.array(z.enum(foodTastes)).max(7).optional(),
           email: z.boolean(),
           push: z.boolean(),
           location: z.boolean(),
@@ -315,6 +318,7 @@ export function createApp(s: Service) {
         })
         .strict()
         .parse(req.body);
+      d.tastes = d.tastes ?? req.user.preferences.tastes ?? [];
       await s.db.transaction(async (db) => {
         await db.query('UPDATE users SET preferences=$1 WHERE id=$2', [d, req.user.id]);
         await db.query('INSERT INTO consents(id,user_id,version,preferences) VALUES($1,$2,$3,$4)', [

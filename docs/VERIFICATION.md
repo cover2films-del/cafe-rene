@@ -78,3 +78,9 @@ Added animated startup branding (30% larger logo), a slow blue header glow, nati
 Fixed native points clipping: the previous 54-point number inherited a 46-point line height. The number now has a dedicated 64/82-point font/line-height pair, scaling for narrow screens, formatted balances and an accessibility label. Browser points tiles now use minimum widths and responsive stacking.
 
 Type checking, lint, the web production build, cold-start rendering test, and both native exports passed. No new native dependencies/configuration were added; runtime remains `1.0.0-native.1`. Motion and layout have not been verified interactively on an actual phone or browser in this workspace.
+
+## My René discovery
+
+Added an authenticated member discovery endpoint and web/native taste selectors, favourites and explained recommendations. Seeded curation is isolated from orders and financial reports, with internal provenance and no invented sales counts. Regression coverage checks unauthenticated rejection, session identity despite a different query-string ID, personalisation opt-out without a history query, saved taste matching, vegan/alcohol-free filtering, disabled-item exclusion, unpriced/non-orderable drinks, old-client preference preservation, invalid taste rejection, no repeated consent reset, and no fabricated order rows.
+
+Type checking, lint, web build and iOS/Android exports passed. The new regression and existing tests are recorded in the latest discovery verification logs. Real-device/network-interruption testing and live EPOS drink/menu synchronisation remain unperformed.

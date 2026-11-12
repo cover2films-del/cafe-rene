@@ -1,3 +1,4 @@
+import { DiscoveryHub } from './DiscoveryHub';
 import { socialIconPaths } from '../../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../../packages/shared/src/venue-menu';
 import { CircleHub } from './CircleHub';
@@ -1148,6 +1149,14 @@ export function App() {
                   onBook={() => setBooking(true)}
                   order={order}
                   rewards={rewards}
+                  onDishSelect={(id: string) => {
+                    const dish = boot.menu.find((m: MenuItem) => m.id === id);
+                    if (dish?.available) {
+                      go('Order');
+                      setMods([]);
+                      setItem(dish);
+                    }
+                  }}
                 />
               ) : (
                 <div className="empty">
@@ -1914,6 +1923,7 @@ function Account({
   run,
   toast,
   onBook,
+  onDishSelect,
   order,
   rewards,
 }: {
@@ -1922,6 +1932,7 @@ function Account({
   run: any;
   toast: any;
   onBook: () => void;
+  onDishSelect: (id: string) => void;
   order: any;
   rewards: any;
 }) {
@@ -1936,10 +1947,19 @@ function Account({
       setBookings(await api('/bookings'));
     });
   }, [user, order]);
+  useEffect(() => setPrefs(user.preferences), [user.preferences]);
   return (
     <div className="account-grid">
       <div className="account-wide">
         <RenéSnapshot rewards={rewards} user={user} />
+        <DiscoveryHub
+          key={'picks-' + user.id}
+          user={user}
+          setUser={setUser}
+          request={api}
+          run={run}
+          onSelect={onDishSelect}
+        />
         <CircleHub key={user.id} user={user} run={run} toast={toast} />
       </div>
       <div>

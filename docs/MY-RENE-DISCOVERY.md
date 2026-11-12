@@ -1,0 +1,13 @@
+# My René favourites and recommendations
+
+My René now shows popular plates, popular drinks and personalised suggestions, with saved food/drink tastes. The new customer feature does not carry a demo label. The initial favourites board is seeded curation, not measured popularity: it shows no invented order counts, rankings attributed to sales, customer names or trend statistics. Its small note describes selected favourites. Configuration/provenance is stored separately in `settings` under `discovery-picks-v1`; no orders, payments, rewards or sales-report rows are generated for this feature.
+
+Daniel’s example account receives a one-time taste profile (pub classics, burgers and ale) and enabled personalisation only if no saved consent choice exists. Email/push marketing permissions remain unchanged. A seed marker prevents repeated resets; deleted accounts are not restored. Other accounts default to personalisation off.
+
+The authenticated `/api/my-rene/discovery` endpoint uses the session user ID, never a caller-supplied member ID. With personalisation off it does not query order history and returns general picks. With it on, explicit tastes, the member’s own completed paid orders and categories determine ranking. Each suggestion explains the reason. Plant-based preferences filter to source-labelled vegan dishes; alcohol-free filters alcoholic bar picks. These are preferences, not an allergen guarantee. Staff must confirm ingredients and availability.
+
+Unavailable food and non-main menu editions are excluded from recommendations. Dish cards open the existing product sheet, resetting modifiers; they never silently add an order or bypass checkout validation. Drinks remain informational, with no price and no order action until a verified drinks catalogue is provided. Alcohol cards retain the staff-age-check/no-food-points note.
+
+The optional `tastes` preference field is validated against seven shared values. Older clients omitting it preserve saved tastes. The existing consent recording, export and deletion behaviour covers these saved preferences; switching personalisation off immediately returns general picks. Requests clean up on account/preference changes to prevent old responses populating another member’s view.
+
+Web and native refresh the section while active (about once a minute and on return to the app). No social messages, marketing sends, push notifications or external profiling are involved. No new native dependency or runtime change is required. Render must deploy the new API before a native build can use the endpoint; older APIs produce a retryable section error rather than a crash.

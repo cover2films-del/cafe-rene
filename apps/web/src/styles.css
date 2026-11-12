@@ -5343,3 +5343,120 @@ header .official-logo {
   background-size: cover;
   background-position: center;
 }
+.discovery-hub {
+  margin: 28px 0;
+}
+.taste-controls {
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid #70dfd044;
+  background:
+    linear-gradient(120deg, #143b4bf0, #172d49ef),
+    url('/images/generated/club.webp') center / cover;
+  margin-bottom: 28px;
+}
+.taste-controls .chips {
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.taste-controls small {
+  display: block;
+  margin-top: 14px;
+  color: #b6d9df;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.discovery-hub > h3 {
+  font-family: 'Bree Serif', serif;
+  font-size: 25px;
+  margin: 28px 0 16px;
+}
+.discovery-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.discovery-card {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid #63ddcc44;
+  background: #153447;
+  display: flex;
+  flex-direction: column;
+}
+.discovery-card > img {
+  width: 100%;
+  aspect-ratio: 1.3;
+  object-fit: cover;
+}
+.discovery-card > div {
+  padding: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.discovery-card h4 {
+  margin: 9px 0;
+  font:
+    21px 'Bree Serif',
+    serif;
+}
+.discovery-card p {
+  color: #b6d9df;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.discovery-card b {
+  color: #f0ed80;
+  margin: auto 0 14px;
+}
+.discovery-card small,
+.bar-availability {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #c2dfde;
+  margin: 8px 0;
+}
+.discovery-card .outline {
+  width: 100%;
+  margin-top: auto;
+}
+.discovery-note {
+  font-size: 11px;
+  color: #b6d9df;
+  margin-top: 20px;
+}
+@media (max-width: 1050px) {
+  .discovery-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 500px) {
+  .discovery-card > div {
+    padding: 14px;
+  }
+  .discovery-card h4 {
+    font-size: 19px;
+  }
+  .taste-controls {
+    padding: 20px;
+  }
+}
+@media (max-width: 350px) {
+  .discovery-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .discovery-card {
+    animation: rene-arrive 0.5s ease-out both;
+    transition: transform 0.2s ease;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .discovery-card:hover {
+    transform: translateY(-4px);
+  }
+}
