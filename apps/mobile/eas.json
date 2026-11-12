@@ -1,5 +1,8 @@
 {
-  "cli": { "version": ">= 16.0.0", "appVersionSource": "remote" },
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -9,10 +12,23 @@
     "preview": {
       "distribution": "internal",
       "environment": "preview",
-      "ios": { "simulator": false },
-      "android": { "buildType": "apk" }
+      "ios": {
+        "simulator": false
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://cafe-rene.onrender.com",
+        "EXPO_PUBLIC_WEB_URL": "https://cafe-rene.onrender.com"
+      }
     },
-    "production": { "autoIncrement": true, "environment": "production" }
+    "production": {
+      "autoIncrement": true,
+      "environment": "production"
+    }
   },
-  "submit": { "production": {} }
+  "submit": {
+    "production": {}
+  }
 }

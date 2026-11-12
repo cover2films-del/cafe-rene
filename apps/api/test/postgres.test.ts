@@ -58,7 +58,7 @@ test('PostgreSQL driver wire values support JSON arrays, modifier snapshots and 
       7,
     );
     assert.equal((await db.query("SELECT id FROM content WHERE id='source-0'")).rows.length, 1);
-    assert.equal((await db.query('SELECT id FROM users')).rows.length, 4);
+    assert.equal((await db.query('SELECT id FROM users')).rows.length, 7);
     await db.close();
   } finally {
     if (previous === undefined) delete process.env.DATABASE_URL;

@@ -1,3 +1,6 @@
+import { circleRoutes } from './circles.ts';
+import { publicVenueContent } from './venue-content.ts';
+import { refreshContent } from './content-refresh.ts';
 import { socialStatus, refreshSocial } from './social.ts';
 import {
   visibleEvents,
@@ -95,6 +98,7 @@ export function createApp(s: Service) {
     menu: await s.menu(),
     events: visibleEvents((await s.db.query('SELECT data FROM events')).rows.map((r) => r.data)),
     ordering: await s.settings(),
+    content: await publicVenueContent(s.db),
   }));
   app.post('/api/auth/login', async (req, res) => {
     const d = z.object({ email: z.string(), password: z.string().max(128) }).parse(req.body);
@@ -189,6 +193,30 @@ export function createApp(s: Service) {
       await s.audit(req.user?.id || 'guest', 'order.cancelled', o.id, db);
     });
   });
+  app.use('/api/circles', circleRoutes(s));
+  route(
+    'get',
+    '/api/history',
+    async (req) => {
+      const orders = (
+        await s.db.query(
+          'SELECT id,total,payment,status,created_at,notes FROM orders WHERE user_id=$1 ORDER BY created_at DESC',
+          [req.user.id],
+        )
+      ).rows;
+      const lines = (
+        await s.db.query(
+          'SELECT oi.* FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.user_id=$1',
+          [req.user.id],
+        )
+      ).rows;
+      return {
+        demo: true,
+        orders: orders.map((o) => ({ ...o, items: lines.filter((i) => i.order_id === o.id) })),
+      };
+    },
+    customer,
+  );
   route('get', '/api/rewards', (req) => s.rewards(req.user), customer);
   route(
     'post',
@@ -304,6 +332,17 @@ export function createApp(s: Service) {
     'get',
     '/api/privacy/export',
     async (req) => ({
+      circles: (
+        await s.db.query('SELECT circle_id,status FROM circle_members WHERE user_id=$1', [
+          req.user.id,
+        ])
+      ).rows,
+      messages: (
+        await s.db.query(
+          'SELECT circle_id,body,created_at FROM circle_messages WHERE author_id=$1',
+          [req.user.id],
+        )
+      ).rows,
       profile: await s.one('SELECT id,email,name,role,preferences FROM users WHERE id=$1', [
         req.user.id,
       ]),
@@ -342,6 +381,18 @@ export function createApp(s: Service) {
       demand(req.body.confirm === 'DELETE', 'Type DELETE to confirm');
       demand(req.user.role === 'customer', 'Staff accounts must be removed by an administrator');
       await s.db.transaction(async (db) => {
+        await db.query('DELETE FROM circle_rsvps WHERE user_id=$1', [req.user.id]);
+        await db.query('DELETE FROM circle_plans WHERE creator_id=$1', [req.user.id]);
+        await db.query(
+          "UPDATE circle_messages SET body='[Message removed on account deletion]',author_id=null WHERE author_id=$1",
+          [req.user.id],
+        );
+        await db.query(
+          "UPDATE circles SET owner_id=null,title=CASE WHEN direct_key IS NOT NULL THEN 'Private conversation' ELSE title END,direct_key=null WHERE owner_id=$1",
+          [req.user.id],
+        );
+        await db.query('DELETE FROM circle_members WHERE user_id=$1', [req.user.id]);
+        await db.query('DELETE FROM social_profiles WHERE user_id=$1', [req.user.id]);
         for (const t of [
           'sessions',
           'consents',
@@ -688,6 +739,40 @@ export function createApp(s: Service) {
     res.setHeader('Cache-Control', 'private, max-age=300');
     res.sendFile(req.params.id + '.webp', { root: mediaRoot });
   });
+  route('get', '/api/public-content', () => publicVenueContent(s.db));
+  route(
+    'get',
+    '/api/manager/content-refresh',
+    async () => ({
+      state:
+        (await s.one('SELECT data FROM settings WHERE id=$1', ['content-refresh']))?.data || null,
+      social: socialStatus(),
+    }),
+    manager,
+  );
+  route('post', '/api/manager/content-refresh', () => refreshContent(s.db, true), manager);
+  app.get('/api/venue-assets/:id', async (req, res) => {
+    demand(/^[a-z0-9-]{1,90}$/.test(req.params.id), 'Asset not found', 404);
+    const asset = await s.one('SELECT * FROM venue_assets WHERE id=$1', [req.params.id]);
+    demand(asset, 'Asset not found', 404);
+    if (asset.kind === 'social')
+      demand(
+        await s.one(
+          "SELECT id FROM content WHERE status='approved' AND data->>'cachedImageId'=$1",
+          [asset.id],
+        ),
+        'Asset unavailable',
+        404,
+      );
+    const etag = '"' + asset.checksum + '"';
+    res.setHeader('ETag', etag);
+    res.setHeader('Cache-Control', 'public, max-age=120');
+    if (req.headers['if-none-match'] === etag) {
+      res.status(304).end();
+      return;
+    }
+    res.type(asset.content_type).send(Buffer.from(asset.bytes));
+  });
   route('get', '/api/manager/social', () => socialStatus(), manager);
   route('post', '/api/manager/social/refresh', (req) => refreshSocial(s.db, req.user.id), manager);
   route(
@@ -841,7 +926,7 @@ export function createApp(s: Service) {
             .string()
             .regex(/^\/(?:images\/events\/[a-z0-9-]+\.webp|api\/media\/[a-f0-9-]{36})$/)
             .optional(),
-          imageKind: z.enum(['original-artwork', 'authorised-photo']).optional(),
+          imageKind: z.enum(['original-artwork', 'authorised-photo', 'venue-programme']).optional(),
         })
         .strict()
         .parse(req.body);

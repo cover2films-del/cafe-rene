@@ -126,6 +126,16 @@ export class Service {
       (r) => r.data as MenuItem,
     );
   }
+  async foodStamps(userId: string, db = this.db) {
+    return Number(
+      (
+        await db.query(
+          "SELECT count(DISTINCT (o.created_at AT TIME ZONE 'Europe/London')::date) AS n FROM orders o JOIN order_items oi ON oi.order_id=o.id JOIN menu m ON m.id=oi.item_id WHERE o.user_id=$1 AND o.payment='paid' AND o.status='completed' AND m.data->>'category'<>'Drinks' AND (m.data->>'alcohol')::boolean=false",
+          [userId],
+        )
+      ).rows[0].n,
+    );
+  }
   async points(userId: string, db = this.db) {
     return Number(
       (
@@ -203,6 +213,10 @@ export class Service {
           'Offer already used',
         );
         demand((await this.points(user.id, db)) >= offer.points, 'Not enough points');
+        demand(
+          !offer.stampsRequired || (await this.foodStamps(user.id, db)) >= offer.stampsRequired,
+          'Collect the required food-visit stamps first',
+        );
         discount = Math.min(foodTotal, offer.discount);
         await db.query('INSERT INTO redemptions(id,user_id,offer_id,status) VALUES($1,$2,$3,$4)', [
           uid(),
@@ -492,8 +506,17 @@ export class Service {
     const used = (await this.db.query('SELECT * FROM redemptions WHERE user_id=$1', [user.id]))
       .rows;
     const points = await this.points(user.id);
+    const stamps = await this.foodStamps(user.id);
     return {
       points,
+      pointsName: 'René Points',
+      stampCard: {
+        name: 'The Kitchen Club',
+        stamps: Math.min(stamps, 6),
+        target: 6,
+        reward: '£5 off eligible food after six food-visit days',
+        demo: true,
+      },
       visits: visits.length,
       membership: this.reference('member', user.id, 1, 600),
       challenges: (
@@ -515,6 +538,7 @@ export class Service {
         eligible:
           !used.some((r) => r.offer_id === o.id) &&
           points >= o.points &&
+          (!o.stampsRequired || stamps >= o.stampsRequired) &&
           new Date(o.expires).getTime() > Date.now(),
       })),
       history: (

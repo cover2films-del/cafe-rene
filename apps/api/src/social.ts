@@ -1,3 +1,5 @@
+import { cacheImage } from './venue-content.ts';
+import { createHash } from 'node:crypto';
 import type { DB } from './db.ts';
 import { randomUUID } from 'node:crypto';
 import { demand } from './service.ts';
@@ -7,11 +9,17 @@ export function socialStatus() {
     facebook: !!(process.env.META_PAGE_ID && process.env.META_PAGE_ACCESS_TOKEN),
     instagram: !!(process.env.META_INSTAGRAM_ACCOUNT_ID && process.env.META_INSTAGRAM_ACCESS_TOKEN),
     version: process.env.META_GRAPH_VERSION || null,
+    automaticPublication: process.env.SOCIAL_AUTO_PUBLISH !== 'false',
     policy:
       'Read-only venue posts → manager review → event publication. No comments, messages or customer profiles.',
   };
 }
-export async function refreshSocial(db: DB, actor: string, request: typeof fetch = fetch) {
+export async function refreshSocial(
+  db: DB,
+  actor: string,
+  request: typeof fetch = fetch,
+  options: { autoPublish?: boolean } = {},
+) {
   const version = process.env.META_GRAPH_VERSION;
   demand(
     version && /^v\d+\.\d+$/.test(version),
@@ -66,6 +74,7 @@ export async function refreshSocial(db: DB, actor: string, request: typeof fetch
         continue;
       }
       const result = await response.json();
+      let imagesChecked = 0;
       for (const post of Array.isArray(result.data) ? result.data : []) {
         if (typeof post.id !== 'string' || typeof (post.message ?? post.caption) !== 'string')
           continue;
@@ -76,8 +85,28 @@ export async function refreshSocial(db: DB, actor: string, request: typeof fetch
           !/^https:\/\/(?:www\.)?(facebook\.com|instagram\.com)\//.test(url)
         )
           continue;
+        const autoPublished = options.autoPublish === true;
+        const imageSourceUrl =
+          post.full_picture ?? (post.media_type === 'IMAGE' ? post.media_url : null);
+        let cachedImageUrl: string | null = null,
+          cachedImageId: string | null = null;
+        if (autoPublished && typeof imageSourceUrl === 'string' && imagesChecked++ < 3) {
+          try {
+            const imageId =
+              'social-' +
+              createHash('sha256')
+                .update(channel.channel + post.id)
+                .digest('hex')
+                .slice(0, 24);
+            const asset = await cacheImage(db, imageId, imageSourceUrl, 'social', request);
+            cachedImageUrl = asset.url;
+            cachedImageId = asset.id;
+          } catch {
+            /* Keep the text/link if provider media is unavailable or unapproved. */
+          }
+        }
         const row = await db.query(
-          'INSERT INTO content(id,data,status) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING id',
+          `INSERT INTO content(id,data,status) VALUES($1,$2,$3) ON CONFLICT(id) DO UPDATE SET data=$2,status=$3 WHERE $4::boolean AND (content.status='needs_review' OR (content.status='approved' AND content.data->>'autoPublished'='true' AND (content.data->>'text' IS DISTINCT FROM $2::jsonb->>'text' OR content.data->>'imageSourceUrl' IS DISTINCT FROM $2::jsonb->>'imageSourceUrl' OR content.data->>'cachedImageUrl' IS DISTINCT FROM $2::jsonb->>'cachedImageUrl'))) RETURNING id`,
           [
             `social-${channel.channel}-${post.id}`,
             {
@@ -88,7 +117,10 @@ export async function refreshSocial(db: DB, actor: string, request: typeof fetch
               platform: channel.channel,
               publicationDate: post.created_time ?? post.timestamp,
               retrievedAt: new Date().toISOString(),
-              permission: 'unknown',
+              permission: autoPublished ? 'venue_account_reuse_requested_by_user' : 'unknown',
+              autoPublished,
+              cachedImageUrl,
+              cachedImageId,
               confidence: 'authorised_venue_account',
               imageSourceUrl:
                 post.full_picture ?? (post.media_type === 'IMAGE' ? post.media_url : null),
@@ -96,7 +128,8 @@ export async function refreshSocial(db: DB, actor: string, request: typeof fetch
                 'Event date and image reuse require manager review; post timestamp is not the event date.',
               ],
             },
-            'needs_review',
+            autoPublished ? 'approved' : 'needs_review',
+            autoPublished,
           ],
         );
         imported += row.rows.length;
@@ -114,6 +147,8 @@ export async function refreshSocial(db: DB, actor: string, request: typeof fetch
   return {
     imported,
     errors,
-    message: 'Posts saved to content review. No events published automatically.',
+    message: options.autoPublish
+      ? 'Venue posts refreshed. Event dates still require review.'
+      : 'Posts saved to content review. No events published automatically.',
   };
 }

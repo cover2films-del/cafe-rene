@@ -9,11 +9,11 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-      bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER || 'uk.co.yourcompany.caferene',
+      bundleIdentifier: process.env.IOS_BUNDLE_IDENTIFIER || 'uk.co.caferene.gloucester',
       infoPlist: { ITSAppUsesNonExemptEncryption: false },
     },
     android: {
-      package: process.env.ANDROID_PACKAGE || 'uk.co.yourcompany.caferene',
+      package: process.env.ANDROID_PACKAGE || 'uk.co.caferene.gloucester',
       permissions: ['CAMERA', 'ACCESS_COARSE_LOCATION', 'ACCESS_FINE_LOCATION'],
       blockedPermissions: [
         'android.permission.RECORD_AUDIO',

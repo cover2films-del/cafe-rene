@@ -4,7 +4,7 @@ No EAS build, signing, upload, App Store submission or real-device run has been 
 
 ## One-time setup
 
-1. Install Node 24 LTS, run `npm ci` at the monorepo root, and choose a permanent reverse-domain bundle identifier that you own. Replace `uk.co.yourcompany.caferene` in `apps/mobile/app.config.ts` (or supply IOS_BUNDLE_IDENTIFIER and ANDROID_PACKAGE consistently in every EAS environment). Do this before registering the App ID.
+1. Install Node 24 LTS, run `npm ci` at the monorepo root, and choose a permanent reverse-domain bundle identifier that you own. Replace `uk.co.caferene.gloucester` in `apps/mobile/app.config.ts` (or supply IOS_BUNDLE_IDENTIFIER and ANDROID_PACKAGE consistently in every EAS environment). Do this before registering the App ID.
 2. Join the paid Apple Developer Program for ad hoc distribution and App Store/TestFlight. Confirm the business has authorised the app, its name, logo and content.
 3. Deploy a **private demonstration** API and web app to your chosen HTTPS hosting. No hosting has been provisioned here. Installed native builds need an API accessible outside your laptop.
 4. From `apps/mobile`:
@@ -68,3 +68,9 @@ The submit command uploads to App Store Connect/TestFlight; it does not by itsel
 Permissions: camera for table/check-in scanning, foreground location for optional proximity assistance. No microphone recording, background location or always-on tracking is enabled. Deep links use `caferene://order?table=SIGNED_REFERENCE` and `caferene://checkin?ref=SIGNED_REFERENCE`. Web table QR links remain usable without installing the app. Universal links require a real owned domain, entitlement configuration and association files and are not configured in the demo.
 
 References checked 11 November 2026: [Expo internal distribution](https://docs.expo.dev/build/internal-distribution/) and [Expo monorepo guidance](https://docs.expo.dev/guides/monorepos/). The EAS configuration lives in the app workspace; npm installation runs at the monorepo root. Default internal build links can be accessible to anyone with the link; use your Expo project settings to restrict unauthenticated build access when needed.
+
+## Current preview configuration
+
+The preview profile now points EXPO_PUBLIC_API_URL and EXPO_PUBLIC_WEB_URL at `https://cafe-rene.onrender.com`, so the installed preview will not try to contact the iPhone's localhost. The replaceable proposed package/bundle ID is `uk.co.caferene.gloucester`; confirm ownership/availability before the first signed build. `extra.eas.projectId` must still be linked to your own Expo project with `eas init`.
+
+When ready, authenticate through EAS's secure sign-in/device-registration/signing prompts. Alternatively, an Expo token can be provided through environment **secret settings** as EXPO_TOKEN. Do not paste Expo/Apple passwords, tokens, recovery codes or signing keys into chat. EAS should manage Apple credentials through its signing workflow. No signed build or installation has been performed. The preview profile uses the deployed demonstration API with mock payments/POS.

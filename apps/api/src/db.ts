@@ -8,7 +8,7 @@ export interface DB {
   close(): Promise<void>;
 }
 export async function openDB(path = process.env.DATA_DIR || 'work/database'): Promise<DB> {
-  if (process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL && path !== 'memory://') {
     const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
     const wrap = (client: pg.Pool | pg.PoolClient): DB => ({
       query: async (sql, p) =>

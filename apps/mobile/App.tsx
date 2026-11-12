@@ -1,7 +1,9 @@
+import { CircleNative } from './CircleNative';
 import { useFonts } from 'expo-font';
-import { Manrope_400Regular } from '@expo-google-fonts/manrope/400Regular';
-import { Manrope_600SemiBold } from '@expo-google-fonts/manrope/600SemiBold';
-import { Manrope_700Bold } from '@expo-google-fonts/manrope/700Bold';
+import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
+import { RobotoSlab_700Bold } from '@expo-google-fonts/roboto-slab/700Bold';
+import { Roboto_700Bold } from '@expo-google-fonts/roboto/700Bold';
+import { BreeSerif_400Regular } from '@expo-google-fonts/bree-serif/400Regular';
 import { Image } from 'expo-image';
 import { programmeSource, customerInterests } from '../../packages/shared/src/content';
 import React, { useState, useEffect, useRef } from 'react';
@@ -48,6 +50,8 @@ const eventImages: Record<string, any> = {
   'nov26-luke-austin': require('../../packages/assets/events/nov26-luke-austin.webp'),
   'nov26-kingsley-allies': require('../../packages/assets/events/nov26-kingsley-allies.webp'),
 };
+const officialLogo = require('../../packages/assets/brand/logo.png');
+const officialPoster = require('../../packages/assets/brand/november-2026.webp');
 /* eslint-enable @typescript-eslint/no-require-imports */
 function eventImage(e: any) {
   return (
@@ -83,7 +87,12 @@ const tabNames = ['Home', 'Order', 'What’s On', 'Rewards', 'My René'];
 const tabIcons = ['⌂', '♧', '♫', '✦', '○'];
 const clean = (s: string) => s.replaceAll('_', ' ');
 export default function App() {
-  const [loaded, error] = useFonts({ Manrope_400Regular, Manrope_600SemiBold, Manrope_700Bold });
+  const [loaded, error] = useFonts({
+    Roboto_400Regular,
+    RobotoSlab_700Bold,
+    Roboto_700Bold,
+    BreeSerif_400Regular,
+  });
   if (!loaded && !error)
     return (
       <SafeAreaProvider>
@@ -100,12 +109,12 @@ export default function App() {
 }
 function AppContent() {
   const [boot, setBoot] = useState<any>(null),
-    [user, setUser] = useState<any>(null),
+    [user, updateUser] = useState<any>(null),
     [tab, setTab] = useState('Home'),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [login, setLogin] = useState(false),
-    [email, setEmail] = useState('customer@demo.rene'),
+    [email, setEmail] = useState('daniel@demo.rene'),
     [password, setPassword] = useState('ReneDemo2026!'),
     [register, setRegister] = useState(false),
     [name, setName] = useState(''),
@@ -130,12 +139,25 @@ function AppContent() {
     [bookingDate, setBookingDate] = useState(''),
     [party, setParty] = useState('2'),
     [myOrders, setMyOrders] = useState<any[]>([]),
+    [myHistory, setMyHistory] = useState<any>(null),
     [myBookings, setMyBookings] = useState<any>(null),
     [locationStatus, setLocationStatus] = useState(
       'Location is off. Use the rotating venue QR or ask staff.',
     ),
     [reduced, setReduced] = useState(false),
     [deleteConfirm, setDeleteConfirm] = useState('');
+  const identity = useRef<string | null>(null);
+  const setUser = (next: any) => {
+    identity.current = next?.id || null;
+    if (next?.id !== user?.id) {
+      setRewards(null);
+      setMyOrders([]);
+      setMyHistory(null);
+      setMyBookings(null);
+      if (order?.user_id && order.user_id !== next?.id) setOrder(null);
+    }
+    updateUser(next);
+  };
   const scanLock = useRef(false),
     watch = useRef<Location.LocationSubscription | null>(null),
     dwell = useRef<number | null>(null),
@@ -152,6 +174,15 @@ function AppContent() {
       setBusy(false);
     }
   };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (AppState.currentState === 'active')
+        api('/bootstrap')
+          .then(setBoot)
+          .catch(() => {});
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
   const notify = (message: string) => Alert.alert('Café René', message);
   const stopLocation = () => {
     watch.current?.remove();
@@ -208,11 +239,20 @@ function AppContent() {
         .then(setRewards)
         .catch(() => {});
     if (user && tab === 'My René') {
+      api('/history')
+        .then((value) => {
+          if (identity.current === user.id) setMyHistory(value);
+        })
+        .catch(() => {});
       api('/orders')
-        .then(setMyOrders)
+        .then((value) => {
+          if (identity.current === user.id) setMyOrders(value);
+        })
         .catch(() => {});
       api('/bookings')
-        .then(setMyBookings)
+        .then((value) => {
+          if (identity.current === user.id) setMyBookings(value);
+        })
         .catch(() => {});
     }
   }, [tab, user]);
@@ -406,7 +446,12 @@ function AppContent() {
   if (!boot)
     return (
       <SafeAreaView style={[s.safe, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={s.wordmark}>Café René</Text>
+        <Image
+          source={officialLogo}
+          style={{ width: 165, height: 65, backgroundColor: '#faf7ed', borderRadius: 5 }}
+          contentFit="contain"
+          accessibilityLabel="Café René Gloucester"
+        />
         <ActivityIndicator color={C.gold} />
         <Text style={s.body}>{error || 'Getting ready for a good night…'}</Text>
         {error && button('Try again', () => void run(refresh))}
@@ -420,7 +465,12 @@ function AppContent() {
       </View>
       <View style={s.header}>
         <Pressable onPress={() => setTab('Home')} accessibilityRole="button">
-          <Text style={s.wordmark}>Café René</Text>
+          <Image
+            source={boot.content?.logo?.id ? { uri: apiUrl + boot.content.logo.url } : officialLogo}
+            style={{ width: 165, height: 56 }}
+            contentFit="contain"
+            accessibilityLabel="Café René Gloucester"
+          />
           <Text style={s.wordmarkSub}>GLOUCESTER · EST. 2003</Text>
         </Pressable>
         <Pressable
@@ -429,7 +479,7 @@ function AppContent() {
           onPress={() => setCheckout(true)}
           style={s.basketIcon}
         >
-          <Text style={{ color: C.gold, fontSize: 17 }}>
+          <Text style={{ color: '#15388e', fontSize: 17 }}>
             ♧ {basket.reduce((n, l) => n + l.quantity, 0)}
           </Text>
         </Pressable>
@@ -492,7 +542,7 @@ function AppContent() {
                       <Image
                         source={eventImage(e)}
                         style={s.eventPhoto}
-                        accessibilityLabel={e.title + ' original event artwork'}
+                        accessibilityLabel={e.title + ' official venue graphic'}
                       />
                     )}
                     <Text style={[s.poster, { fontSize: 35 }]}>{e.title}</Text>
@@ -507,6 +557,7 @@ function AppContent() {
                   </Pressable>
                 ))}
               </ScrollView>
+              <NativeVenueBoard content={boot.content} />
               {panel(
                 <>
                   <Text style={s.eyebrow}>PULL UP A CHAIR</Text>
@@ -740,8 +791,9 @@ function AppContent() {
             {heading(
               'LIVE & IN GOOD COMPANY',
               'What’s on.',
-              'From René’s official November calendar. Check with the venue for late changes.',
+              'Official artwork and fresh posts from René. Check the source for late changes.',
             )}
+            <NativeVenueBoard content={boot.content} />
             <ScrollView horizontal style={{ marginBottom: 20 }}>
               {['All', ...new Set<string>(boot.events.map((e: any) => e.genre))].map((g) => (
                 <Pressable
@@ -771,7 +823,7 @@ function AppContent() {
                     <Image
                       source={eventImage(e)}
                       style={s.eventPhoto}
-                      accessibilityLabel={e.title + ' original event artwork'}
+                      accessibilityLabel={e.title + ' official venue graphic'}
                     />
                   )}
                   <Text style={s.poster}>{e.title}</Text>
@@ -796,6 +848,7 @@ function AppContent() {
         )}
         {tab === 'Rewards' && (
           <View style={s.content}>
+            {user && <NativeSnapshot rewards={rewards} />}
             {heading(
               'MORE THAN A NIGHT OUT',
               'Your René story.',
@@ -813,10 +866,20 @@ function AppContent() {
                     {panel(
                       <>
                         <Text style={s.eyebrow}>THE RENÉ CIRCLE · DEMO</Text>
-                        <Text style={s.wordmark}>Café René</Text>
+                        <Image
+                          source={officialLogo}
+                          style={{
+                            width: 165,
+                            height: 65,
+                            backgroundColor: '#faf7ed',
+                            borderRadius: 5,
+                          }}
+                          contentFit="contain"
+                          accessibilityLabel="Café René Gloucester"
+                        />
                         <Text style={s.body}>{user.name}</Text>
                         <Text style={[s.heading, { color: C.gold }]}>
-                          {rewards.points} <Text style={s.small}>demo points</Text>
+                          {rewards.points} <Text style={s.small}>René Points · demo balance</Text>
                         </Text>
                         <View
                           style={{
@@ -913,6 +976,21 @@ function AppContent() {
         {tab === 'My René' && (
           <View style={s.content}>
             {heading('YOUR LITTLE CORNER', 'My René.')}
+            {user?.id !== 'daniel' &&
+              button(
+                'Explore Daniel Woolf’s demo',
+                () =>
+                  void run(async () => {
+                    const d = await api('/auth/login', 'POST', {
+                      email: 'daniel@demo.rene',
+                      password: 'ReneDemo2026!',
+                    });
+                    sessionToken = d.token;
+                    await SecureStore.setItemAsync('rene-session', d.token);
+                    setUser(d.user);
+                    setRewards(await api('/rewards'));
+                  }),
+              )}
             {!user ? (
               <>
                 {button('Sign in / create account', () => setLogin(true))}
@@ -992,9 +1070,28 @@ function AppContent() {
                     </View>
                   </>,
                 )}
+                <NativeSnapshot rewards={rewards} />
+                <CircleNative key={user.id} user={user} api={api} run={run} />
                 {panel(
                   <>
-                    <Text style={s.title}>Orders & receipts</Text>
+                    <Text style={s.title}>What you ate & drank</Text>
+                    <Text style={s.small}>Demo history only — these are not actual purchases.</Text>
+                    {myHistory?.orders.map((o: any) => (
+                      <View key={o.id} style={s.listRow}>
+                        <Text style={s.price}>
+                          {new Date(o.created_at).toLocaleDateString('en-GB', {
+                            timeZone: 'Europe/London',
+                          })}{' '}
+                          · {money(o.total)}
+                        </Text>
+                        {o.items.map((i: any) => (
+                          <Text key={i.id} style={s.body}>
+                            {i.quantity} × {i.name}
+                          </Text>
+                        ))}
+                      </View>
+                    ))}
+                    <Text style={[s.title, { marginTop: 25 }]}>Orders & receipts</Text>
                     {myOrders.map((o) => (
                       <Pressable
                         key={o.id}
@@ -1149,7 +1246,7 @@ function AppContent() {
         title={register ? 'Your René starts here.' : 'Welcome to René.'}
         close={() => setLogin(false)}
       >
-        <Text style={s.body}>Seeded account: customer@demo.rene{`\n`}Password: ReneDemo2026!</Text>
+        <Text style={s.body}>Seeded account: daniel@demo.rene{`\n`}Password: ReneDemo2026!</Text>
         {register && (
           <TextInput
             style={s.input}
@@ -1353,7 +1450,7 @@ function AppContent() {
               <Image
                 source={eventImage(event)}
                 style={s.eventDetailPhoto}
-                accessibilityLabel={event.title + ' original event artwork'}
+                accessibilityLabel={event.title + ' official venue graphic'}
               />
             )}
             <Text style={s.body}>
@@ -1460,6 +1557,140 @@ function AppContent() {
     </SafeAreaView>
   );
 }
+function NativeSnapshot({ rewards }: { rewards: any }) {
+  if (!rewards) return null;
+  return (
+    <View style={{ marginBottom: 24 }}>
+      <View style={[s.panel, { backgroundColor: '#28325a' }]}>
+        <Text style={s.eyebrow}>YOUR RENÉ POINTS · DEMO</Text>
+        <Text style={[s.heading, { fontSize: 54, color: '#f0ed80' }]}>{rewards.points}</Text>
+        <Text style={s.title}>René Points</Text>
+        <Text style={s.small}>
+          Food purchases and sample welcome rewards. No points for alcohol spending.
+        </Text>
+      </View>
+      <View style={[s.panel, { backgroundColor: '#e9ed7c' }]}>
+        <Text style={[s.title, { color: '#17485b' }]}>The Kitchen Club</Text>
+        <View style={{ flexDirection: 'row', gap: 8, marginBottom: 18 }}>
+          {Array.from({ length: 6 }, (_, i) => (
+            <View
+              key={i}
+              style={{
+                flex: 1,
+                aspectRatio: 1,
+                maxWidth: 38,
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: '#166555',
+                backgroundColor: i < (rewards.stampCard?.stamps || 0) ? '#167a68' : 'transparent',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: i < (rewards.stampCard?.stamps || 0) ? '#f6f5ba' : '#3d6d72',
+                }}
+              >
+                {i < (rewards.stampCard?.stamps || 0) ? '✦' : i + 1}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <Text style={[s.body, { color: '#184e5b' }]}>
+          {rewards.stampCard?.stamps || 0} / 6 separate food-visit days. Collect all six for £5 off
+          eligible food.
+        </Text>
+        <Text style={[s.small, { color: '#3c6971' }]}>
+          Sample promotion. Drinks don’t earn food stamps. Eligibility is checked at checkout.
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function NativeVenueBoard({ content }: { content: any }) {
+  const posters = content?.programmes || [
+    { id: 'fallback-nov26', url: '/programme/november-2026.webp' },
+  ];
+  return (
+    <View style={{ marginBottom: 30 }}>
+      <Text style={s.eyebrow}>THE RENÉ NOTICEBOARD</Text>
+      <Text style={s.title}>Fresh off the wall.</Text>
+      {posters.map((p: any) => (
+        <Pressable
+          key={p.id}
+          onPress={() => void Linking.openURL(apiUrl + p.url)}
+          style={{
+            marginBottom: 20,
+            borderWidth: 3,
+            borderColor: '#03c6a6',
+            borderRadius: 6,
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            source={p.id === 'fallback-nov26' ? officialPoster : { uri: apiUrl + p.url }}
+            style={{ width: '100%', aspectRatio: 1200 / 1689 }}
+            contentFit="contain"
+            accessibilityLabel="Café René official What’s On artwork"
+          />
+          <Text style={[s.small, { paddingHorizontal: 15, color: '#c8fff0' }]}>
+            Tap to open the full programme ↗
+          </Text>
+        </Pressable>
+      ))}
+      {content?.posts?.map((p: any) => (
+        <View
+          key={p.id}
+          style={[s.panel, { borderColor: p.platform === 'instagram' ? '#e74f9a' : '#05c5ec' }]}
+        >
+          <Text style={s.eyebrow}>
+            {p.platform === 'instagram' ? '◎ INSTAGRAM' : 'f FACEBOOK'} · CAFÉ RENÉ
+          </Text>
+          {p.imageUrl && (
+            <Image
+              source={{ uri: apiUrl + p.imageUrl }}
+              style={s.featuredFood}
+              contentFit="cover"
+            />
+          )}
+          <Text style={s.body}>{p.text}</Text>
+          <Pressable onPress={() => void Linking.openURL(p.url)}>
+            <Text style={{ color: '#eff181', fontSize: 12 }}>View original post ↗</Text>
+          </Pressable>
+        </View>
+      ))}
+      {!content?.posts?.length && (
+        <View style={[s.panel, { backgroundColor: '#652768' }]}>
+          <Text style={s.title}>Don’t miss a beat.</Text>
+          <Text style={s.body}>Follow the nights, the music and what’s happening at René.</Text>
+          <Pressable
+            style={s.button}
+            onPress={() => void Linking.openURL('https://www.instagram.com/cafereneglos/')}
+          >
+            <Text style={s.buttonText}>◎ Follow @cafereneglos ↗</Text>
+          </Pressable>
+          <Pressable
+            style={[s.button, { backgroundColor: '#194fba' }]}
+            onPress={() => void Linking.openURL('https://www.facebook.com/thecaferene')}
+          >
+            <Text style={s.buttonText}>f Café René on Facebook ↗</Text>
+          </Pressable>
+        </View>
+      )}
+      <Text style={s.small}>
+        {content?.checkedAt
+          ? 'Website checked ' +
+            new Date(content.checkedAt).toLocaleString('en-GB', { timeZone: 'Europe/London' })
+          : 'Official venue programme'}{' '}
+        · Updates while the server is awake.
+      </Text>
+    </View>
+  );
+}
+
 function Sheet({
   visible,
   title,
@@ -1496,18 +1727,18 @@ function Sheet({
   );
 }
 const C = {
-  bg: '#141714',
-  panel: '#20261f',
+  bg: '#0d1728',
+  panel: '#162b40',
   cream: '#f1eadd',
   muted: '#acae9b',
-  gold: '#d9b875',
-  red: '#a73d4d',
+  gold: '#e9ed76',
+  red: '#e83476',
   line: '#45483a',
 };
 const s = StyleSheet.create({
   menuPhoto: { width: 95, height: 150, borderRadius: 8 },
   photoLabel: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     fontSize: 5,
     color: '#d9bb83',
     marginTop: 7,
@@ -1520,8 +1751,9 @@ const s = StyleSheet.create({
 
   safe: { flex: 1, backgroundColor: C.bg },
   demo: { backgroundColor: '#30251f', padding: 7, alignItems: 'center' },
-  demoText: { fontFamily: 'Manrope_400Regular', fontSize: 8, color: C.gold, letterSpacing: 1 },
+  demoText: { fontFamily: 'Roboto_400Regular', fontSize: 8, color: C.gold, letterSpacing: 1 },
   header: {
+    backgroundColor: '#faf7ed',
     paddingHorizontal: 24,
     paddingVertical: 18,
     flexDirection: 'row',
@@ -1537,9 +1769,10 @@ const s = StyleSheet.create({
     color: C.cream,
   },
   wordmarkSub: {
-    fontFamily: 'Manrope_400Regular',
+    color: '#14358d',
+    fontFamily: 'Roboto_400Regular',
     fontSize: 6,
-    color: C.gold,
+
     letterSpacing: 2.5,
     marginTop: 3,
   },
@@ -1548,7 +1781,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 26,
     paddingTop: 45,
     paddingBottom: 28,
-    backgroundColor: '#222c1e',
+    backgroundColor: '#0d3b4a',
     overflow: 'hidden',
   },
   heroLines: {
@@ -1563,14 +1796,14 @@ const s = StyleSheet.create({
     transform: [{ rotate: '-20deg' }],
   },
   heroTitle: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'RobotoSlab_700Bold',
     fontSize: 46,
     lineHeight: 56,
     color: C.cream,
     letterSpacing: -2,
   },
   eyebrow: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     fontSize: 8,
     letterSpacing: 1.7,
     color: C.gold,
@@ -1578,7 +1811,7 @@ const s = StyleSheet.create({
     marginBottom: 15,
   },
   heading: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'RobotoSlab_700Bold',
     fontSize: 36,
     lineHeight: 46,
     color: C.cream,
@@ -1586,21 +1819,21 @@ const s = StyleSheet.create({
     letterSpacing: -0.7,
   },
   title: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'RobotoSlab_700Bold',
     fontSize: 27,
     lineHeight: 34,
     color: C.cream,
     marginBottom: 14,
   },
   body: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     fontSize: 12,
     lineHeight: 20,
     color: '#bfc1ae',
     marginBottom: 12,
   },
   small: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     fontSize: 9,
     lineHeight: 16,
     color: C.muted,
@@ -1618,7 +1851,7 @@ const s = StyleSheet.create({
   },
   secondary: { backgroundColor: '#ffffff04', borderWidth: 1, borderColor: '#cab47d44' },
   buttonText: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'Roboto_700Bold',
     color: C.cream,
     fontSize: 12,
     fontWeight: '600',
@@ -1641,7 +1874,7 @@ const s = StyleSheet.create({
     justifyContent: 'space-between',
   },
   poster: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'RobotoSlab_700Bold',
     fontSize: 36,
     color: '#e9dfb8',
     lineHeight: 45,
@@ -1650,10 +1883,10 @@ const s = StyleSheet.create({
   tabs: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 10, paddingBottom: 10 },
   tabSafe: { backgroundColor: '#20221b', borderTopWidth: 1, borderTopColor: '#d2b77444' },
   tab: { alignItems: 'center', gap: 4, minWidth: 58, minHeight: 43 },
-  tabIcon: { fontFamily: 'Manrope_400Regular', fontSize: 24, color: '#8f9981' },
-  tabText: { fontFamily: 'Manrope_400Regular', fontSize: 8, color: '#9da58f' },
+  tabIcon: { fontFamily: 'Roboto_400Regular', fontSize: 24, color: '#8f9981' },
+  tabText: { fontFamily: 'Roboto_400Regular', fontSize: 8, color: '#9da58f' },
   input: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     backgroundColor: '#1a1d16',
     borderColor: '#cabb8c44',
     borderWidth: 1,
@@ -1676,9 +1909,9 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   selected: { backgroundColor: '#d6b27620', borderColor: '#d6b27688' },
-  chipText: { fontFamily: 'Manrope_400Regular', fontSize: 10, color: C.gold },
+  chipText: { fontFamily: 'Roboto_400Regular', fontSize: 10, color: C.gold },
   warning: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     color: '#d4ba8e',
     fontSize: 10,
     lineHeight: 18,
@@ -1687,7 +1920,7 @@ const s = StyleSheet.create({
     marginVertical: 10,
   },
   menuCard: {
-    backgroundColor: '#24271d',
+    backgroundColor: '#153448',
     padding: 20,
     borderWidth: 1,
     borderColor: '#cabb8c20',
@@ -1698,15 +1931,15 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   menuTitle: {
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'RobotoSlab_700Bold',
     fontSize: 21,
     lineHeight: 26,
     color: C.cream,
     marginBottom: 9,
   },
-  price: { fontFamily: 'Manrope_600SemiBold', fontSize: 14, color: C.gold, marginTop: 8 },
+  price: { fontFamily: 'RobotoSlab_700Bold', fontSize: 14, color: C.gold, marginTop: 8 },
   add: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     color: C.gold,
     fontSize: 26,
     borderWidth: 1,
@@ -1724,7 +1957,7 @@ const s = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
   },
-  errorText: { fontFamily: 'Manrope_400Regular', color: '#ffe0da', fontSize: 11, flexShrink: 1 },
+  errorText: { fontFamily: 'Roboto_400Regular', color: '#ffe0da', fontSize: 11, flexShrink: 1 },
   challenge: {
     padding: 20,
     borderWidth: 1,
@@ -1737,7 +1970,7 @@ const s = StyleSheet.create({
     backgroundColor: C.panel,
   },
   badge: {
-    fontFamily: 'Manrope_400Regular',
+    fontFamily: 'Roboto_400Regular',
     fontSize: 33,
     color: C.gold,
     width: 45,

@@ -6,7 +6,7 @@ Run in the managed Linux workspace using Node 24.22.1 / npm 11.9.0.
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `npm run typecheck`                             | Passed API/shared/browser and native TypeScript checks                                                  |
 | `npm run lint`                                  | Passed ESLint with no reported errors                                                                   |
-| `npm test`                                      | 16 tests passed, 0 failed                                                                               |
+| `npm test`                                      | 20 tests passed, 0 failed                                                                               |
 | `npm run build`                                 | Vite production build passed                                                                            |
 | `expo install --check`                          | Dependencies up to date for Expo SDK 54                                                                 |
 | `expo export --platform ios --platform android` | Both Metro/Hermes bundles exported, 925/924 modules on the initial full export                          |
@@ -50,3 +50,11 @@ The PostgreSQL adapter now encodes JSON-array parameters explicitly, covering ch
 Modern Manrope fonts are self-hosted on web and bundled on native. Food photography is locally optimised WebP with credits and illustrative labels. Source-backed November programme entries replace sample listings; original event artwork avoids redistributing unlicensed performer images. New tests cover dated-event filtering and credential-safe, idempotent social import into review. Meta calls are mocked; no real account is connected. TouchOffice/Eposbuddy is recorded as the supplier integration plan, not claimed as a live till connection.
 
 Native image rendering now uses Expo Image for cross-platform WebP support. Final exports include three locally bundled Manrope weights and eleven local images (five food photographs and six original event artworks). Real device and interactive browser checks remain unavailable; successful exports verify bundling, not installation or signing.
+
+## Official branding, automatic refresh and Daniel/circles update
+
+The official logo/programme and website Roboto/Roboto Slab/Bree Serif fonts now replace substitute branding at the user’s request. The website parser was checked against the actual public HTML and its noscript image fallbacks. New tests exercise bounded image discovery, persistent asset bytes, shared refresh leases, last-good recovery, automatic social-post edits/rejection, and the branded cold-start loading state. Private-circle tests cover invitation acceptance, non-member/staff denial, duplicate-message prevention, RSVP permissions, sample points/stamps and deletion without reseeding deleted Daniel data. Memory-test databases now explicitly ignore any configured external DATABASE_URL.
+
+The preview EAS profile points at the actual hosted demo URL. Native exports include four official-site font-family weights and locally bundled official logo/programme fallbacks. No EAS signing, actual iPhone installation or live Meta connection has been performed. Interactive browser screenshots remain unavailable in this environment; server/asset HTTP and React cold-start rendering are checked separately.
+
+A live read of the official public website succeeded using the managed environment’s inherited network proxy: the current programme and logo were decoded and cached into an isolated PostgreSQL-compatible test database with no source errors. No real Neon, EPOS or Meta credentials were used for that check.

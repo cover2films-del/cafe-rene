@@ -1,3 +1,4 @@
+import { seedDaniel } from './demo-daniel.ts';
 import { officialProgramme } from '../../../packages/shared/src/content.ts';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -188,6 +189,10 @@ async function seedDefaults(db: DB) {
   ]);
   for (const event of officialProgramme)
     await db.query('INSERT INTO events VALUES($1,$2) ON CONFLICT DO NOTHING', [event.id, event]);
+  await db.query(
+    "UPDATE events SET data=jsonb_set(data,'{imageKind}',to_jsonb('venue-programme'::text)) WHERE data->>'imageKind'='original-artwork' AND data->>'sourceUrl'=$1",
+    ['https://www.caferene.co.uk/events32897205y0w609734'],
+  );
   await db.query('INSERT INTO settings VALUES($1,$2) ON CONFLICT DO NOTHING', [
     'challenges',
     challenges,
@@ -204,4 +209,5 @@ async function seedDefaults(db: DB) {
       { title: source.url, url: source.url, text: source.issues.join('\n'), ...source },
       'needs_review',
     ]);
+  await seedDaniel(db);
 }

@@ -80,7 +80,7 @@ export const officialProgramme = programme.map(([slug, title, genre, date, descr
   verifiedAt: programmeChecked,
   approvedReview: true,
   imageUrl: '/images/events/nov26-' + slug + '.webp',
-  imageKind: 'original-artwork',
+  imageKind: 'venue-programme',
 }));
 export function visibleEvents(events: any[], now = Date.now()) {
   const published = events.some((e) => e.sample === false)

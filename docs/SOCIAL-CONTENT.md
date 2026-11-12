@@ -1,36 +1,34 @@
-# Current events and ongoing social imports
+# Official branding, artwork and ongoing refresh
 
-The app now includes factual event names, dates/times, free-entry information and concise original descriptions transcribed from the **official Café René November 2026 programme**, linked from https://www.caferene.co.uk/events32897205y0w609734. Dates are Europe/London (November = GMT). The source poster explicitly prints @cafereneglos, verifying that handle through a venue-owned source.
+The venue user explicitly requested the official Café René logo, website What’s On graphics and site fonts on 11 November 2026. The app now uses those assets and an attributed original programme, not substitute artist artwork. The website’s inline CSS specifies Roboto body text, Roboto Slab headlines and Bree Serif navigation. Open-licensed font copies are bundled locally with their licence files. Food photos remain clearly labelled illustrative stock.
 
-Programme checked 11 November 2026: Alex Comaish (11 Nov, 20:00), Baron Crâne (13 Nov, 21:00), St. Fian (18 Nov, 20:00), Kayco’ (20 Nov, 21:00), Luke Austin (25 Nov, 20:00), Kingsley & The Allies (27 Nov, 21:00). Past/start-time-passed events are removed automatically. Real programme listings take precedence over sample cards. No mock admission/ticket purchase is offered for a real event; its button opens the official programme.
+The source is https://www.caferene.co.uk/events32897205y0w609734. The official November poster also confirms @cafereneglos. Factual dates/descriptions are transcribed; past/start-time-passed structured events are excluded. Whole calendar graphics can contain earlier dates as part of their original monthly layout, so the artwork board is distinguished from the upcoming-event list.
 
-Actual poster/artist images are not redistributed without reuse permission. The event-card artwork is new typography/geometry, not an artist photograph. Food photographs are licensed illustrative stock, with sources in image-credits.json and explicit labels in both apps. They do not represent actual venue dishes and imply no ingredients or allergens.
+## Automatic public website refresh
 
-## Authorised Meta connection
+The API starts a refresh shortly after startup and checks whether another is due every minute. Default refresh interval: 15 minutes, configurable with CONTENT_REFRESH_MINUTES (5–60). A PostgreSQL lease prevents concurrent refreshes. Only public HTTPS images under www.caferene.co.uk/uploads are fetched; redirects, external hosts, oversized files and unsupported images are rejected. The parser handles the website’s public noscript image fallback without running website scripts or bypassing access restrictions.
 
-Public Facebook requests redirected to login/block pages; Instagram requests were throttled. No bypass, private profile scraping, comments, customer identities or fake posts are used.
+Images are decoded, resized, stripped of metadata and re-encoded as WebP. Logo and programme bytes live in PostgreSQL's venue_assets table, so they survive Render Free filesystem resets. Responses use ETags and content-hash URLs. A failed source request keeps the last successful board. The bundled official November artwork and logo provide a first-load fallback. Filenames with an identified month are hidden from the public board after that month; unknown-date artwork is shown as source artwork, not invented structured event dates.
 
-A manager can now use **Content review → Pull latest posts** after a permitted Meta app/account connection has been provisioned. Configure these server-only environment variables in Render:
+Web/native clients refresh public content every minute while visible/active. **Render Free can sleep**: scheduled refreshes do not run while the host sleeps. Opening the app wakes it; this is not an always-on background service. No fake uptime pings were added.
 
-- META_GRAPH_VERSION: the supported version of your approved Meta app, such as vXX.0 replaced with the actual version. No outdated/guessed version is hard-coded.
-- META_PAGE_ID and META_PAGE_ACCESS_TOKEN: the venue's Facebook Page ID and a token authorised for reading that Page's posts.
-- META_INSTAGRAM_ACCOUNT_ID and META_INSTAGRAM_ACCESS_TOKEN: the venue's linked professional Instagram account and the token authorised through **Instagram API with Facebook Login**. This adapter uses graph.facebook.com; Instagram Login tokens for graph.instagram.com require a different adapter.
+New graphics generate a manager review record for adding precise structured dates. Graphics can refresh automatically because the user requested trusted venue artwork, but the software does not guess new performance dates from a poster. Staff can force a website/connected-social refresh from Content review.
 
-Required permissions, app review and account roles depend on your Meta app configuration. Use Meta's current official documentation:
+## Facebook and Instagram
 
-- https://developers.facebook.com/docs/pages-api/posts/
-- https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/
+Public Facebook requests require login/block handling; Instagram has throttled unauthenticated requests. No access restriction is bypassed. To enable ongoing social pulls, configure server-only credentials in Render:
 
-Never put these tokens in EXPO_PUBLIC settings or paste them into chat. Tokens travel in Authorization headers and are never returned to clients, stored in provenance or placed in URL query strings.
+- META_GRAPH_VERSION: actual supported version of your approved Meta app.
+- META_PAGE_ID and META_PAGE_ACCESS_TOKEN: the authorised venue Facebook Page.
+- META_INSTAGRAM_ACCOUNT_ID and META_INSTAGRAM_ACCESS_TOKEN: the linked professional Instagram account using Instagram API **with Facebook Login** (graph.facebook.com).
+- SOCIAL_AUTO_PUBLISH=true: automatically show venue-owned posts from those authorised accounts, as requested. Set false to retain a review-only workflow.
 
-Refresh reads up to 20 recent posts per configured channel. It is manually triggered, not a scheduled scraper. It stores text, permalink, publication timestamp and an image source reference in the content-review queue with stable IDs; repeated imports do not duplicate records. Image references are not automatically downloaded, embedded or published. Provider errors return a status-only summary, not sensitive response bodies.
+Tokens remain server-side in Authorization headers; they are never in mobile bundles, URLs, provenance or client responses. Only Page posts/professional-account media are requested, not comments, messages, personal profiles or reviews. Current account tokens and provider permission/app-review requirements must be supplied through secret settings. Official references: https://developers.facebook.com/docs/pages-api/posts/ and https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/ (documentation requests were rate-limited during this session).
 
-## Review and publication
+Scheduled refresh reads up to 20 recent posts per channel with stable IDs, updates edited automatic posts and respects manager rejection. A small bounded batch of permitted Meta CDN images is cached as WebP in PostgreSQL; no fragile hotlink or heavy social embed is rendered. Expired/unavailable images leave the original text and permalink available. Public social-image delivery requires an approved post still linked to that asset.
 
-On an imported social record, choose **Review this post and publish an event**. Confirm the actual event date/time (post time is not event time), concise description, genre and explicit free-entry statement. Confirm source review before publication. The backend rejects a non-sample event without a source URL and approval flag.
+The public feed shows post text, publication date, original permalink and cached image. **A post timestamp is never treated as the event date.** Adding a structured event remains a manager action. With no authorised account connected, customers see links to the genuine Facebook/Instagram accounts, not fabricated posts. No real Meta credentials are configured here; provider responses were mocked in tests.
 
-For imagery, upload an authorised image using the existing manager uploader. It is re-encoded to private WebP and starts in review. Once both reuse permission and review are approved, the content entry exposes `/api/media/ID`, which can be entered as the event image URL. Public delivery checks those approvals on every request; revoking approval removes public access. A URL alone does not establish reuse rights.
+## User uploads
 
-Render Free has ephemeral filesystem storage. Bundled food/event artwork survives deployments through GitHub; manager uploads need a persistent object-store adapter before reliable long-term use. This limitation is unchanged.
-
-No real Meta account is connected in this workspace, so provider calls have only been tested with mocked responses. Existing public programme data is current as of the checked date, not a promise of automatic future social updates.
+The manager uploader still saves private optimised WebP files locally. Those separate manual uploads need persistent object storage for reliable Render Free retention; automatic website/social assets now use database storage. To publish a manually uploaded event image, both permission and review must be approved. Revoking approval stops public delivery on subsequent requests. User uploads and automatically refreshed official venue assets are separate storage paths.

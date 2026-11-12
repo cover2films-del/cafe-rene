@@ -70,3 +70,63 @@ test('authorised social refresh imports once into review, never fetches images o
     await db.close();
   }
 });
+
+test('scheduled authorised social posts publish without inventing event dates and respect rejection', async () => {
+  const keys = [
+    'META_GRAPH_VERSION',
+    'META_PAGE_ID',
+    'META_PAGE_ACCESS_TOKEN',
+    'META_INSTAGRAM_ACCOUNT_ID',
+    'META_INSTAGRAM_ACCESS_TOKEN',
+  ];
+  const before = Object.fromEntries(keys.map((k) => [k, process.env[k]]));
+  const db = await openDB('memory://');
+  try {
+    for (const k of keys) delete process.env[k];
+    process.env.META_GRAPH_VERSION = 'v99.0';
+    process.env.META_PAGE_ID = '123';
+    process.env.META_PAGE_ACCESS_TOKEN = 'test-only';
+    let text = 'Demo venue post for the automatic feed';
+    const provider = (async () =>
+      new Response(
+        JSON.stringify({
+          data: [
+            {
+              id: '123_789',
+              message: text,
+              created_time: '2026-11-11T12:00:00Z',
+              permalink_url: 'https://www.facebook.com/thecaferene/posts/123_789',
+            },
+          ],
+        }),
+        { status: 200 },
+      )) as typeof fetch;
+    await refreshSocial(db, 'scheduled-content', provider, { autoPublish: true });
+    let row = (await db.query("SELECT * FROM content WHERE id='social-facebook-123_789'")).rows[0];
+    assert.equal(row.status, 'approved');
+    assert.equal(row.data.autoPublished, true);
+    assert.equal((await db.query('SELECT * FROM events')).rows.length, 0);
+    assert.equal(
+      (await refreshSocial(db, 'scheduled-content', provider, { autoPublish: true })).imported,
+      0,
+    );
+    text = 'Edited demo venue post';
+    await refreshSocial(db, 'scheduled-content', provider, { autoPublish: true });
+    row = (await db.query("SELECT * FROM content WHERE id='social-facebook-123_789'")).rows[0];
+    assert.equal(row.data.text, text);
+    await db.query("UPDATE content SET status='rejected' WHERE id='social-facebook-123_789'");
+    text = 'Another edit';
+    await refreshSocial(db, 'scheduled-content', provider, { autoPublish: true });
+    assert.equal(
+      (await db.query("SELECT status FROM content WHERE id='social-facebook-123_789'")).rows[0]
+        .status,
+      'rejected',
+    );
+  } finally {
+    for (const k of keys) {
+      if (before[k] === undefined) delete process.env[k];
+      else process.env[k] = before[k];
+    }
+    await db.close();
+  }
+});

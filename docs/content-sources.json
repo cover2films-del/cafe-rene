@@ -269,9 +269,9 @@
     },
     {
       "path": "packages/assets/events/*.webp",
-      "origin": "Original typography/geometry compositions created for the six programme listings; no artist likenesses/photos copied.",
-      "permission": "project-created artwork",
-      "reviewStatus": "original illustrative event artwork"
+      "origin": "Cropped attributed portions of the official venue programme, replacing the earlier original substitute artwork",
+      "permission": "User requested use of official website programme graphics on2026-11-11",
+      "reviewStatus": "official_venue_artwork_in_use"
     }
   ],
   "releaseGates": [
@@ -281,5 +281,33 @@
     "Verify Instagram account ownership",
     "Import approved current events",
     "Review privacy notice and data retention"
-  ]
+  ],
+  "brandUpdate": {
+    "date": "2026-11-11",
+    "authorisation": "User explicitly requested the official site logo, programme graphics, site fonts and automatic refresh.",
+    "logoSource": "https://www.caferene.co.uk/uploads/C11Ei9jf/768x0_320x0/cafe-rene-logo.png",
+    "programmeSource": "https://www.caferene.co.uk/uploads/zXu9ZoDp/768x0_1200x0/LiveMusic26-11-Nov__msi___png.webp",
+    "localAssets": [
+      "apps/web/public/brand/logo.png",
+      "apps/web/public/programme/november-2026.webp",
+      "apps/web/public/images/events/*.webp",
+      "packages/assets/brand/",
+      "packages/assets/events/"
+    ],
+    "fontEvidence": {
+      "body": "Roboto",
+      "headlines": "Roboto Slab",
+      "navigation": "Bree Serif",
+      "source": "Official site inline CSS retrieved 2026-11-11"
+    },
+    "refresh": "Server-only bounded website reads every15minutes while host awake; database-cached assets. Meta accounts still require authorised tokens."
+  },
+  "demoData": {
+    "user": "Daniel Woolf",
+    "source": "User requested sample account data,2026-11-11",
+    "email": "daniel@demo.rene",
+    "reviewStatus": "explicitly_labelled_demo_not_actual_purchase_history",
+    "friends": ["Demo Alex", "Demo Sam"],
+    "privacy": "No real external messages, bookings or payment activity generated."
+  }
 }
