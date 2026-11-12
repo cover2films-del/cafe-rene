@@ -1,3 +1,4 @@
+import { enqueuePush } from './push.ts';
 import { load } from 'cheerio';
 import sharp from 'sharp';
 import { createHash } from 'node:crypto';
@@ -25,7 +26,7 @@ export async function boundedResponse(response: Response, maxBytes: number) {
   return Buffer.concat(chunks);
 }
 export function discoverVenueImages(html: string) {
-  const $ = load(html,{scriptingEnabled:false}),
+  const $ = load(html, { scriptingEnabled: false }),
     images: { url: string; logo: boolean; period: string | null }[] = [];
   $('img').each((_i, node) => {
     const el = $(node);
@@ -145,11 +146,18 @@ export async function refreshWebsite(db: DB, request: typeof fetch = fetch) {
     }
   }
   if (!programmes.length) throw Error('Programme graphics unavailable');
+  let menus = previous?.menus || [];
+  try {
+    menus = await (await import('./menu-links.ts')).discoverMenuLinks(request);
+  } catch {
+    errors.push('Menu links refresh unavailable; keeping previous links.');
+  }
   const checkedAt = new Date().toISOString();
   const data = {
     checkedAt,
     lastSuccessAt: checkedAt,
     sourceUrl: websiteEvents,
+    menus,
     logo,
     programmes,
     errors,
@@ -174,6 +182,15 @@ export async function refreshWebsite(db: DB, request: typeof fetch = fetch) {
       },
       'needs_review',
     ]);
+  if (programmes.some((p) => !previous?.programmes?.some((old: any) => old.url === p.url)))
+    await enqueuePush(
+      db,
+      'programme:' + programmes.map((p) => p.url).join('|'),
+      'events',
+      'New René programme',
+      'See the latest programme from the venue.',
+      { screen: 'What’s On' },
+    );
   return { programmes: programmes.length, errors };
 }
 export async function publicVenueContent(db: DB) {
@@ -214,6 +231,7 @@ export async function publicVenueContent(db: DB) {
       ]
     ).filter((p: any) => !p.period || p.period >= month),
     posts,
+    menus: state?.menus || [],
     refreshMinutes: Number(process.env.CONTENT_REFRESH_MINUTES) || 15,
   };
 }

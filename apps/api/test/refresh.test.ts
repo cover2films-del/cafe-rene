@@ -19,7 +19,10 @@ test('official asset refresh is bounded to the venue, leased, persistent and kee
     calls++;
     const u = new URL(url);
     assert.equal(u.origin, 'https://www.caferene.co.uk');
-    return new Response(u.pathname.includes('events328') ? html : image, { status: 200 });
+    return new Response(
+      u.pathname.includes('events328') || u.pathname === '/restaurant' ? html : image,
+      { status: 200 },
+    );
   }) as typeof fetch;
   try {
     const results = await Promise.all([
@@ -27,7 +30,7 @@ test('official asset refresh is bounded to the venue, leased, persistent and kee
       refreshContent(db, false, provider),
     ]);
     assert.equal(results.filter((r) => r.skipped).length, 1);
-    assert.equal(calls, 3);
+    assert.equal(calls, 4);
     assert.equal((await db.query('SELECT id FROM venue_assets')).rows.length, 2);
     const before = await publicVenueContent(db);
     assert.equal(before.programmes.length, 1);

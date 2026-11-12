@@ -10,7 +10,17 @@ import {
   Switch,
 } from 'react-native';
 import * as Crypto from 'expo-crypto';
-export function CircleNative({ user, api, run }: { user: any; api: any; run: any }) {
+export function CircleNative({
+  user,
+  api,
+  run,
+  initialCircleId,
+}: {
+  user: any;
+  api: any;
+  run: any;
+  initialCircleId?: string;
+}) {
   const [groups, setGroups] = useState<any[]>([]),
     [id, setId] = useState(''),
     [detail, setDetail] = useState<any>(null),
@@ -50,11 +60,13 @@ export function CircleNative({ user, api, run }: { user: any; api: any; run: any
     api('/circles')
       .then((rows: any[]) => {
         setGroups(rows);
-        const first = rows.find((g) => g.status === 'active');
+        const first =
+          rows.find((g) => g.id === initialCircleId && g.status === 'active') ||
+          rows.find((g) => g.status === 'active');
         if (first) choose(first.id);
       })
       .catch(() => {});
-  }, [user.id]);
+  }, [user.id, initialCircleId]);
   useEffect(() => {
     if (id) pullDetail(id).catch(() => setDetail(null));
     const timer = setInterval(() => {
@@ -317,7 +329,7 @@ export function CircleNative({ user, api, run }: { user: any; api: any; run: any
         </View>
       )}
       <Text style={c.small}>
-        Alex and Sam are fictional. Plans and invitations stay inside the app.
+        Plans and invitations stay inside your René Circle.
       </Text>
     </View>
   );

@@ -197,8 +197,8 @@ export function CircleHub({ user, run, toast }: { user: any; run: any; toast: an
             </label>
           )}
           <small>
-            Alex and Sam are fictional sample members. No external notifications or bookings are
-            made.
+            Private groups keep plans and conversations together. Plans do not make bookings. Phone
+            notifications are optional.
           </small>
         </div>
         <div className="circle-conversation">

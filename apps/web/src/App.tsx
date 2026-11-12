@@ -1,3 +1,5 @@
+import { VisitPanel } from './VisitPanel';
+import { DrinksHub } from './DrinksHub';
 import { DiscoveryHub } from './DiscoveryHub';
 import { socialIconPaths } from '../../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../../packages/shared/src/venue-menu';
@@ -54,7 +56,11 @@ const nextStatus: Record<string, string> = {
   preparing: 'ready',
   ready: 'completed',
 };
-const nice = (s: string) => s.replaceAll('_', ' ');
+const nice = (s: string) =>
+  s
+    .replaceAll('_', ' ')
+    .replace(/\b(?:demo|sample)\s*/gi, '')
+    .trim();
 function QR({ value }: { value: string }) {
   const [src, set] = useState('');
   useEffect(() => {
@@ -88,6 +94,7 @@ export function App() {
     [event, setEvent] = useState<any>(null),
     [rewards, setRewards] = useState<any>(null),
     [category, setCategory] = useState('All'),
+    [orderMode, setOrderMode] = useState('Food'),
     [menuEdition, setMenuEdition] = useState('main'),
     [query, setQuery] = useState(''),
     [genre, setGenre] = useState('All'),
@@ -409,6 +416,9 @@ export function App() {
                   MUSIC & SOUL
                 </div>
               </section>
+              <div className="home-checkin">
+                <VisitPanel user={user} request={api} onLogin={() => setLogin(true)} />
+              </div>
               <section className="experience-hub" aria-label="Explore Café René">
                 <div className="experience-intro">
                   <span className="eyebrow">MAKE IT A RENÉ KIND OF DAY</span>
@@ -538,7 +548,7 @@ export function App() {
                 <p className="muted caption">
                   {upcoming.some((e: any) => !e.sample)
                     ? 'Current programme · event details link to reviewed venue sources.'
-                    : 'Programme preview · sample events are labelled.'}{' '}
+                    : 'Check the official programme for current listings.'}{' '}
                   <a href={boot.venue.facebook} target="_blank" rel="noreferrer">
                     Check René’s Facebook for official listings ↗
                   </a>
@@ -639,296 +649,313 @@ export function App() {
           )}
           {tab === 'Order' && (
             <section className="section order-page">
-              <div className="page-title">
-                <div>
-                  <div className="eyebrow">GOOD FOOD, YOUR WAY</div>
-                  <h1>The menu.</h1>
-                  <p>Settle in. We’ll bring it to you.</p>
-                </div>
-                <span className="pill">
-                  <span className="demo-dot" />
-                  Kitchen {boot.ordering.open ? 'open' : 'paused'}
-                </span>
+              <div className="chips order-mode">
+                {['Food', 'Drinks'].map((mode) => (
+                  <button
+                    key={mode}
+                    className={orderMode === mode ? 'selected' : ''}
+                    aria-pressed={orderMode === mode}
+                    onClick={() => setOrderMode(mode)}
+                  >
+                    {mode === 'Drinks' ? 'Beers, cocktails & more' : 'Food menu'}
+                  </button>
+                ))}
               </div>
-              <div className="ordering-context">
-                <QrCode size={22} />
-                <div>
-                  <b>
-                    {collection ? 'Collect from the bar' : table?.label || 'Where are you sitting?'}
-                  </b>
-                  <small>
-                    {table && !collection
-                      ? 'Signed table reference verified by the server'
-                      : 'Choose your table or scan the QR on your table'}
-                  </small>
-                </div>
-                <select
-                  aria-label="Ordering location"
-                  value={collection ? 'collection' : table?.label.split(' ')[1] || ''}
-                  onChange={(e) =>
-                    void run(async () => {
-                      if (e.target.value === 'collection') {
-                        setCollection(true);
-                        return;
-                      }
-                      setCollection(false);
-                      setTable(await api('/demo/table/' + e.target.value));
-                    })
-                  }
-                >
-                  <option value="" disabled>
-                    Choose table
-                  </option>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <option key={i} value={i + 1}>
-                      Table {i + 1}
-                    </option>
-                  ))}
-                  <option value="collection">Collection</option>
-                </select>
-              </div>
-              {order && (
-                <div className="order-status">
+              {orderMode === 'Drinks' && <DrinksHub request={api} user={user} />}
+              <div hidden={orderMode !== 'Food'}>
+                <div className="page-title">
                   <div>
-                    <div className="eyebrow">
-                      ORDER PREVIEW · {order.id.slice(0, 8).toUpperCase()}
-                    </div>
-                    <h3>{nice(order.status)}</h3>
-                    <p>
-                      {money(order.total)} · Payment: {order.payment}{' '}
-                      {order.status === 'awaiting_acceptance'
-                        ? '· Waiting for staff acceptance'
-                        : ''}
-                    </p>
+                    <div className="eyebrow">GOOD FOOD, YOUR WAY</div>
+                    <h1>The menu.</h1>
+                    <p>Settle in. We’ll bring it to you.</p>
+                  </div>
+                  <span className="pill">
+                    <span className="demo-dot" />
+                    Kitchen {boot.ordering.open ? 'open' : 'paused'}
+                  </span>
+                </div>
+                <div className="ordering-context">
+                  <QrCode size={22} />
+                  <div>
+                    <b>
+                      {collection
+                        ? 'Collect from the bar'
+                        : table?.label || 'Where are you sitting?'}
+                    </b>
                     <small>
-                      {order.status === 'completed'
-                        ? 'Receipt ready. Eligible food rewards issued.'
-                        : 'This is a simulated order. No food will be prepared.'}
+                      {table && !collection
+                        ? 'Signed table reference verified by the server'
+                        : 'Choose your table or scan the QR on your table'}
                     </small>
                   </div>
-                  {order.payment === 'unpaid' && order.status !== 'cancelled' && (
-                    <button
-                      className="primary"
-                      disabled={busy}
-                      onClick={() =>
-                        void run(async () => {
-                          const r = JSON.parse(sessionStorage.getItem('rene-receipt') || '{}');
-                          setOrder(
-                            await api('/orders/' + order.id + '/mock-pay', 'POST', {}, r.secret),
-                          );
-                          toast('Mock webhook verified. Waiting for staff/POS acceptance.');
-                        })
-                      }
-                    >
-                      Simulate payment <ShieldCheck size={17} />
-                    </button>
-                  )}
-                  {order.payment === 'unpaid' && order.status !== 'cancelled' && (
-                    <button
-                      className="outline"
-                      onClick={() =>
-                        void run(async () => {
-                          const r = JSON.parse(sessionStorage.getItem('rene-receipt') || '{}');
-                          await api('/orders/' + order.id + '/cancel', 'POST', {}, r.secret);
-                          setOrder(await api('/orders/' + order.id, 'GET', undefined, r.secret));
-                        })
-                      }
-                    >
-                      Cancel
-                    </button>
-                  )}
-                  <button
-                    className="text-link"
-                    onClick={() =>
+                  <select
+                    aria-label="Ordering location"
+                    value={collection ? 'collection' : table?.label.split(' ')[1] || ''}
+                    onChange={(e) =>
                       void run(async () => {
-                        const r = JSON.parse(sessionStorage.getItem('rene-receipt') || '{}');
-                        const receipt = await api(
-                          '/orders/' + order.id,
-                          'GET',
-                          undefined,
-                          r.secret,
-                        );
-                        download('rene-receipt.json', receipt);
+                        if (e.target.value === 'collection') {
+                          setCollection(true);
+                          return;
+                        }
+                        setCollection(false);
+                        setTable(await api('/demo/table/' + e.target.value));
                       })
                     }
                   >
-                    <Download size={16} />
-                    Receipt
-                  </button>
+                    <option value="" disabled>
+                      Choose table
+                    </option>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <option key={i} value={i + 1}>
+                        Table {i + 1}
+                      </option>
+                    ))}
+                    <option value="collection">Collection</option>
+                  </select>
                 </div>
-              )}
-              <div className="published-menus">
-                <div className="eyebrow">FROM THE RENÉ KITCHEN · PUBLISHED MENUS</div>
-                <div className="chips menu-editions" aria-label="Choose a menu">
-                  {menuSources.map((source) => (
-                    <button
-                      key={source.id}
-                      className={menuEdition === source.id ? 'selected' : ''}
-                      onClick={() => {
-                        setMenuEdition(source.id);
-                        setCategory('All');
-                      }}
-                    >
-                      {source.name}
-                    </button>
-                  ))}
-                </div>
-                <p>{menuSources.find((source) => source.id === menuEdition)?.note}</p>
-                <a
-                  href={menuSources.find((source) => source.id === menuEdition)?.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Read the original menu ↗
-                </a>
-                <small>
-                  Published prices checked {menuChecked}. Availability and dietary requirements:
-                  please ask the team. Meal deals are arranged with staff.
-                </small>
-              </div>
-              {['festive', 'christmas-day', 'christmas-children'].includes(menuEdition) && (
-                <div className="seasonal-courses">
-                  {seasonalMenu(menuEdition).map((dish) => (
-                    <article className="seasonal-dish" key={dish.name}>
-                      <img
-                        src={'/images/generated/' + dish.imageKey + '.webp'}
-                        alt={'AI illustration of ' + dish.name}
-                        loading="lazy"
-                      />
-                      <div>
-                        <span className="eyebrow">{dish.course}</span>
-                        <h3>{dish.name}</h3>
-                        <p>{dish.description}</p>
-                        <small>Included in the set menu · AI illustration</small>
+                {order && (
+                  <div className="order-status">
+                    <div>
+                      <div className="eyebrow">
+                        ORDER PREVIEW · {order.id.slice(0, 8).toUpperCase()}
                       </div>
-                    </article>
-                  ))}
-                  <a className="primary" href="mailto:info@caferene.co.uk">
-                    Book your festive meal ↗
-                  </a>
-                </div>
-              )}
-              <div className="menu-toolbar">
-                <div className="chips">
-                  {[
-                    'All',
-                    ...new Set<string>(
-                      boot.menu
-                        .filter((m: MenuItem) => (m.menuEdition || 'main') === menuEdition)
-                        .map((m: MenuItem) => m.category),
-                    ),
-                  ].map((c) => (
-                    <button
-                      key={c}
-                      className={category === c ? 'selected' : ''}
-                      onClick={() => setCategory(c)}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-                <label className="search">
-                  <Search size={17} />
-                  <input
-                    placeholder="Find your favourite"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </label>
-              </div>
-              <div className="allergen-note">
-                <Leaf size={17} />
-                <span>
-                  Menu prices are unapproved published prices. Allergen data is unavailable — ask
-                  staff before ordering. Dietary labels are transcribed from the source menu and
-                  await review.
-                </span>
-              </div>
-              <div className="menu-grid">
-                {boot.menu
-                  .filter(
-                    (m: MenuItem) =>
-                      (m.menuEdition || 'main') === menuEdition &&
-                      (category === 'All' || m.category === category) &&
-                      m.name.toLowerCase().includes(query.toLowerCase()),
-                  )
-                  .map((m: MenuItem) => (
-                    <article
-                      className={'menu-card ' + (!m.available ? 'unavailable' : '')}
-                      key={m.id}
-                    >
-                      <div
-                        className={
-                          'dish-art ' +
-                          (foodPhotography[m.imageKey || m.id] ? 'has-photo ' : '') +
-                          m.category.toLowerCase().split(' ')[0]
+                      <h3>{nice(order.status)}</h3>
+                      <p>
+                        {money(order.total)} · Payment: {order.payment}{' '}
+                        {order.status === 'awaiting_acceptance'
+                          ? '· Waiting for staff acceptance'
+                          : ''}
+                      </p>
+                      <small>
+                        {order.status === 'completed'
+                          ? 'Receipt ready. Eligible food rewards issued.'
+                          : 'This is a simulated order. No food will be prepared.'}
+                      </small>
+                    </div>
+                    {order.payment === 'unpaid' && order.status !== 'cancelled' && (
+                      <button
+                        className="primary"
+                        disabled={busy}
+                        onClick={() =>
+                          void run(async () => {
+                            const r = JSON.parse(sessionStorage.getItem('rene-receipt') || '{}');
+                            setOrder(
+                              await api('/orders/' + order.id + '/mock-pay', 'POST', {}, r.secret),
+                            );
+                            toast('Mock webhook verified. Waiting for staff/POS acceptance.');
+                          })
                         }
                       >
-                        {foodPhotography[m.imageKey || m.id] && (
-                          <img
-                            className="dish-photo"
-                            src={foodPhotography[m.imageKey || m.id].path}
-                            alt={foodPhotography[m.imageKey || m.id].alt}
-                            loading="lazy"
-                            width={1000}
-                            height={750}
-                          />
-                        )}
-                        <span>
-                          {m.category === 'Drinks'
-                            ? '◈'
-                            : m.category === 'Desserts'
-                              ? '✦'
-                              : m.category === 'Sides'
-                                ? '≋'
-                                : m.category === 'Burgers'
-                                  ? '☷'
-                                  : '❦'}
-                        </span>
-                        <small>
-                          {foodPhotography[m.imageKey || m.id]
-                            ? 'AI DISH ILLUSTRATION'
-                            : m.category}
-                        </small>
-                      </div>
-                      <div className="menu-copy">
-                        <span className="micro">
-                          {m.alcohol
-                            ? 'STAFF AGE CHECK REQUIRED'
-                            : m.dietary.length
-                              ? 'SOURCE DIETARY LABEL · UNVERIFIED'
-                              : 'RENÉ KITCHEN'}
-                        </span>
-                        <h3>{m.name}</h3>
-                        <p>{m.description}</p>
+                        Simulate payment <ShieldCheck size={17} />
+                      </button>
+                    )}
+                    {order.payment === 'unpaid' && order.status !== 'cancelled' && (
+                      <button
+                        className="outline"
+                        onClick={() =>
+                          void run(async () => {
+                            const r = JSON.parse(sessionStorage.getItem('rene-receipt') || '{}');
+                            await api('/orders/' + order.id + '/cancel', 'POST', {}, r.secret);
+                            setOrder(await api('/orders/' + order.id, 'GET', undefined, r.secret));
+                          })
+                        }
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    <button
+                      className="text-link"
+                      onClick={() =>
+                        void run(async () => {
+                          const r = JSON.parse(sessionStorage.getItem('rene-receipt') || '{}');
+                          const receipt = await api(
+                            '/orders/' + order.id,
+                            'GET',
+                            undefined,
+                            r.secret,
+                          );
+                          download('rene-receipt.json', receipt);
+                        })
+                      }
+                    >
+                      <Download size={16} />
+                      Receipt
+                    </button>
+                  </div>
+                )}
+                <div className="published-menus">
+                  <div className="eyebrow">FROM THE RENÉ KITCHEN · PUBLISHED MENUS</div>
+                  <div className="chips menu-editions" aria-label="Choose a menu">
+                    {menuSources.map((source) => (
+                      <button
+                        key={source.id}
+                        className={menuEdition === source.id ? 'selected' : ''}
+                        onClick={() => {
+                          setMenuEdition(source.id);
+                          setCategory('All');
+                        }}
+                      >
+                        {source.name}
+                      </button>
+                    ))}
+                  </div>
+                  <p>{menuSources.find((source) => source.id === menuEdition)?.note}</p>
+                  <a
+                    href={menuSources.find((source) => source.id === menuEdition)?.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Read the original menu ↗
+                  </a>
+                  <small>
+                    Published prices checked {menuChecked}. Availability and dietary requirements:
+                    please ask the team. Meal deals are arranged with staff.
+                  </small>
+                </div>
+                {['festive', 'christmas-day', 'christmas-children'].includes(menuEdition) && (
+                  <div className="seasonal-courses">
+                    {seasonalMenu(menuEdition).map((dish) => (
+                      <article className="seasonal-dish" key={dish.name}>
+                        <img
+                          src={'/images/generated/' + dish.imageKey + '.webp'}
+                          alt={'AI illustration of ' + dish.name}
+                          loading="lazy"
+                        />
                         <div>
-                          <b>{money(m.price)}</b>
-                          <button
-                            aria-label={'Add ' + m.name}
-                            disabled={!m.available}
-                            className="add"
-                            onClick={() => add(m)}
-                          >
-                            {m.available ? <Plus size={20} /> : <span>Sold out</span>}
-                          </button>
+                          <span className="eyebrow">{dish.course}</span>
+                          <h3>{dish.name}</h3>
+                          <p>{dish.description}</p>
+                          <small>Included in the set menu · AI illustration</small>
                         </div>
-                      </div>
-                    </article>
-                  ))}
+                      </article>
+                    ))}
+                    <a className="primary" href="mailto:info@caferene.co.uk">
+                      Book your festive meal ↗
+                    </a>
+                  </div>
+                )}
+                <div className="menu-toolbar">
+                  <div className="chips">
+                    {[
+                      'All',
+                      ...new Set<string>(
+                        boot.menu
+                          .filter((m: MenuItem) => (m.menuEdition || 'main') === menuEdition)
+                          .map((m: MenuItem) => m.category),
+                      ),
+                    ].map((c) => (
+                      <button
+                        key={c}
+                        className={category === c ? 'selected' : ''}
+                        onClick={() => setCategory(c)}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                  <label className="search">
+                    <Search size={17} />
+                    <input
+                      placeholder="Find your favourite"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                  </label>
+                </div>
+                <div className="allergen-note">
+                  <Leaf size={17} />
+                  <span>
+                    Menu prices are unapproved published prices. Allergen data is unavailable — ask
+                    staff before ordering. Dietary labels are transcribed from the source menu and
+                    await review.
+                  </span>
+                </div>
+                <div className="menu-grid">
+                  {boot.menu
+                    .filter(
+                      (m: MenuItem) =>
+                        (m.menuEdition || 'main') === menuEdition &&
+                        (category === 'All' || m.category === category) &&
+                        m.name.toLowerCase().includes(query.toLowerCase()),
+                    )
+                    .map((m: MenuItem) => (
+                      <article
+                        className={'menu-card ' + (!m.available ? 'unavailable' : '')}
+                        key={m.id}
+                      >
+                        <div
+                          className={
+                            'dish-art ' +
+                            (foodPhotography[m.imageKey || m.id] ? 'has-photo ' : '') +
+                            m.category.toLowerCase().split(' ')[0]
+                          }
+                        >
+                          {foodPhotography[m.imageKey || m.id] && (
+                            <img
+                              className="dish-photo"
+                              src={foodPhotography[m.imageKey || m.id].path}
+                              alt={foodPhotography[m.imageKey || m.id].alt}
+                              loading="lazy"
+                              width={1000}
+                              height={750}
+                            />
+                          )}
+                          <span>
+                            {m.category === 'Drinks'
+                              ? '◈'
+                              : m.category === 'Desserts'
+                                ? '✦'
+                                : m.category === 'Sides'
+                                  ? '≋'
+                                  : m.category === 'Burgers'
+                                    ? '☷'
+                                    : '❦'}
+                          </span>
+                          <small>
+                            {foodPhotography[m.imageKey || m.id]
+                              ? 'AI DISH ILLUSTRATION'
+                              : m.category}
+                          </small>
+                        </div>
+                        <div className="menu-copy">
+                          <span className="micro">
+                            {m.alcohol
+                              ? 'STAFF AGE CHECK REQUIRED'
+                              : m.dietary.length
+                                ? 'SOURCE DIETARY LABEL · UNVERIFIED'
+                                : 'RENÉ KITCHEN'}
+                          </span>
+                          <h3>{m.name}</h3>
+                          <p>{m.description}</p>
+                          <div>
+                            <b>{money(m.price)}</b>
+                            <button
+                              aria-label={'Add ' + m.name}
+                              disabled={!m.available}
+                              className="add"
+                              onClick={() => add(m)}
+                            >
+                              {m.available ? <Plus size={20} /> : <span>Sold out</span>}
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                </div>
+                {boot.menu.filter(
+                  (m: MenuItem) =>
+                    (m.menuEdition || 'main') === menuEdition &&
+                    (category === 'All' || m.category === category) &&
+                    m.name.toLowerCase().includes(query.toLowerCase()),
+                ).length === 0 && <div className="empty">No dishes found. Try another search.</div>}
+                {basket.length > 0 && (
+                  <button className="basket-float primary" onClick={() => setDrawer(true)}>
+                    <ShoppingBag size={20} />
+                    {basket.reduce((s, l) => s + l.quantity, 0)} items · View basket{' '}
+                    <b>{money(subtotal)}</b>
+                  </button>
+                )}
               </div>
-              {boot.menu.filter(
-                (m: MenuItem) =>
-                  (m.menuEdition || 'main') === menuEdition &&
-                  (category === 'All' || m.category === category) &&
-                  m.name.toLowerCase().includes(query.toLowerCase()),
-              ).length === 0 && <div className="empty">No dishes found. Try another search.</div>}
-              {basket.length > 0 && (
-                <button className="basket-float primary" onClick={() => setDrawer(true)}>
-                  <ShoppingBag size={20} />
-                  {basket.reduce((s, l) => s + l.quantity, 0)} items · View basket{' '}
-                  <b>{money(subtotal)}</b>
-                </button>
-              )}
             </section>
           )}
           {tab === 'What’s On' && (
@@ -962,7 +989,7 @@ export function App() {
               </div>
               <p className="allergen-note">
                 Current programme from reviewed venue sources. Check event details for the source
-                and any late changes. Sample events are labelled.
+                and any late changes.
               </p>
               <div className={calendar ? 'calendar-list' : 'events-grid'}>
                 {!upcoming.filter((e: any) => genre === 'All' || e.genre === genre).length && (
@@ -1104,10 +1131,18 @@ export function App() {
                     <h2>A treat for next time.</h2>
                     <div className="offers">
                       {rewards.offers.map((o: any) => (
-                        <div className="offer" key={o.id}>
+                        <div
+                          className="offer"
+                          key={o.id}
+                          style={
+                            {
+                              '--offer-image': `url("/images/generated/${o.id === 'kitchen-six' ? 'club' : 'burger'}.webp")`,
+                            } as React.CSSProperties
+                          }
+                        >
                           <Gift />
                           <div>
-                            <span className="micro">SAMPLE OFFER</span>
+                            <span className="micro">RENÉ REWARD</span>
                             <h3>{o.name}</h3>
                             <p>{o.description}</p>
                             <small>
@@ -1158,7 +1193,7 @@ export function App() {
                 <div className="daniel-demo-banner">
                   <div>
                     <b>Daniel’s René Circle.</b>
-                    <p>Sample food & drink history, 100 René Points, stamps and a private group.</p>
+                    <p>Food & drink history, René Points, stamps and a private group.</p>
                   </div>
                   <button
                     className="primary"
@@ -1212,6 +1247,7 @@ export function App() {
                     const dish = boot.menu.find((m: MenuItem) => m.id === id);
                     if (dish?.available) {
                       go('Order');
+                      setOrderMode('Food');
                       setMods([]);
                       setItem(dish);
                     }
@@ -1518,7 +1554,7 @@ export function App() {
       {event && (
         <Modal title={event.title} onClose={() => setEvent(null)}>
           <span className="pill">
-            {event.sample ? 'SAMPLE EVENT' : 'OFFICIAL VENUE PROGRAMME'} · {event.genre}
+            {event.sample ? 'COMING UP' : 'OFFICIAL VENUE PROGRAMME'} · {event.genre}
           </span>
           {event.imageUrl && (
             <img
@@ -1537,7 +1573,7 @@ export function App() {
           <p>{event.description}</p>
           <p className="allergen-note">
             {event.sample
-              ? 'Sample listing. No real admission is arranged.'
+              ? 'Event information. Confirm admission details with the venue.'
               : 'Listed in the venue programme. Please check the official source for changes.'}{' '}
             Reminder delivery is not connected.
           </p>
@@ -1570,7 +1606,7 @@ export function App() {
               }
             >
               <Ticket size={17} />
-              {event.sample ? 'Example ticket' : 'Official event information'}
+              {event.sample ? 'Save event details' : 'Official event information'}
             </button>
           </div>
         </Modal>
@@ -1760,15 +1796,27 @@ function EventCard({
   const date = new Date(e.date);
   return (
     <button className="event-card" onClick={onClick}>
-      {e.imageUrl && (
-        <img
-          className="event-card-background"
-          src={e.imageUrl}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-        />
-      )}
+      <img
+        className="event-card-background"
+        src={
+          e.artistImageUrl ||
+          (e.imageKind === 'venue-programme' &&
+          [
+            'nov26-alex-comaish',
+            'nov26-baron-crane',
+            'nov26-st-fian',
+            'nov26-kayco',
+            'nov26-luke-austin',
+            'nov26-kingsley-allies',
+          ].includes(e.id)
+            ? '/images/artists/' + e.id + '.webp'
+            : e.imageUrl) ||
+          '/brand/venue-interior.webp'
+        }
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+      />
       <div className={'event-art art-' + (index % 3)}>
         {e.imageUrl && (
           <img
@@ -1779,7 +1827,7 @@ function EventCard({
             loading="lazy"
           />
         )}
-        <span className="sample-tag">{e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'}</span>
+        <span className="sample-tag">{e.sample ? 'COMING UP' : 'RENÉ LIVE'}</span>
         {e.imageUrl && (
           <img
             className="event-image"
@@ -1841,7 +1889,7 @@ function EventCard({
         </h3>
         <p>
           {e.sample
-            ? 'Sample programme · Entry information'
+            ? 'Event information · Entry details'
             : e.free
               ? 'Official programme · Free entry'
               : 'Official programme · See event details'}
@@ -1938,8 +1986,8 @@ function RenéSnapshot({ rewards, user }: { rewards: any; user: any }) {
         </strong>
         <span>René Points</span>
         <small>
-          {user.id === 'daniel' ? 'Daniel Woolf · sample member balance' : 'Rewards balance'} ·
-          eligible food only
+          {user.id === 'daniel' ? 'Daniel Woolf · member balance' : 'Rewards balance'} · eligible
+          food only
         </small>
       </div>
       <div className="stamp-tile">
@@ -1956,9 +2004,7 @@ function RenéSnapshot({ rewards, user }: { rewards: any; user: any }) {
           {rewards.stampCard?.stamps || 0} / 6 food-visit stamps · £5 off eligible food after six
           separate food-visit days.
         </p>
-        <small>
-          Sample promotion. Drinks don’t earn food stamps. Eligibility checked by the server.
-        </small>
+        <small>Drinks don’t earn food stamps. Eligibility is checked at checkout.</small>
       </div>
       <div className="reward-mini">
         <div className="eyebrow">READY WHEN YOU ARE</div>
@@ -2011,6 +2057,7 @@ function Account({
     <div className="account-grid">
       <div className="account-wide">
         <RenéSnapshot rewards={rewards} user={user} />
+        <VisitPanel user={user} request={api} onLogin={() => {}} />
         <DiscoveryHub
           key={'picks-' + user.id}
           user={user}
@@ -2025,14 +2072,14 @@ function Account({
         <div className="panel">
           <div className="eyebrow">WELCOME BACK</div>
           <h2>{user.name}</h2>
-          <p className="muted">{nice(user.role)} account · Sample history</p>
+          <p className="muted">{nice(user.role)} account · Order history</p>
         </div>
         <div className="panel">
           <h3>What you ate & drank</h3>
           <p className="muted">
             {user.id === 'daniel'
-              ? 'Sample history — these are examples, not Daniel’s actual purchases.'
-              : 'Your order history. Sample transactions are labelled.'}
+              ? 'Your food and drink story, all in one place.'
+              : 'Your orders and receipts.'}
           </p>
           {history?.orders.map((o: any) => (
             <details className="history-visit" key={o.id}>
@@ -2232,6 +2279,7 @@ function Staff({
     [overview, setOverview] = useState<any>(null),
     [tables, setTables] = useState<any[]>([]),
     [qr, setQr] = useState(''),
+    [printQr, setPrintQr] = useState<any>(null),
     [content, setContent] = useState<any[]>([]),
     [campaigns, setCampaigns] = useState<any[]>([]),
     [audit, setAudit] = useState<any[]>([]),
@@ -2249,6 +2297,7 @@ function Staff({
     if (view === 'Tables & check-in') {
       setTables(await api('/staff/tables'));
       setQr((await api('/staff/checkin-qr')).ref);
+      setPrintQr(await api('/staff/print-checkin'));
     }
     if (manager) {
       if (['Overview', 'Integrations', 'Bookings', 'Menu & hours'].includes(view))
@@ -2339,7 +2388,7 @@ function Staff({
                 <div className="metric" key={name}>
                   <span>{name}</span>
                   <strong>{val}</strong>
-                  <small>Sample records</small>
+                  <small>Recorded activity</small>
                 </div>
               ))}
             </div>
@@ -2628,6 +2677,31 @@ function Staff({
         )}
         {view === 'Tables & check-in' && (
           <>
+            <div className="panel print-checkin">
+              <h3>Printed check-in QR</h3>
+              <p>Records a visit journal entry once per day. It does not issue purchase stamps.</p>
+              {printQr && (
+                <>
+                  <QR value={printQr.url} />
+                  <p>{printQr.url}</p>
+                  <button className="primary" onClick={() => window.print()}>
+                    Print this QR
+                  </button>
+                  {['manager', 'admin'].includes(user.role) && (
+                    <button
+                      className="outline"
+                      onClick={() =>
+                        void act(async () =>
+                          setPrintQr(await api('/manager/print-checkin/revoke', 'POST', {})),
+                        )
+                      }
+                    >
+                      Replace printed code
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
             <div className="panel venue-qr">
               <div>
                 <div className="eyebrow">ROTATING VENUE CHECK-IN</div>
@@ -3058,7 +3132,7 @@ function Staff({
                     </select>
                   </label>
                   <label>
-                    Sample offer
+                    Food offer
                     <select name="offerId">
                       <option value="welcome">£2 food welcome</option>
                       <option value="regular-treat">Regular’s £5 reward</option>
@@ -3484,16 +3558,16 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
                 kind === 'events'
                   ? {
                       id: 'event-' + crypto.randomUUID().slice(0, 8),
-                      title: 'New sample event',
+                      title: 'New event',
                       genre: 'Blues',
                       date: new Date(Date.now() + 864e5).toISOString(),
-                      description: 'Sample programme. Not a confirmed performance.',
+                      description: 'Programme entry awaiting confirmation.',
                       sample: true,
                       free: true,
                     }
                   : {
                       id: 'offer-' + crypto.randomUUID().slice(0, 8),
-                      name: 'New sample food offer',
+                      name: 'New food offer',
                       description: 'Single-use offer.',
                       discount: 200,
                       min: 1000,
@@ -3540,7 +3614,7 @@ function Catalogue({ data, act, toast }: { data: any; act: any; toast: any }) {
         <h3>Loyalty adjustment</h3>
         <p>
           Manager-only, audited. Find the customer ID through customer lookup or use customer for
-          the sample account.
+          the selected account.
         </p>
         <form
           onSubmit={(e) => {

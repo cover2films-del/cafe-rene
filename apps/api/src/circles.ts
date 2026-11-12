@@ -1,3 +1,4 @@
+import { enqueuePush } from './push.ts';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
@@ -191,10 +192,29 @@ export function circleRoutes(s: Service) {
         .object({ body: z.string().trim().min(1).max(2000), clientId: z.string().uuid() })
         .strict()
         .parse(req.body);
-      await s.db.query(
-        'INSERT INTO circle_messages(id,circle_id,author_id,body,client_id) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING',
-        [randomUUID(), req.params.id, req.user.id, d.body, d.clientId],
-      );
+      await s.db.transaction(async (db) => {
+        const inserted = await db.query(
+          'INSERT INTO circle_messages(id,circle_id,author_id,body,client_id) VALUES($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING RETURNING id',
+          [randomUUID(), req.params.id, req.user.id, d.body, d.clientId],
+        );
+        if (inserted.rows.length) {
+          const recipients = (
+            await db.query(
+              "SELECT user_id FROM circle_members WHERE circle_id=$1 AND status='active' AND user_id<>$2",
+              [req.params.id, req.user.id],
+            )
+          ).rows.map((r) => r.user_id);
+          await enqueuePush(
+            db,
+            'message:' + inserted.rows[0].id,
+            'messages',
+            'Your René Circle',
+            'You have a new message.',
+            { screen: 'My René', circleId: req.params.id },
+            recipients,
+          );
+        }
+      });
       res.json({ ok: true });
     },
   );

@@ -1,3 +1,4 @@
+import { enqueuePush } from './push.ts';
 import { randomUUID, randomBytes, createHash, scryptSync } from 'node:crypto';
 import { z } from 'zod';
 import type { DB } from './db.ts';
@@ -452,9 +453,20 @@ export class Service {
           [uid(), o.user_id, venueDay(), 'purchase:' + id],
         );
       }
+      if (status === 'completed' && o.user_id)
+        await enqueuePush(
+          db,
+          'reward:' + id,
+          'rewards',
+          'Your René rewards',
+          'Your completed order has updated your rewards.',
+          { screen: 'Rewards' },
+          [o.user_id],
+        );
       await this.audit(user.id, `order.${status}`, id, db);
     });
   }
+
   async refund(id: string, user: any) {
     this.role(user, ['manager', 'admin']);
     return this.db.transaction(async (db) => {

@@ -1,3 +1,8 @@
+import { eventArtwork } from './event-artwork.ts';
+import { enqueuePush, deviceId, pushCategories } from './push.ts';
+import { printCheckin, visitJournal, recordPrintedVisit } from './visits.ts';
+import { drinkCatalogue } from './drinks.ts';
+import { drinkLibrary, drinkCategories } from '../../../packages/shared/src/drinks.ts';
 import { foodTastes, memberDiscovery } from './discovery.ts';
 import { circleRoutes } from './circles.ts';
 import { publicVenueContent } from './venue-content.ts';
@@ -41,6 +46,7 @@ export function createApp(s: Service) {
   });
   app.use('/api/auth', limited);
   app.use('/api/checkin', limited);
+  app.use('/api/visits', limited);
   app.use('/api/orders', rateLimit({ windowMs: 60000, limit: 60 }));
   app.post(
     '/api/webhooks/payment',
@@ -93,14 +99,18 @@ export function createApp(s: Service) {
     payment: 'mock',
     pos: 'mock',
   }));
-  route('get', '/api/bootstrap', async () => ({
-    mode: 'demo',
-    venue,
-    menu: await s.menu(),
-    events: visibleEvents((await s.db.query('SELECT data FROM events')).rows.map((r) => r.data)),
-    ordering: await s.settings(),
-    content: await publicVenueContent(s.db),
-  }));
+  route('get', '/api/bootstrap', async () => {
+    const content = await publicVenueContent(s.db);
+    const events = (await s.db.query('SELECT data FROM events')).rows.map((r) => r.data);
+    return {
+      mode: 'demo',
+      venue,
+      menu: await s.menu(),
+      events: visibleEvents(eventArtwork(events, content.posts)),
+      ordering: await s.settings(),
+      content,
+    };
+  });
   app.post('/api/auth/login', async (req, res) => {
     const d = z.object({ email: z.string(), password: z.string().max(128) }).parse(req.body);
     const result = await s.login(d.email, d.password);
@@ -125,6 +135,11 @@ export function createApp(s: Service) {
     res.json(req.header('x-native-client') === 'true' ? result : { user: result.user });
   });
   app.post('/api/auth/logout', async (req: any, res) => {
+    if (req.user && typeof req.body?.pushToken === 'string')
+      await s.db.query('UPDATE push_devices SET active=false WHERE user_id=$1 AND token=$2', [
+        req.user.id,
+        req.body.pushToken,
+      ]);
     if (req.sessionToken)
       await s.db.query('DELETE FROM sessions WHERE token=$1', [digest(req.sessionToken)]);
     res.clearCookie('rene_session', { path: '/api' });
@@ -220,6 +235,134 @@ export function createApp(s: Service) {
   );
   route('get', '/api/my-rene/discovery', (req) => memberDiscovery(s.db, req.user.id), customer);
   route('get', '/api/rewards', (req) => s.rewards(req.user), customer);
+  route('get', '/api/visits', (req) => visitJournal(s.db, req.user.id), customer);
+  route(
+    'post',
+    '/api/visits/check-in',
+    (req) => recordPrintedVisit(s.db, req.user.id, z.string().max(80).parse(req.body.code)),
+    customer,
+  );
+  route('get', '/api/staff/print-checkin', () => printCheckin(s.db), staff);
+  route(
+    'post',
+    '/api/manager/print-checkin/revoke',
+    async (req) => {
+      await printCheckin(s.db);
+      await s.db.query(
+        "UPDATE settings SET data=jsonb_set(data,'{version}',to_jsonb((data->>'version')::int+1)) WHERE id='print-checkin'",
+      );
+      await s.audit(req.user.id, 'visit.printed_code_replaced', 'venue');
+      return printCheckin(s.db);
+    },
+    manager,
+  );
+  route(
+    'get',
+    '/api/notifications/status',
+    async (req) => ({
+      enabled: process.env.PUSH_DELIVERY_ENABLED !== 'false',
+      devices: (
+        await s.db.query(
+          'SELECT id,platform,preferences,active FROM push_devices WHERE user_id=$1',
+          [req.user.id],
+        )
+      ).rows,
+    }),
+    customer,
+  );
+  route(
+    'post',
+    '/api/notifications/device',
+    async (req) => {
+      const d = z
+        .object({
+          token: z
+            .string()
+            .max(256)
+            .regex(/^(?:ExpoPushToken|ExponentPushToken)\[[A-Za-z0-9_-]+\]$/),
+          platform: z.enum(['ios', 'android']),
+          preferences: z
+            .object({
+              messages: z.boolean(),
+              deals: z.boolean(),
+              rewards: z.boolean(),
+              gigs: z.boolean(),
+              events: z.boolean(),
+            })
+            .strict(),
+        })
+        .strict()
+        .parse(req.body);
+      const preferences = {
+        ...req.user.preferences,
+        push: !!req.user.preferences.push || d.preferences.deals,
+      };
+      await s.db.transaction(async (db) => {
+        await db.query(
+          'INSERT INTO push_devices(id,user_id,token,platform,preferences) VALUES($1,$2,$3,$4,$5) ON CONFLICT(token) DO UPDATE SET user_id=$2,platform=$4,preferences=$5,active=true',
+          [deviceId(d.token), req.user.id, d.token, d.platform, d.preferences],
+        );
+        const prefs = preferences;
+        await db.query('UPDATE users SET preferences=$1 WHERE id=$2', [prefs, req.user.id]);
+        await db.query('INSERT INTO consents(id,user_id,version,preferences) VALUES($1,$2,$3,$4)', [
+          randomUUID(),
+          req.user.id,
+          'notifications-v1',
+          prefs,
+        ]);
+      });
+      return {
+        registered: true,
+        deliveryEnabled: process.env.PUSH_DELIVERY_ENABLED !== 'false',
+        user: { ...req.user, preferences },
+      };
+    },
+    customer,
+  );
+  app.use(
+    '/api/notifications/test',
+    rateLimit({ windowMs: 60000, limit: 3, standardHeaders: true, legacyHeaders: false }),
+  );
+  route(
+    'post',
+    '/api/notifications/test',
+    async (req) => {
+      const devices = (
+        await s.db.query('SELECT preferences FROM push_devices WHERE user_id=$1 AND active=true', [
+          req.user.id,
+        ])
+      ).rows;
+      const category = pushCategories.find(
+        (c) =>
+          devices.some((d) => d.preferences[c]) && (c !== 'deals' || req.user.preferences.push),
+      );
+      demand(category, 'Enable a notification category first');
+      await enqueuePush(
+        s.db,
+        'test:' + randomUUID(),
+        category!,
+        'Café René',
+        'Your selected notifications are ready.',
+        { screen: 'My René' },
+        [req.user.id],
+      );
+      return { queued: true };
+    },
+    customer,
+  );
+  route(
+    'delete',
+    '/api/notifications/device',
+    async (req) => {
+      await s.db.query('UPDATE push_devices SET active=false WHERE token=$1 AND user_id=$2', [
+        z.string().max(256).parse(req.body.token),
+        req.user.id,
+      ]);
+      return { disabled: true };
+    },
+    customer,
+  );
+
   route(
     'post',
     '/api/checkin',
@@ -257,7 +400,7 @@ export function createApp(s: Service) {
     '/api/tickets/:id',
     async (req) => {
       const e = await s.one('SELECT data FROM events WHERE id=$1', [req.params.id]);
-      demand(e && e.data.sample, 'Only sample tickets are available');
+      demand(e && e.data.sample, 'Ticket booking is not connected for this event');
       const id = randomUUID();
       await s.db.query(
         'INSERT INTO tickets(id,user_id,event_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',
@@ -347,6 +490,19 @@ export function createApp(s: Service) {
           [req.user.id],
         )
       ).rows,
+      visitJournal: await visitJournal(s.db, req.user.id),
+      notificationHistory: (
+        await s.db.query(
+          'SELECT category,title,body,data,status,created_at FROM push_deliveries WHERE user_id=$1',
+          [req.user.id],
+        )
+      ).rows,
+      notificationDevices: (
+        await s.db.query(
+          'SELECT platform,preferences,active,created_at FROM push_devices WHERE user_id=$1',
+          [req.user.id],
+        )
+      ).rows,
       profile: await s.one('SELECT id,email,name,role,preferences FROM users WHERE id=$1', [
         req.user.id,
       ]),
@@ -385,6 +541,8 @@ export function createApp(s: Service) {
       demand(req.body.confirm === 'DELETE', 'Type DELETE to confirm');
       demand(req.user.role === 'customer', 'Staff accounts must be removed by an administrator');
       await s.db.transaction(async (db) => {
+        await db.query('DELETE FROM push_devices WHERE user_id=$1', [req.user.id]);
+        await db.query('DELETE FROM visit_journal WHERE user_id=$1', [req.user.id]);
         await db.query('DELETE FROM circle_rsvps WHERE user_id=$1', [req.user.id]);
         await db.query('DELETE FROM circle_plans WHERE creator_id=$1', [req.user.id]);
         await db.query(
@@ -744,6 +902,53 @@ export function createApp(s: Service) {
     res.sendFile(req.params.id + '.webp', { root: mediaRoot });
   });
   route('get', '/api/public-content', () => publicVenueContent(s.db));
+  route('get', '/api/drinks', () => drinkCatalogue(s.db));
+  route(
+    'put',
+    '/api/manager/drinks/:id',
+    async (req) => {
+      const input = z
+        .object({
+          name: z.string().min(1).max(80),
+          description: z.string().max(600),
+          category: z.enum(drinkCategories),
+          styleId: z.string(),
+          availability: z.enum(['unconfirmed', 'available', 'limited', 'unavailable']),
+          price: z.number().int().min(0).max(100000).nullable(),
+          sourceUrl: z
+            .url()
+            .refine((url) =>
+              /^https:\/\/(?:www\.)?(?:caferene\.co\.uk|facebook\.com|instagram\.com)\//.test(url),
+            )
+            .optional(),
+        })
+        .strict()
+        .parse(req.body);
+      demand(/^[a-z0-9-]{1,60}$/.test(req.params.id), 'Invalid drink identifier');
+      const style = drinkLibrary.find((d) => d.id === input.styleId);
+      demand(style, 'Select a known drink style');
+      await s.db.transaction(async (db) => {
+        await db.query("INSERT INTO settings VALUES('bar-catalogue','[]') ON CONFLICT DO NOTHING");
+        const saved = (
+          await db.query("SELECT data FROM settings WHERE id='bar-catalogue' FOR UPDATE")
+        ).rows[0].data;
+        const item = {
+          ...style,
+          ...input,
+          id: req.params.id,
+          confirmedAt: new Date().toISOString(),
+          orderable: false,
+        };
+        await db.query("UPDATE settings SET data=$1 WHERE id='bar-catalogue'", [
+          [...saved.filter((d: any) => d.id !== item.id), item],
+        ]);
+        await s.audit(req.user.id, 'bar.updated', item.id, db);
+      });
+      return drinkCatalogue(s.db);
+    },
+    manager,
+  );
+
   route(
     'get',
     '/api/manager/content-refresh',
@@ -930,6 +1135,10 @@ export function createApp(s: Service) {
             .string()
             .regex(/^\/(?:images\/events\/[a-z0-9-]+\.webp|api\/media\/[a-f0-9-]{36})$/)
             .optional(),
+          artistImageUrl: z
+            .string()
+            .regex(/^\/(?:images\/artists\/[a-z0-9-]+\.webp|api\/media\/[a-f0-9-]{36})$/)
+            .optional(),
           imageKind: z.enum(['original-artwork', 'authorised-photo', 'venue-programme']).optional(),
         })
         .strict()
@@ -944,6 +1153,11 @@ export function createApp(s: Service) {
         d,
       ]);
       await s.audit(req.user.id, 'event.saved', d.id);
+      if (d.approvedReview && new Date(d.date).getTime() > Date.now())
+        await enqueuePush(s.db, 'gig:' + d.id, 'gigs', 'Live at Café René', d.title, {
+          screen: 'What’s On',
+          eventId: d.id,
+        });
       return d;
     },
     manager,
@@ -971,6 +1185,10 @@ export function createApp(s: Service) {
         d,
       ]);
       await s.audit(req.user.id, 'offer.saved', d.id);
+      if (Date.parse(d.expires) > Date.now())
+        await enqueuePush(s.db, 'offer:' + d.id, 'deals', 'A treat at Café René', d.name, {
+          screen: 'Rewards',
+        });
       return d;
     },
     manager,

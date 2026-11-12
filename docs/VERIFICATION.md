@@ -96,3 +96,7 @@ API/shared/native type checks, lint, web production build and branded cold-start
 ## CR app identity
 
 Added a blue/cream CR monogram and explicit Café René iOS display name, shared Expo app icon, Android adaptive foreground and website favicon. Native assets are validated as 1024×1024 opaque sRGB PNGs. Preview build numbers auto-increment; runtime advances to `1.0.0-native.2` because the icon is native configuration. Runtime/config resolution and TypeScript/lint checks are run locally; a new signed EAS build and phone installation remain necessary.
+
+## Bar, printed visits and notifications
+
+Added drink browsing, a recipe picker, sourced expandable histories, manager bar-board edits, refreshed source links, artist-photo backgrounds, printable QR visit journaling and opted-in native notification registration/delivery. Automated integration checks cover role-protected bar updates, non-orderable drinks, alcohol-free matching, duplicate/revoked printed QR handling without reward issuance, recipient membership, notification category consent, message idempotency, generic lock-screen content, provider tickets/receipts and logout deactivation. Native runtime is now 1.0.0-native.3. Actual iPhone camera scanning, APNs signing and live delivery require device testing; provider calls are mocked locally.

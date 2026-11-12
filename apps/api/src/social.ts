@@ -1,3 +1,4 @@
+import { enqueuePush } from './push.ts';
 import { cacheImage } from './venue-content.ts';
 import { createHash } from 'node:crypto';
 import type { DB } from './db.ts';
@@ -133,6 +134,24 @@ export async function refreshSocial(
           ],
         );
         imported += row.rows.length;
+        if (
+          autoPublished &&
+          row.rows.length &&
+          Date.parse(post.created_time ?? post.timestamp) >= Date.now() - 86400000 &&
+          Date.parse(post.created_time ?? post.timestamp) <= Date.now() + 300000
+        )
+          await enqueuePush(
+            db,
+            'social:' + channel.channel + ':' + post.id,
+            /\b(gig|live music|band|dj|concert)\b/i.test(text)
+              ? 'gigs'
+              : /\b(deal|offer|discount)\b/i.test(text)
+                ? 'deals'
+                : 'events',
+            'New from Café René',
+            'There is a new venue update.',
+            { screen: 'What’s On' },
+          );
       }
     } catch {
       errors.push(channel.channel + ': request unavailable; try later');

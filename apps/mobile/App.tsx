@@ -1,3 +1,6 @@
+import { PushSettings, savedPushToken, useNotificationLinks } from './PushSettings';
+import { VisitsNative } from './VisitsNative';
+import { DrinksNative } from './DrinksNative';
 import { DiscoveryNative } from './DiscoveryNative';
 import Svg, { Path } from 'react-native-svg';
 import { socialIconPaths } from '../../packages/shared/src/social-icons';
@@ -130,11 +133,20 @@ const eventImages: Record<string, any> = {
   'nov26-luke-austin': require('../../packages/assets/events/nov26-luke-austin.webp'),
   'nov26-kingsley-allies': require('../../packages/assets/events/nov26-kingsley-allies.webp'),
 };
+const artistImages: Record<string, any> = {
+  'nov26-alex-comaish': require('../../packages/assets/artists/nov26-alex-comaish.webp'),
+  'nov26-baron-crane': require('../../packages/assets/artists/nov26-baron-crane.webp'),
+  'nov26-st-fian': require('../../packages/assets/artists/nov26-st-fian.webp'),
+  'nov26-kayco': require('../../packages/assets/artists/nov26-kayco.webp'),
+  'nov26-luke-austin': require('../../packages/assets/artists/nov26-luke-austin.webp'),
+  'nov26-kingsley-allies': require('../../packages/assets/artists/nov26-kingsley-allies.webp'),
+};
 const officialLogo = require('../../packages/assets/brand/logo.png');
 const venueInterior = require('../../packages/assets/brand/venue-interior.webp');
 const officialPoster = require('../../packages/assets/brand/november-2026.webp');
 /* eslint-enable @typescript-eslint/no-require-imports */
 function eventImage(e: any) {
+  if (e.imageUrl?.startsWith('/api/')) return { uri: apiUrl + e.imageUrl };
   return (
     eventImages[e.id] ||
     (e.imageUrl
@@ -165,7 +177,11 @@ async function api(path: string, method = 'GET', body?: unknown, guest?: string)
   return d;
 }
 const tabNames = ['Home', 'Order', 'What’s On', 'Rewards', 'My René'];
-const clean = (s: string) => s.replaceAll('_', ' ');
+const clean = (s: string) =>
+  s
+    .replaceAll('_', ' ')
+    .replace(/\b(?:demo|sample)\s*/gi, '')
+    .trim();
 export default function App() {
   const [loaded, error] = useFonts({
     Roboto_400Regular,
@@ -199,6 +215,7 @@ function AppContent() {
     [table, setTable] = useState<any>(null),
     [collection, setCollection] = useState(false),
     [category, setCategory] = useState('All'),
+    [orderMode, setOrderMode] = useState('Food'),
     [menuEdition, setMenuEdition] = useState('main'),
     [query, setQuery] = useState(''),
     [basket, setBasket] = useState<BasketLine[]>([]),
@@ -224,7 +241,17 @@ function AppContent() {
       'Location is off. Use the rotating venue QR or ask staff.',
     ),
     [reduced, setReduced] = useState(false),
-    [deleteConfirm, setDeleteConfirm] = useState('');
+    [deleteConfirm, setDeleteConfirm] = useState(''),
+    [visitRevision, setVisitRevision] = useState(0),
+    [notificationCircle, setNotificationCircle] = useState('');
+  const pendingVisit = useRef<string | null>(null);
+  useNotificationLinks((data) => {
+    if (tabNames.includes(String(data.screen))) setTab(String(data.screen));
+    if (data.circleId) setNotificationCircle(String(data.circleId));
+    const listing = boot?.events.find((e: any) => e.id === data.eventId);
+    if (listing) setEvent(listing);
+    if (data.screen === 'My René' && !sessionToken) setLogin(true);
+  });
   const identity = useRef<string | null>(null);
   const setUser = (next: any) => {
     identity.current = next?.id || null;
@@ -351,6 +378,28 @@ function AppContent() {
     try {
       const parsed = Linking.parse(url);
       const q = parsed.queryParams;
+      const printed = q?.checkin || q?.code;
+      if (printed) {
+        if (!sessionToken) {
+          pendingVisit.current = url;
+          setLogin(true);
+          notify('Sign in to record your visit.');
+          return;
+        }
+        const result = await api('/visits/check-in', 'POST', { code: String(printed) });
+        setVisitRevision((n) => n + 1);
+        setTab('My René');
+        notify(result.message);
+        return;
+      }
+      if (q?.scan) {
+        if (!sessionToken) {
+          setLogin(true);
+          return;
+        }
+        await openScan();
+        return;
+      }
       if (q?.table) {
         const ref = String(q.table);
         const t = await api('/table/validate', 'POST', { ref });
@@ -385,6 +434,11 @@ function AppContent() {
       setUser(d.user);
       setRewards(await api('/rewards'));
       setLogin(false);
+      if (pendingVisit.current) {
+        const url = pendingVisit.current;
+        pendingVisit.current = null;
+        await scanHandler.current(url);
+      }
     });
   }
   async function chooseTable(n: number) {
@@ -639,6 +693,15 @@ function AppContent() {
               <Text style={s.small}>31 Southgate Street · Independently spirited since 2003</Text>
             </View>
             <View style={s.content}>
+              <VisitsNative
+                user={user}
+                request={api}
+                revision={visitRevision}
+                onScan={() => {
+                  if (user) void openScan();
+                  else setLogin(true);
+                }}
+              />
               <Text style={s.eyebrow}>MAKE IT A RENÉ KIND OF DAY</Text>
               <Text style={s.heading}>Find your food. Your music. Your people.</Text>
               <View style={s.experienceGrid}>
@@ -720,7 +783,7 @@ function AppContent() {
                   >
                     <NativeEventBackdrop event={e} />
                     <Text style={s.eyebrow}>
-                      {e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'} · {e.genre.toUpperCase()}
+                      {e.sample ? 'COMING UP' : 'RENÉ LIVE'} · {e.genre.toUpperCase()}
                     </Text>
                     <NativeEventArtwork event={e} />
                     <Text style={[s.poster, { fontSize: 35 }]}>{e.title}</Text>
@@ -730,7 +793,7 @@ function AppContent() {
                         day: 'numeric',
                         month: 'long',
                       })}{' '}
-                      · {e.sample ? 'Programme preview' : 'Official venue programme'}
+                      · {e.sample ? 'Event information' : 'Official venue programme'}
                     </Text>
                   </Pressable>
                 ))}
@@ -785,237 +848,263 @@ function AppContent() {
         )}
         {tab === 'Order' && (
           <View style={s.content}>
-            {heading(
-              'GOOD FOOD, YOUR WAY',
-              'The menu.',
-              'Sample prices. No real food or payment is arranged.',
-            )}
-            {panel(
-              <>
-                <Text style={s.title}>
-                  {collection ? 'Collect from the bar' : table?.label || 'Where are you sitting?'}
-                </Text>
-                {button('Scan table QR', () => void openScan(), true)}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <Pressable
-                      key={i}
-                      style={[
-                        s.chip,
-                        table?.label === `Table ${i + 1}` && !collection && s.selected,
-                      ]}
-                      onPress={() => void chooseTable(i + 1)}
-                    >
-                      <Text style={s.chipText}>Table {i + 1}</Text>
-                    </Pressable>
-                  ))}
-                </ScrollView>
-                {button(
-                  collection ? '✓ Collection selected' : 'Choose collection',
-                  () => setCollection(true),
-                  true,
-                )}
-              </>,
-            )}
-            {order &&
-              panel(
+            <View style={s.wrap}>
+              {['Food', 'Drinks'].map((mode) => (
+                <Pressable
+                  key={mode}
+                  style={[s.chip, orderMode === mode && s.selected]}
+                  onPress={() => setOrderMode(mode)}
+                >
+                  <Text style={s.chipText}>
+                    {mode === 'Drinks' ? 'Beers, cocktails & more' : 'Food menu'}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {orderMode === 'Drinks' && <DrinksNative request={api} apiUrl={apiUrl} />}
+            <View
+              style={{ display: orderMode === 'Food' ? 'flex' : 'none' }}
+              accessibilityElementsHidden={orderMode !== 'Food'}
+            >
+              {heading(
+                'GOOD FOOD, YOUR WAY',
+                'The menu.',
+                'Published menu prices. Payments and till delivery are not connected.',
+              )}
+              {panel(
                 <>
-                  <Text style={s.eyebrow}>ORDER PREVIEW #{order.id.slice(0, 8)}</Text>
-                  <Text style={s.title}>{clean(order.status)}</Text>
-                  <Text style={s.body}>
-                    {money(order.total)} · Payment {order.payment}
+                  <Text style={s.title}>
+                    {collection ? 'Collect from the bar' : table?.label || 'Where are you sitting?'}
                   </Text>
-                  <Text style={s.small}>
-                    {order.status === 'awaiting_acceptance'
-                      ? 'Payment confirmed. Waiting for staff/POS acceptance.'
-                      : 'Simulated order. No food will be prepared.'}
-                  </Text>
-                  {order.payment === 'unpaid' &&
-                    order.status !== 'cancelled' &&
-                    button(
-                      'Simulate payment',
-                      () =>
-                        void run(async () => {
-                          setOrder(
-                            await api(
-                              '/orders/' + order.id + '/mock-pay',
-                              'POST',
-                              {},
-                              receipt?.secret,
-                            ),
-                          );
-                        }),
-                      false,
-                    )}
+                  {button('Scan table QR', () => void openScan(), true)}
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {Array.from({ length: 12 }, (_, i) => (
+                      <Pressable
+                        key={i}
+                        style={[
+                          s.chip,
+                          table?.label === `Table ${i + 1}` && !collection && s.selected,
+                        ]}
+                        onPress={() => void chooseTable(i + 1)}
+                      >
+                        <Text style={s.chipText}>Table {i + 1}</Text>
+                      </Pressable>
+                    ))}
+                  </ScrollView>
                   {button(
-                    'Share receipt',
-                    () =>
-                      void run(async () => {
-                        const r = await api(
-                          '/orders/' + order.id,
-                          'GET',
-                          undefined,
-                          receipt?.secret,
-                        );
-                        await Share.share({
-                          message: JSON.stringify(
-                            {
-                              id: r.id,
-                              total: r.total,
-                              payment: r.payment,
-                              status: r.status,
-                              items: r.items,
-                            },
-                            null,
-                            2,
-                          ),
-                        });
-                      }),
+                    collection ? '✓ Collection selected' : 'Choose collection',
+                    () => setCollection(true),
                     true,
                   )}
-                  {order.payment === 'unpaid' &&
-                    order.status !== 'cancelled' &&
-                    button(
-                      'Cancel unpaid order',
+                </>,
+              )}
+              {order &&
+                panel(
+                  <>
+                    <Text style={s.eyebrow}>ORDER PREVIEW #{order.id.slice(0, 8)}</Text>
+                    <Text style={s.title}>{clean(order.status)}</Text>
+                    <Text style={s.body}>
+                      {money(order.total)} · Payment {order.payment}
+                    </Text>
+                    <Text style={s.small}>
+                      {order.status === 'awaiting_acceptance'
+                        ? 'Payment confirmed. Waiting for staff/POS acceptance.'
+                        : 'Simulated order. No food will be prepared.'}
+                    </Text>
+                    {order.payment === 'unpaid' &&
+                      order.status !== 'cancelled' &&
+                      button(
+                        'Simulate payment',
+                        () =>
+                          void run(async () => {
+                            setOrder(
+                              await api(
+                                '/orders/' + order.id + '/mock-pay',
+                                'POST',
+                                {},
+                                receipt?.secret,
+                              ),
+                            );
+                          }),
+                        false,
+                      )}
+                    {button(
+                      'Share receipt',
                       () =>
                         void run(async () => {
-                          await api('/orders/' + order.id + '/cancel', 'POST', {}, receipt?.secret);
-                          setOrder(
-                            await api('/orders/' + order.id, 'GET', undefined, receipt?.secret),
+                          const r = await api(
+                            '/orders/' + order.id,
+                            'GET',
+                            undefined,
+                            receipt?.secret,
                           );
+                          await Share.share({
+                            message: JSON.stringify(
+                              {
+                                id: r.id,
+                                total: r.total,
+                                payment: r.payment,
+                                status: r.status,
+                                items: r.items,
+                              },
+                              null,
+                              2,
+                            ),
+                          });
                         }),
                       true,
                     )}
-                </>,
+                    {order.payment === 'unpaid' &&
+                      order.status !== 'cancelled' &&
+                      button(
+                        'Cancel unpaid order',
+                        () =>
+                          void run(async () => {
+                            await api(
+                              '/orders/' + order.id + '/cancel',
+                              'POST',
+                              {},
+                              receipt?.secret,
+                            );
+                            setOrder(
+                              await api('/orders/' + order.id, 'GET', undefined, receipt?.secret),
+                            );
+                          }),
+                        true,
+                      )}
+                  </>,
+                )}
+              <TextInput
+                style={s.input}
+                placeholder="Find your favourite"
+                placeholderTextColor={C.muted}
+                value={query}
+                onChangeText={setQuery}
+              />
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ marginBottom: 16 }}
+              >
+                {menuSources.map((source) => (
+                  <Pressable
+                    key={source.id}
+                    style={[s.chip, menuEdition === source.id && s.selected]}
+                    onPress={() => {
+                      setMenuEdition(source.id);
+                      setCategory('All');
+                    }}
+                  >
+                    <Text style={s.chipText}>{source.name}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+              <Text style={s.body}>
+                {menuSources.find((source) => source.id === menuEdition)?.note}
+              </Text>
+              {button(
+                'Read original menu ↗',
+                () =>
+                  void Linking.openURL(
+                    menuSources.find((source) => source.id === menuEdition)!.url,
+                  ),
+                true,
               )}
-            <TextInput
-              style={s.input}
-              placeholder="Find your favourite"
-              placeholderTextColor={C.muted}
-              value={query}
-              onChangeText={setQuery}
-            />
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 16 }}
-            >
-              {menuSources.map((source) => (
-                <Pressable
-                  key={source.id}
-                  style={[s.chip, menuEdition === source.id && s.selected]}
-                  onPress={() => {
-                    setMenuEdition(source.id);
-                    setCategory('All');
-                  }}
-                >
-                  <Text style={s.chipText}>{source.name}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <Text style={s.body}>
-              {menuSources.find((source) => source.id === menuEdition)?.note}
-            </Text>
-            {button(
-              'Read original menu ↗',
-              () =>
-                void Linking.openURL(menuSources.find((source) => source.id === menuEdition)!.url),
-              true,
-            )}
-            <Text style={s.small}>
-              Published menu checked {menuChecked}. Ask the team about availability and allergens.
-              Meal deals are arranged with staff.
-            </Text>
-            {['festive', 'christmas-day', 'christmas-children'].includes(menuEdition) &&
-              seasonalMenu(menuEdition).map((dish) => (
-                <View key={dish.name} style={s.panel}>
-                  <Image
-                    source={foodImages[dish.imageKey]}
-                    style={s.featuredFood}
-                    contentFit="cover"
-                    accessibilityLabel={'AI illustration of ' + dish.name}
-                  />
-                  <Text style={s.eyebrow}>{dish.course}</Text>
-                  <Text style={s.title}>{dish.name}</Text>
-                  <Text style={s.body}>{dish.description}</Text>
-                  <Text style={s.small}>Included in the set menu · AI illustration</Text>
-                </View>
-              ))}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ marginVertical: 15 }}
-            >
-              {[
-                'All',
-                ...new Set<string>(
-                  boot.menu
-                    .filter((m: MenuItem) => (m.menuEdition || 'main') === menuEdition)
-                    .map((m: MenuItem) => m.category),
-                ),
-              ].map((c) => (
-                <Pressable
-                  key={c}
-                  style={[s.chip, category === c && s.selected]}
-                  onPress={() => setCategory(c)}
-                >
-                  <Text style={s.chipText}>{c}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <Text style={s.warning}>
-              Allergen data is unavailable. Ask staff before ordering. Source dietary labels await
-              review.
-            </Text>
-            {boot.menu
-              .filter(
-                (m: MenuItem) =>
-                  (m.menuEdition || 'main') === menuEdition &&
-                  (category === 'All' || m.category === category) &&
-                  m.name.toLowerCase().includes(query.toLowerCase()),
-              )
-              .map((m: MenuItem) => (
-                <Pressable
-                  key={m.id}
-                  disabled={!m.available}
-                  style={[s.menuCard, !m.available && { opacity: 0.4 }]}
-                  onPress={() => {
-                    setItem(m);
-                    setMods([]);
-                  }}
-                >
-                  {foodImages[m.imageKey || m.id] && (
-                    <View>
-                      <Image
-                        source={foodImages[m.imageKey || m.id]}
-                        style={s.menuPhoto}
-                        accessibilityLabel={
-                          'AI-generated illustration, not a photograph of René’s actual dish'
-                        }
-                      />
-                      <Text style={s.photoLabel}>AI ILLUSTRATION</Text>
-                    </View>
-                  )}
-                  <View style={{ flex: 1 }}>
-                    <Text style={s.eyebrow}>
-                      {m.category.toUpperCase()}
-                      {m.alcohol ? ' · AGE CHECK' : ''}
-                    </Text>
-                    <Text style={s.menuTitle}>{m.name}</Text>
-                    <Text style={s.body}>{m.description}</Text>
-                    <Text style={s.small}>{m.dietary.join(' · ')}</Text>
-                    <Text style={s.price}>
-                      {money(m.price)} <Text style={s.small}>published price</Text>
-                    </Text>
+              <Text style={s.small}>
+                Published menu checked {menuChecked}. Ask the team about availability and allergens.
+                Meal deals are arranged with staff.
+              </Text>
+              {['festive', 'christmas-day', 'christmas-children'].includes(menuEdition) &&
+                seasonalMenu(menuEdition).map((dish) => (
+                  <View key={dish.name} style={s.panel}>
+                    <Image
+                      source={foodImages[dish.imageKey]}
+                      style={s.featuredFood}
+                      contentFit="cover"
+                      accessibilityLabel={'AI illustration of ' + dish.name}
+                    />
+                    <Text style={s.eyebrow}>{dish.course}</Text>
+                    <Text style={s.title}>{dish.name}</Text>
+                    <Text style={s.body}>{dish.description}</Text>
+                    <Text style={s.small}>Included in the set menu · AI illustration</Text>
                   </View>
-                  <Text style={s.add}>+</Text>
-                </Pressable>
-              ))}
-            {basket.length > 0 &&
-              button(
-                `View basket · ${basket.reduce((s, l) => s + l.quantity, 0)} items · ${money(total)}`,
-                () => setCheckout(true),
-              )}
+                ))}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ marginVertical: 15 }}
+              >
+                {[
+                  'All',
+                  ...new Set<string>(
+                    boot.menu
+                      .filter((m: MenuItem) => (m.menuEdition || 'main') === menuEdition)
+                      .map((m: MenuItem) => m.category),
+                  ),
+                ].map((c) => (
+                  <Pressable
+                    key={c}
+                    style={[s.chip, category === c && s.selected]}
+                    onPress={() => setCategory(c)}
+                  >
+                    <Text style={s.chipText}>{c}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+              <Text style={s.warning}>
+                Allergen data is unavailable. Ask staff before ordering. Source dietary labels await
+                review.
+              </Text>
+              {boot.menu
+                .filter(
+                  (m: MenuItem) =>
+                    (m.menuEdition || 'main') === menuEdition &&
+                    (category === 'All' || m.category === category) &&
+                    m.name.toLowerCase().includes(query.toLowerCase()),
+                )
+                .map((m: MenuItem) => (
+                  <Pressable
+                    key={m.id}
+                    disabled={!m.available}
+                    style={[s.menuCard, !m.available && { opacity: 0.4 }]}
+                    onPress={() => {
+                      setItem(m);
+                      setMods([]);
+                    }}
+                  >
+                    {foodImages[m.imageKey || m.id] && (
+                      <View>
+                        <Image
+                          source={foodImages[m.imageKey || m.id]}
+                          style={s.menuPhoto}
+                          accessibilityLabel={
+                            'AI-generated illustration, not a photograph of René’s actual dish'
+                          }
+                        />
+                        <Text style={s.photoLabel}>AI ILLUSTRATION</Text>
+                      </View>
+                    )}
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.eyebrow}>
+                        {m.category.toUpperCase()}
+                        {m.alcohol ? ' · AGE CHECK' : ''}
+                      </Text>
+                      <Text style={s.menuTitle}>{m.name}</Text>
+                      <Text style={s.body}>{m.description}</Text>
+                      <Text style={s.small}>{m.dietary.join(' · ')}</Text>
+                      <Text style={s.price}>
+                        {money(m.price)} <Text style={s.small}>published price</Text>
+                      </Text>
+                    </View>
+                    <Text style={s.add}>+</Text>
+                  </Pressable>
+                ))}
+              {basket.length > 0 &&
+                button(
+                  `View basket · ${basket.reduce((s, l) => s + l.quantity, 0)} items · ${money(total)}`,
+                  () => setCheckout(true),
+                )}
+            </View>
           </View>
         )}
         {tab === 'What’s On' && (
@@ -1050,7 +1139,7 @@ function AppContent() {
                 >
                   <NativeEventBackdrop event={e} />
                   <Text style={s.eyebrow}>
-                    {e.sample ? 'SAMPLE' : 'OFFICIAL PROGRAMME'} · {e.genre.toUpperCase()}
+                    {e.sample ? 'COMING UP' : 'OFFICIAL PROGRAMME'} · {e.genre.toUpperCase()}
                   </Text>
                   <NativeEventArtwork event={e} />
                   <Text style={s.poster}>{e.title}</Text>
@@ -1194,7 +1283,13 @@ function AppContent() {
                     <Text style={s.title}>A treat for next time.</Text>
                     {rewards.offers.map((o: any) => (
                       <View style={s.panel} key={o.id}>
-                        <Text style={s.eyebrow}>SAMPLE OFFER · SINGLE USE</Text>
+                        <Image
+                          source={o.id === 'kitchen-six' ? foodImages.club : foodImages.burger}
+                          style={[StyleSheet.absoluteFillObject, { opacity: 0.15 }]}
+                          contentFit="cover"
+                          accessible={false}
+                        />
+                        <Text style={s.eyebrow}>RENÉ REWARD · SINGLE USE</Text>
                         <Text style={s.title}>{o.name}</Text>
                         <Text style={s.body}>{o.description}</Text>
                         <Text style={s.small}>
@@ -1261,7 +1356,7 @@ function AppContent() {
                       'Sign out',
                       () =>
                         void run(async () => {
-                          await api('/auth/logout', 'POST', {});
+                          await api('/auth/logout', 'POST', { pushToken: await savedPushToken() });
                           sessionToken = null;
                           await SecureStore.deleteItemAsync('rene-session');
                           setUser(null);
@@ -1281,7 +1376,6 @@ function AppContent() {
                     {[
                       ['personalisation', 'Personalised recommendations'],
                       ['email', 'Email marketing'],
-                      ['push', 'Push marketing'],
                       ['location', 'Location-assisted arrival'],
                     ].map(([key, label]) => (
                       <View style={s.switchRow} key={key}>
@@ -1331,6 +1425,14 @@ function AppContent() {
                   </>,
                 )}
                 <NativeSnapshot rewards={rewards} />
+                <VisitsNative
+                  user={user}
+                  request={api}
+                  revision={visitRevision}
+                  history
+                  onScan={() => void openScan()}
+                />
+                <PushSettings user={user} request={api} setUser={setUser} />
                 <DiscoveryNative
                   key={'picks-' + user.id}
                   user={user}
@@ -1343,16 +1445,23 @@ function AppContent() {
                     const dish = boot.menu.find((m: MenuItem) => m.id === id);
                     if (dish?.available) {
                       setTab('Order');
+                      setOrderMode('Food');
                       setMods([]);
                       setItem(dish);
                     }
                   }}
                 />
-                <CircleNative key={user.id} user={user} api={api} run={run} />
+                <CircleNative
+                  key={user.id}
+                  user={user}
+                  api={api}
+                  run={run}
+                  initialCircleId={notificationCircle}
+                />
                 {panel(
                   <>
                     <Text style={s.title}>What you ate & drank</Text>
-                    <Text style={s.small}>Sample history — these are not actual purchases.</Text>
+                    <Text style={s.small}>Your food and drink story, all in one place.</Text>
                     {myHistory?.orders.map((o: any) => (
                       <View key={o.id} style={s.listRow}>
                         <Text style={s.price}>
@@ -1534,7 +1643,7 @@ function AppContent() {
         close={() => setLogin(false)}
       >
         <Text style={s.body}>
-          Sign in to your René Circle, or explore Daniel’s sample account from My René.
+          Sign in to your René Circle, or explore Daniel’s René from My René.
         </Text>
         {register && (
           <TextInput
@@ -1733,7 +1842,7 @@ function AppContent() {
         {event && (
           <>
             <Text style={s.eyebrow}>
-              {event.sample ? 'SAMPLE EVENT' : 'OFFICIAL VENUE PROGRAMME'} · {event.genre}
+              {event.sample ? 'COMING UP' : 'OFFICIAL VENUE PROGRAMME'} · {event.genre}
             </Text>
             {eventImage(event) && (
               <Image
@@ -1748,7 +1857,7 @@ function AppContent() {
             <Text style={s.body}>{event.description}</Text>
             <Text style={s.warning}>
               {event.sample
-                ? 'Sample listing. Example tickets do not grant real admission.'
+                ? 'Event information. Confirm admission details with the venue.'
                 : 'From the official venue programme; check the source for changes.'}{' '}
               Reminder preferences are stored; delivery is not connected.
             </Text>
@@ -1770,7 +1879,7 @@ function AppContent() {
                 () => void Linking.openURL(event.sourceUrl || programmeSource),
               )}
             {event.sample &&
-              button('Save example ticket', () =>
+              button('Save event details', () =>
                 user
                   ? void run(async () =>
                       notify((await api('/tickets/' + event.id, 'POST', {})).message),
@@ -1872,7 +1981,7 @@ function NativeSnapshot({ rewards }: { rewards: any }) {
         </Text>
         <Text style={s.title}>René Points</Text>
         <Text style={s.small}>
-          Food purchases and sample welcome rewards. No points for alcohol spending.
+          Food purchases and welcome rewards. No points for alcohol spending.
         </Text>
       </View>
       <View style={[s.panel, { backgroundColor: '#e9ed7c' }]}>
@@ -1915,7 +2024,7 @@ function NativeSnapshot({ rewards }: { rewards: any }) {
           eligible food.
         </Text>
         <Text style={[s.small, { color: '#3c6971' }]}>
-          Sample promotion. Drinks don’t earn food stamps. Eligibility is checked at checkout.
+          Drinks don’t earn food stamps. Eligibility is checked at checkout.
         </Text>
       </View>
     </View>
@@ -2582,7 +2691,11 @@ function StartupScreen({ message, retry }: { message?: string; retry?: () => voi
   );
 }
 function NativeEventBackdrop({ event }: { event: any }) {
-  const source = eventImage(event);
+  const source = event.artistImageUrl
+    ? { uri: apiUrl + event.artistImageUrl }
+    : (event.imageKind === 'venue-programme' ? artistImages[event.id] : null) ||
+      eventImage(event) ||
+      venueInterior;
   if (!source) return null;
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFillObject}>
@@ -2590,7 +2703,7 @@ function NativeEventBackdrop({ event }: { event: any }) {
         source={source}
         style={StyleSheet.absoluteFillObject}
         contentFit="cover"
-        blurRadius={8}
+        blurRadius={3}
         accessible={false}
       />
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#041322', opacity: 0.5 }]} />

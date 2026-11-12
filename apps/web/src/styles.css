@@ -5854,3 +5854,221 @@ header .official-logo {
     animation-fill-mode: backwards;
   }
 }
+.order-mode {
+  margin-bottom: 28px;
+}
+.bar-tabs {
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+.bar-hub > p {
+  max-width: 820px;
+  color: #c2dce1;
+  line-height: 1.7;
+}
+.bar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin: 26px 0;
+}
+.drink-card {
+  overflow: hidden;
+  border: 1px solid #75dbce55;
+  border-radius: 24px;
+  background:
+    linear-gradient(#102b3ef0, #102b3ee8),
+    var(--drink-image) center/cover;
+}
+.drink-hero {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.drink-copy {
+  padding: 25px;
+}
+.drink-copy h3 {
+  font:
+    29px 'Bree Serif',
+    serif;
+  margin: 12px 0;
+}
+.drink-copy p {
+  font-size: 14px;
+  color: #c2dce1;
+  line-height: 1.7;
+}
+.drink-copy small,
+.drink-status {
+  display: block;
+  font-size: 11px;
+  color: #c1dce1;
+  line-height: 1.7;
+  margin: 12px 0;
+}
+.drink-status {
+  color: #eef298;
+}
+.drink-history {
+  border-top: 1px solid #75dbce44;
+  padding: 15px 0;
+  margin-top: 15px;
+}
+.drink-history summary {
+  cursor: pointer;
+  color: #b4f6dd;
+}
+.drink-history a {
+  margin-left: 20px;
+  font-size: 12px;
+  color: #eaf099;
+}
+.mixologist,
+.bar-admin,
+.bar-sources {
+  border-radius: 20px;
+  border: 1px solid #75dbce55;
+  padding: 25px;
+  background:
+    linear-gradient(120deg, #133e51eb, #1d3156eb),
+    url('/images/drinks/negroni.webp') center/cover;
+  margin: 24px 0;
+}
+.mixologist label {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 24px 14px 0;
+  min-width: 180px;
+}
+.mixologist small,
+.bar-sources small {
+  display: block;
+}
+.bar-sources a {
+  display: block;
+  padding: 12px 0;
+  color: #eaf099;
+}
+.bar-admin form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 24px;
+}
+.bar-admin label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bar-post {
+  border: 1px solid #75dbce44;
+  border-radius: 20px;
+  padding: 20px;
+  background: #143447;
+}
+.bar-post img {
+  width: 100%;
+  border-radius: 12px;
+}
+.bar-post p {
+  line-height: 1.7;
+}
+.home-checkin {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 30px 50px 0;
+}
+.visit-prompt {
+  display: flex;
+  gap: 26px;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 28px;
+  border-radius: 22px;
+  border: 1px solid #8adbc55c;
+  background:
+    linear-gradient(120deg, #135456ee, #122b48eb),
+    url('/brand/venue-interior.webp') center/cover;
+}
+.visit-prompt h2 {
+  font:
+    31px 'Bree Serif',
+    serif;
+  margin: 12px 0;
+}
+.visit-prompt p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.visit-prompt > div:last-child {
+  min-width: 200px;
+  display: grid;
+  gap: 16px;
+}
+.visit-prompt a.outline {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+.offer {
+  background:
+    linear-gradient(120deg, #163b4be3, #312d4cde),
+    var(--offer-image, url('/images/generated/club.webp')) center/cover;
+}
+.event-card-background {
+  opacity: 0.62;
+  filter: blur(1px) saturate(1.1);
+}
+@media (max-width: 1000px) {
+  .bar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .bar-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .visit-prompt {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 24px;
+  }
+  .home-checkin {
+    padding: 24px 22px 0;
+  }
+  .bar-admin form {
+    grid-template-columns: 1fr;
+  }
+  .drink-copy {
+    padding: 23px;
+  }
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-checkin,
+  .print-checkin * {
+    visibility: visible;
+  }
+  .print-checkin {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    color: #15388e !important;
+    padding: 40px !important;
+  }
+  .print-checkin button {
+    display: none;
+  }
+  .print-checkin .qr {
+    width: 320px;
+    height: 320px;
+  }
+}

@@ -1,3 +1,4 @@
+import { deliverPush } from './push.ts';
 import { refreshContent } from './content-refresh.ts';
 import { existsSync } from 'node:fs';
 import express from 'express';
@@ -27,6 +28,9 @@ if (process.env.SERVE_WEB === 'true') {
 const server = app.listen(Number(process.env.PORT || 3001), '0.0.0.0', () =>
   console.log('René demo API listening on :3001 — mock payments / mock POS'),
 );
+const pushTimer = setInterval(() => {
+  void deliverPush(db).catch(() => console.error('Notification delivery deferred'));
+}, 15000);
 const contentTimer = setInterval(() => {
   void refreshContent(db).catch(() => console.error('Content refresh deferred'));
 }, 60000);
@@ -36,6 +40,7 @@ const firstContent = setTimeout(() => {
 const timer = setInterval(() => s.runJobs().catch(() => console.error('Job retry deferred')), 3000);
 process.on('SIGTERM', () => {
   clearInterval(timer);
+  clearInterval(pushTimer);
   clearInterval(contentTimer);
   clearTimeout(firstContent);
   server.close(() => db.close());

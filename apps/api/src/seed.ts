@@ -150,9 +150,15 @@ async function seedDefaults(db: DB) {
     ]);
   await seedDaniel(db);
   await seedDiscovery(db);
+  await db.query(
+    "UPDATE users SET name=replace(name,' (sample)','') WHERE id IN ('demo-alex','demo-sam') AND name IN ('Alex (sample)','Sam (sample)')",
+  );
+  await db.query(
+    "UPDATE social_profiles SET display_name=replace(display_name,' (sample)','') WHERE user_id IN ('demo-alex','demo-sam') AND display_name IN ('Alex (sample)','Sam (sample)')",
+  );
   for (const [before, after] of [
-    ['Demo Alex', 'Alex (sample)'],
-    ['Demo Sam', 'Sam (sample)'],
+    ['Demo Alex', 'Alex'],
+    ['Demo Sam', 'Sam'],
   ]) {
     await db.query('UPDATE users SET name=$2 WHERE name=$1', [before, after]);
     await db.query('UPDATE social_profiles SET display_name=$2 WHERE display_name=$1', [
@@ -167,7 +173,10 @@ async function seedDefaults(db: DB) {
     "UPDATE circle_plans SET title='Food & live music', notes='A sample plan with fictional members. No table or tickets booked.' WHERE id='demo-friday-plan' AND title='Demo · Food & live music'",
   );
   await db.query(
-    "UPDATE circle_messages SET body=replace(body,'[Demo]','[Sample]') WHERE id IN ('demo-message-1','demo-message-2','demo-message-3') AND body LIKE '[Demo]%'",
+    "UPDATE circle_messages SET body=replace(body,'[Demo]','') WHERE id IN ('demo-message-1','demo-message-2','demo-message-3') AND body LIKE '[Demo]%'",
+  );
+  await db.query(
+    "UPDATE circle_messages SET body=replace(body,'[Sample]','') WHERE id IN ('demo-message-1','demo-message-2','demo-message-3') AND body LIKE '[Sample]%'",
   );
   await db.query(
     "UPDATE offers SET data=jsonb_set(data,'{description}',to_jsonb(replace(data->>'description','demo food order','eligible food order'))) WHERE id IN ('welcome','kitchen-six') AND data->>'description' LIKE '%demo food order%'",
