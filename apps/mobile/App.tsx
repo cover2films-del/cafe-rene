@@ -165,7 +165,6 @@ async function api(path: string, method = 'GET', body?: unknown, guest?: string)
   return d;
 }
 const tabNames = ['Home', 'Order', 'What’s On', 'Rewards', 'My René'];
-const tabIcons = ['⌂', '♧', '♫', '✦', '○'];
 const clean = (s: string) => s.replaceAll('_', ' ');
 export default function App() {
   const [loaded, error] = useFonts({
@@ -592,8 +591,9 @@ function AppContent() {
           onPress={() => setCheckout(true)}
           style={s.basketIcon}
         >
-          <Text style={{ color: '#15388e', fontSize: 17 }}>
-            ♧ {basket.reduce((n, l) => n + l.quantity, 0)}
+          <NativeNavIcon name="Basket" color="#15388e" />
+          <Text style={{ color: '#15388e', fontSize: 14, fontFamily: 'Roboto_700Bold' }}>
+            {basket.reduce((n, l) => n + l.quantity, 0)}
           </Text>
         </Pressable>
       </View>
@@ -619,6 +619,12 @@ function AppContent() {
         {tab === 'Home' && (
           <>
             <View style={s.hero}>
+              <Image
+                source={venueInterior}
+                style={[StyleSheet.absoluteFillObject, { opacity: 0.23 }]}
+                contentFit="cover"
+                accessible={false}
+              />
               <View style={s.heroLines} />
               <Text style={s.eyebrow}>IN THE HEART OF GLOUCESTER</Text>
               <Text style={s.heroTitle}>
@@ -633,6 +639,66 @@ function AppContent() {
               <Text style={s.small}>31 Southgate Street · Independently spirited since 2003</Text>
             </View>
             <View style={s.content}>
+              <Text style={s.eyebrow}>MAKE IT A RENÉ KIND OF DAY</Text>
+              <Text style={s.heading}>Find your food. Your music. Your people.</Text>
+              <View style={s.experienceGrid}>
+                {[
+                  {
+                    target: 'Order',
+                    title: 'Pull up a chair.',
+                    detail: 'Explore the menu',
+                    image: foodImages.burger,
+                  },
+                  {
+                    target: 'What’s On',
+                    title: 'Find your night.',
+                    detail: 'See what’s on',
+                    image: boot.events[0] ? eventImage(boot.events[0]) : officialPoster,
+                  },
+                  {
+                    target: 'Rewards',
+                    title: 'Be a regular.',
+                    detail: 'Points & treats',
+                    image: foodImages.club,
+                  },
+                  {
+                    target: 'My René',
+                    title: 'Bring your people.',
+                    detail: 'Groups & plans',
+                    image: venueInterior,
+                  },
+                ].map((card) => (
+                  <Pressable
+                    key={card.target}
+                    accessibilityRole="button"
+                    style={({ pressed }) => [
+                      s.experienceCard,
+                      pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+                    ]}
+                    onPress={() => setTab(card.target)}
+                  >
+                    <Image
+                      source={card.image}
+                      style={StyleSheet.absoluteFillObject}
+                      contentFit="cover"
+                      accessible={false}
+                    />
+                    <View
+                      style={[
+                        StyleSheet.absoluteFillObject,
+                        { backgroundColor: '#041322', opacity: 0.55 },
+                      ]}
+                    />
+                    <View style={s.experienceIcon}>
+                      <NativeNavIcon name={card.target} color="#a2fff0" />
+                    </View>
+                    <View>
+                      <Text style={s.experienceTitle}>{card.title}</Text>
+                      <Text style={s.experienceDetail}>{card.detail} ↗</Text>
+                    </View>
+                  </Pressable>
+                ))}
+              </View>
               {heading('THE SOUND OF RENÉ', 'Find your kind of night.')}
               <ScrollView
                 horizontal
@@ -1438,16 +1504,26 @@ function AppContent() {
       </MotionScroll>
       <SafeAreaView edges={['bottom']} style={s.tabSafe}>
         <View style={s.tabs}>
-          {tabNames.map((t, i) => (
+          {tabNames.map((t) => (
             <Pressable
               key={t}
               accessibilityRole="tab"
               accessibilityState={{ selected: tab === t }}
               onPress={() => setTab(t)}
-              style={s.tab}
+              style={({ pressed }) => [
+                s.tab,
+                tab === t && { backgroundColor: '#1c847446' },
+                pressed && { opacity: 0.7 },
+              ]}
             >
-              <Text style={[s.tabIcon, tab === t && { color: C.gold }]}>{tabIcons[i]}</Text>
-              <Text style={[s.tabText, tab === t && { color: C.gold }]}>{t}</Text>
+              <NativeNavIcon name={t} color={tab === t ? '#eeef93' : '#a9c4d1'} />
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[s.tabText, tab === t && { color: C.gold }]}
+              >
+                {t}
+              </Text>
             </Pressable>
           ))}
         </View>
@@ -1975,11 +2051,11 @@ const C = {
   line: '#45483a',
 };
 const s = StyleSheet.create({
-  menuPhoto: { width: 95, height: 150, borderRadius: 8 },
+  menuPhoto: { width: 100, height: 145, borderRadius: 14 },
   photoLabel: {
     fontFamily: 'Roboto_400Regular',
-    fontSize: 5,
-    color: '#d9bb83',
+    fontSize: 8,
+    color: '#b5d5dd',
     marginTop: 7,
     textAlign: 'center',
     letterSpacing: 1,
@@ -1994,7 +2070,7 @@ const s = StyleSheet.create({
   header: {
     backgroundColor: '#faf7ed',
     paddingHorizontal: 24,
-    paddingVertical: 18,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -2015,7 +2091,16 @@ const s = StyleSheet.create({
     letterSpacing: 2.5,
     marginTop: 3,
   },
-  basketIcon: { borderWidth: 1, borderColor: C.line, padding: 12, borderRadius: 10 },
+  basketIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    borderWidth: 1,
+    borderColor: '#2763ab55',
+    padding: 12,
+    borderRadius: 18,
+    backgroundColor: '#d8e7ef',
+  },
   hero: {
     paddingHorizontal: 26,
     paddingTop: 45,
@@ -2121,11 +2206,19 @@ const s = StyleSheet.create({
     lineHeight: 45,
     marginVertical: 20,
   },
-  tabs: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 10, paddingBottom: 10 },
-  tabSafe: { backgroundColor: '#20221b', borderTopWidth: 1, borderTopColor: '#d2b77444' },
-  tab: { alignItems: 'center', gap: 4, minWidth: 58, minHeight: 43 },
+  tabs: { flexDirection: 'row', justifyContent: 'space-around', padding: 8, gap: 3 },
+  tabSafe: { backgroundColor: '#0c2336', borderTopWidth: 1, borderTopColor: '#52d5d54d' },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 9,
+    borderRadius: 16,
+    minHeight: 58,
+  },
   tabIcon: { fontFamily: 'Roboto_400Regular', fontSize: 24, color: '#8f9981' },
-  tabText: { fontFamily: 'Roboto_400Regular', fontSize: 8, color: '#9da58f' },
+  tabText: { fontFamily: 'Roboto_700Bold', fontSize: 10, color: '#a9c4d1' },
   input: {
     fontFamily: 'Roboto_400Regular',
     backgroundColor: '#1a1d16',
@@ -2133,8 +2226,8 @@ const s = StyleSheet.create({
     borderWidth: 1,
     padding: 14,
     color: C.cream,
-    borderRadius: 3,
-    fontSize: 12,
+    borderRadius: 12,
+    fontSize: 14,
     marginVertical: 8,
     minHeight: 45,
   },
@@ -2161,15 +2254,50 @@ const s = StyleSheet.create({
     marginVertical: 10,
   },
   menuCard: {
-    backgroundColor: '#153448',
-    padding: 20,
+    backgroundColor: '#14384b',
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#cabb8c20',
-    borderRadius: 10,
+    borderColor: '#65d9cf44',
+    borderRadius: 20,
     marginBottom: 15,
     flexDirection: 'row',
     gap: 18,
     alignItems: 'center',
+  },
+  experienceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 34 },
+  experienceCard: {
+    flexGrow: 1,
+    flexBasis: '46%',
+    minHeight: 210,
+    borderRadius: 22,
+    padding: 17,
+    justifyContent: 'space-between',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#70e7d555',
+  },
+  experienceIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0d354a99',
+    borderWidth: 1,
+    borderColor: '#a3fff044',
+  },
+  experienceTitle: {
+    fontFamily: 'BreeSerif_400Regular',
+    fontSize: 25,
+    lineHeight: 31,
+    color: '#fff9ed',
+    marginBottom: 8,
+  },
+  experienceDetail: {
+    fontFamily: 'Roboto_700Bold',
+    fontSize: 11,
+    lineHeight: 17,
+    color: '#b8ffec',
   },
   menuTitle: {
     fontFamily: 'RobotoSlab_700Bold',
@@ -2467,5 +2595,29 @@ function NativeEventBackdrop({ event }: { event: any }) {
       />
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#041322', opacity: 0.5 }]} />
     </View>
+  );
+}
+
+function NativeNavIcon({ name, color }: { name: string; color: string }) {
+  const paths: Record<string, string> = {
+    Home: 'm3 10 9-7 9 7v11H3V10Zm5 11v-8h8v8',
+    Order: 'M4 3v6a3 3 0 0 0 6 0V3M7 3v18M19 3v18M19 3c-4 2-5 6-5 9h5',
+    'What’s On':
+      'M9 18V5l12-2v13M9 8l12-2M9 18a3 3 0 1 1-3-3c1.7 0 3 1.3 3 3Zm12-2a3 3 0 1 1-3-3c1.7 0 3 1.3 3 3Z',
+    Rewards: 'M3 8h18v5H3V8Zm2 5v8h14v-8M12 8v13M12 8H7a3 3 0 1 1 5-3v3Zm0 0h5a3 3 0 1 0-5-3v3Z',
+    'My René': 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2',
+    Basket: 'M5 7h14l2 14H3L5 7Zm4 0V6a3 3 0 0 1 6 0v1',
+  };
+  return (
+    <Svg width={23} height={23} viewBox="0 0 24 24" accessible={false}>
+      <Path
+        d={paths[name] || paths.Home}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.7}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
   );
 }

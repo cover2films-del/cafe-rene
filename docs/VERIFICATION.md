@@ -84,3 +84,11 @@ Type checking, lint, the web production build, cold-start rendering test, and bo
 Added an authenticated member discovery endpoint and web/native taste selectors, favourites and explained recommendations. Seeded curation is isolated from orders and financial reports, with internal provenance and no invented sales counts. Regression coverage checks unauthenticated rejection, session identity despite a different query-string ID, personalisation opt-out without a history query, saved taste matching, vegan/alcohol-free filtering, disabled-item exclusion, unpriced/non-orderable drinks, old-client preference preservation, invalid taste rejection, no repeated consent reset, and no fabricated order rows.
 
 Type checking, lint, web build and iOS/Android exports passed. The new regression and existing tests are recorded in the latest discovery verification logs. Real-device/network-interruption testing and live EPOS drink/menu synchronisation remain unperformed.
+
+## Final customer visual system
+
+Refined the home hero around actual venue photography and added four full-image action cards that navigate to the existing order, programme, rewards and member screens. Customer controls now share cream/ink/aqua/pink colours, rounded shapes, clearer active/focus states and image-card spacing. Wide-screen navigation stays available while scrolling; mobile web retains the bottom navigation without a large sticky header consuming the viewport.
+
+Native navigation/basket now use vector icons drawn with the already-installed SVG library, larger labels and active capsules. Native home cards navigate through the existing tab state; button presses give restrained feedback. No new native dependency, permission or runtime version is introduced. Reduced-motion users retain static imagery and readable controls.
+
+API/shared/native type checks, lint, web production build and branded cold-start test passed. iOS/Android exports are checked separately. Interactive visual QA and real-device tap/keyboard checks still need to be performed on the installed build; no screenshot-based verification is claimed.

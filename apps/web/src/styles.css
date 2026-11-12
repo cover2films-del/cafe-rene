@@ -5460,3 +5460,397 @@ header .official-logo {
     transform: translateY(-4px);
   }
 }
+
+/* Final customer-facing visual system: deep ink, warm cream and vivid venue colour. */
+.app:not(.staff-app) {
+  --surface: #143449;
+  --edge: #6cddce44;
+  --aqua: #85eee2;
+  --pink: #ed4380;
+}
+.app:not(.staff-app) header {
+  position: sticky;
+  top: 0;
+  z-index: 45;
+  box-shadow: 0 8px 30px #04162526;
+}
+.app:not(.staff-app) header nav button {
+  height: 48px;
+  padding: 0 15px;
+  border-radius: 26px;
+  border-bottom: 0;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.app:not(.staff-app) header nav button.active {
+  background: #124c7520;
+  color: #12378d;
+  box-shadow: inset 0 0 0 1px #1e65ae33;
+}
+.hero {
+  background-image:
+    radial-gradient(ellipse at 75% 15%, #2d8bb044, transparent 55%),
+    linear-gradient(100deg, #062f42ed 10%, #102747c7 60%, #09223fc9),
+    url('/brand/venue-interior.webp');
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid #67dfd94d;
+}
+.hero h1 {
+  text-shadow: 0 8px 35px #00132166;
+}
+.hero em {
+  color: #f0ef91;
+  text-decoration: underline;
+  text-decoration-color: #63dedc70;
+  text-decoration-thickness: 5px;
+  text-underline-offset: 9px;
+}
+.hero-buttons {
+  gap: 12px;
+}
+.hero-food-main {
+  border-radius: 24px;
+  border: 1px solid #c2fff08c;
+  box-shadow: 0 30px 80px #00162877;
+}
+.hero-food-small {
+  border-radius: 22px;
+  border: 1px solid #ffdeed77;
+}
+.hero-bottom {
+  color: #c3e5e6;
+}
+.app:not(.staff-app) .primary {
+  background: linear-gradient(125deg, #bf2862, #a82872);
+  color: #fff9ef;
+  border: 1px solid #ff96bd55;
+  border-radius: 13px;
+  box-shadow: 0 7px 20px #ab1f6026;
+  min-height: 46px;
+}
+.app:not(.staff-app) .outline,
+.app:not(.staff-app) .glass {
+  border-radius: 13px;
+  border-color: #91dcd873;
+  background-color: #0f394b55;
+  min-height: 44px;
+}
+.app:not(.staff-app) .chips button {
+  min-height: 42px;
+  border-color: #70cfc44d;
+}
+.app:not(.staff-app) .chips button.selected {
+  background: #dded99;
+  color: #113648;
+  border-color: #eef6c4;
+  box-shadow: 0 3px 12px #061c2933;
+}
+.app:not(.staff-app) .panel,
+.checkin-card,
+.discovery-card,
+.offer,
+.challenge {
+  border-radius: 20px;
+  border-color: var(--edge, #6cddce44);
+  box-shadow: 0 12px 30px #03172324;
+}
+.app:not(.staff-app) input,
+.app:not(.staff-app) textarea,
+.app:not(.staff-app) select {
+  border-radius: 11px;
+  border-color: #78c9c450;
+}
+.app:not(.staff-app) input:focus,
+.app:not(.staff-app) textarea:focus,
+.app:not(.staff-app) select:focus {
+  border-color: #8beddb;
+  box-shadow: 0 0 0 3px #40c4b91c;
+}
+.menu-card {
+  border-radius: 20px;
+  border-color: #67d7ce44;
+  box-shadow: 0 10px 25px #02142330;
+}
+.menu-card .dish-art {
+  height: 205px;
+}
+.menu-copy {
+  padding: 23px;
+}
+.menu-copy p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #bdd7df;
+}
+.menu-copy h3 {
+  font-family: 'Bree Serif', serif;
+  font-size: 25px;
+  line-height: 1.25;
+}
+.menu-copy > div > b {
+  color: #f1ef94;
+}
+.menu-copy .add {
+  border-radius: 13px;
+  width: 43px;
+  height: 43px;
+  background: #18776866;
+}
+.event-card {
+  border-radius: 20px;
+  border-color: #70dfce66;
+  box-shadow: 0 14px 40px #0014253d;
+}
+.event-copy h3 {
+  line-height: 1.3;
+}
+.date-stamp {
+  border-radius: 13px;
+  box-shadow: 0 5px 16px #00142555;
+}
+.experience-hub {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 58px 50px;
+}
+.experience-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 32px;
+  align-items: end;
+  margin-bottom: 28px;
+}
+.experience-intro > .eyebrow {
+  grid-column: 1 / -1;
+  color: #84e8de;
+}
+.experience-intro h2 {
+  font-size: clamp(32px, 3.2vw, 44px);
+  line-height: 1.18;
+  margin-bottom: 0;
+}
+.experience-intro h2 em {
+  font-style: normal;
+  color: #edf199;
+}
+.experience-intro p {
+  max-width: 300px;
+  justify-self: end;
+  color: #bdd7df;
+  line-height: 1.7;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+.experience-card {
+  min-width: 0;
+  min-height: 320px;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  text-align: left;
+  border-radius: 24px;
+  padding: 24px;
+  border: 1px solid #89e7dc66;
+  box-shadow: 0 14px 34px #02142250;
+}
+.experience-card > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transition: transform 0.5s ease;
+}
+.experience-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #09263833, #071e3580 40%, #06172aeb 100%);
+  z-index: -1;
+}
+.experience-symbol {
+  display: grid;
+  place-items: center;
+  width: 47px;
+  height: 47px;
+  border-radius: 16px;
+  background: #13374b99;
+  border: 1px solid #c8fff055;
+  color: #b7ffeb;
+  backdrop-filter: blur(8px);
+}
+.experience-card .eyebrow {
+  display: block;
+  color: #c5f9e8;
+  font-size: 9px;
+  line-height: 1.7;
+  letter-spacing: 1.1px;
+  margin: 0 0 10px;
+}
+.experience-card h3 {
+  font-family: 'Bree Serif', serif;
+  font-weight: 400;
+  font-size: 31px;
+  line-height: 1.15;
+  margin: 0 0 20px;
+  color: #fff9ed;
+}
+.experience-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #eaf69f;
+  line-height: 1.5;
+  border-top: 1px solid #d1fff044;
+  padding-top: 14px;
+}
+.mobile-tabs {
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -10px 35px #03152266;
+  background: #0d293bf5;
+}
+.mobile-tabs button {
+  border-radius: 15px;
+  transition: background 0.2s ease;
+}
+.mobile-tabs button.active {
+  background: #1e8d7652;
+  color: #f0ed9b;
+}
+.basket-float {
+  border-radius: 18px;
+  border-color: #8be6d166;
+  box-shadow: 0 12px 40px #0007;
+}
+@media (min-width: 1450px) {
+  header nav button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  header nav button svg {
+    display: inline-block;
+  }
+}
+@media (max-width: 1150px) {
+  .experience-hub {
+    padding: 42px 30px;
+  }
+  .experience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .experience-card {
+    min-height: 285px;
+  }
+}
+@media (max-width: 760px) {
+  .app:not(.staff-app) header {
+    position: relative;
+  }
+  .experience-hub {
+    padding: 34px 22px;
+  }
+  .experience-intro {
+    display: block;
+  }
+  .experience-intro h2 {
+    margin: 12px 0;
+  }
+  .experience-intro p {
+    max-width: none;
+    font-size: 13px;
+  }
+  .experience-grid {
+    gap: 12px;
+  }
+  .experience-card {
+    padding: 17px;
+    min-height: 245px;
+    border-radius: 20px;
+  }
+  .experience-card h3 {
+    font-size: 27px;
+    margin-bottom: 15px;
+  }
+  .experience-card .eyebrow {
+    font-size: 8px;
+  }
+  .experience-action {
+    font-size: 11px;
+  }
+  .menu-copy {
+    padding: 19px;
+  }
+  .menu-card .dish-art {
+    height: 190px;
+  }
+}
+@media (max-width: 350px) {
+  .experience-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .experience-card {
+    min-height: 260px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .experience-card {
+    animation: rene-arrive 0.6s ease-out both;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .experience-card:nth-child(2) {
+    animation-delay: 0.06s;
+  }
+  .experience-card:nth-child(3) {
+    animation-delay: 0.12s;
+  }
+  .experience-card:nth-child(4) {
+    animation-delay: 0.18s;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .experience-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px #00152566;
+  }
+  .experience-card:hover > img {
+    transform: scale(1.05);
+  }
+  .app:not(.staff-app) .primary:hover {
+    box-shadow: 0 9px 28px #d02e6f44;
+    background: linear-gradient(125deg, #cf3470, #b52d80);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .experience-card,
+  .experience-card > img {
+    transition: none;
+  }
+}
+.app:not(.staff-app) header button:focus-visible {
+  outline: 3px solid #1649a3;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .experience-card,
+  .discovery-card,
+  .challenge {
+    animation-fill-mode: backwards;
+  }
+}

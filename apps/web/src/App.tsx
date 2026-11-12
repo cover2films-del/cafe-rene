@@ -291,7 +291,12 @@ export function App() {
         </button>
         <nav>
           {tabs.map(([t, I]) => (
-            <button key={t} className={!staff && tab === t ? 'active' : ''} onClick={() => go(t)}>
+            <button
+              key={t}
+              className={!staff && tab === t ? 'active' : ''}
+              aria-current={!staff && tab === t ? 'page' : undefined}
+              onClick={() => go(t)}
+            >
               <I size={17} />
               {t}
             </button>
@@ -348,11 +353,6 @@ export function App() {
           {tab === 'Home' && (
             <>
               <section className="hero">
-                <div
-                  className="hero-art"
-                  role="img"
-                  aria-label="Original illustration of a candlelit pub with a bottle-lined ceiling"
-                />
                 <div className="hero-shade" />
                 <div className="hero-content">
                   <div className="eyebrow">
@@ -383,9 +383,6 @@ export function App() {
                     since 2003
                   </div>
                 </div>
-                <div className="art-caption">
-                  Bottle-ceiling study · Original illustration, not venue photography
-                </div>
                 <div className="hero-food">
                   <div className="hero-food-main">
                     <img
@@ -410,6 +407,68 @@ export function App() {
                   <span>✦</span>
                   <br />
                   MUSIC & SOUL
+                </div>
+              </section>
+              <section className="experience-hub" aria-label="Explore Café René">
+                <div className="experience-intro">
+                  <span className="eyebrow">MAKE IT A RENÉ KIND OF DAY</span>
+                  <h2>
+                    Come for one thing.
+                    <br />
+                    <em>Stay for everything.</em>
+                  </h2>
+                  <p>Find your food, your music and your people.</p>
+                </div>
+                <div className="experience-grid">
+                  {[
+                    {
+                      tab: 'Order',
+                      kicker: 'FRESH FROM THE KITCHEN',
+                      title: 'Pull up a chair.',
+                      detail: 'Explore the menu',
+                      image: '/images/generated/burger.webp',
+                      icon: UtensilsCrossed,
+                    },
+                    {
+                      tab: 'What’s On',
+                      kicker: 'LIVE & LOUD',
+                      title: 'Find your night.',
+                      detail: 'See what’s on',
+                      image: upcoming[0]?.imageUrl || '/programme/november-2026.webp',
+                      icon: Music,
+                    },
+                    {
+                      tab: 'Rewards',
+                      kicker: 'A LITTLE BACK, EVERY VISIT',
+                      title: 'Be a regular.',
+                      detail: 'Points, stamps & treats',
+                      image: '/images/generated/club.webp',
+                      icon: Gift,
+                    },
+                    {
+                      tab: 'My René',
+                      kicker: 'GOOD COMPANY STARTS HERE',
+                      title: 'Bring your people.',
+                      detail: 'Your groups & plans',
+                      image: '/brand/venue-interior.webp',
+                      icon: User,
+                    },
+                  ].map(({ tab: target, kicker, title, detail, image, icon: Icon }) => (
+                    <button className="experience-card" key={target} onClick={() => go(target)}>
+                      <img src={image} alt="" loading="lazy" />
+                      <span className="experience-symbol">
+                        <Icon size={23} />
+                      </span>
+                      <div>
+                        <span className="eyebrow">{kicker}</span>
+                        <h3>{title}</h3>
+                        <span className="experience-action">
+                          {detail}
+                          <ArrowUpRight size={20} />
+                        </span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </section>
               <div className="live-ribbon">
