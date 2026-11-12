@@ -19,6 +19,7 @@ import {
   StyleSheet,
   Modal,
   ActivityIndicator,
+  Animated,
   Alert,
   Platform,
   AppState,
@@ -175,9 +176,7 @@ export default function App() {
   if (!loaded && !error)
     return (
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#141714', justifyContent: 'center' }}>
-          <ActivityIndicator color="#d9bb83" />
-        </SafeAreaView>
+        <StartupScreen />
       </SafeAreaProvider>
     );
   return (
@@ -519,7 +518,23 @@ function AppContent() {
       {sub && <Text style={s.body}>{sub}</Text>}
     </View>
   );
-  const panel = (children: React.ReactNode) => <View style={s.panel}>{children}</View>;
+  const panel = (children: React.ReactNode) => (
+    <View style={s.panel}>
+      <Image
+        source={
+          tab === 'Order'
+            ? foodImages.club
+            : tab === 'What’s On'
+              ? eventImages['nov26-baron-crane']
+              : venueInterior
+        }
+        style={[StyleSheet.absoluteFillObject, { opacity: 0.1 }]}
+        contentFit="cover"
+        accessible={false}
+      />
+      {children}
+    </View>
+  );
   const openScan = async () => {
     if (!permission?.granted) {
       const p = await requestPermission();
@@ -533,31 +548,40 @@ function AppContent() {
   };
   if (!boot)
     return (
-      <SafeAreaView style={[s.safe, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Image
-          source={officialLogo}
-          style={{ width: 165, height: 65, backgroundColor: '#faf7ed', borderRadius: 5 }}
-          contentFit="contain"
-          accessibilityLabel="Café René Gloucester"
-        />
-        <ActivityIndicator color={C.gold} />
-        <Text style={s.body}>{error || 'Getting ready for a good night…'}</Text>
-        {error && button('Try again', () => void run(refresh))}
-      </SafeAreaView>
+      <StartupScreen
+        message={error || undefined}
+        retry={error ? () => void run(refresh) : undefined}
+      />
     );
   return (
     <SafeAreaView style={s.safe} edges={['top', 'left', 'right']}>
+      <Image
+        source={
+          tab === 'Order'
+            ? foodImages.club
+            : tab === 'What’s On'
+              ? eventImages['nov26-baron-crane']
+              : tab === 'Rewards'
+                ? foodImages.burger
+                : venueInterior
+        }
+        style={[StyleSheet.absoluteFillObject, { opacity: 0.12 }]}
+        contentFit="cover"
+        accessible={false}
+        pointerEvents="none"
+      />
       <StatusBar style="light" />
       <View style={s.demo}>
         <Text style={s.demoText}>FOOD · LIVE MUSIC · GOOD COMPANY</Text>
       </View>
       <View style={s.header}>
-        <Pressable onPress={() => setTab('Home')} accessibilityRole="button">
-          <Image
+        <Pressable
+          onPress={() => setTab('Home')}
+          accessibilityRole="button"
+          style={{ flex: 1, marginRight: 12 }}
+        >
+          <AnimatedLogo
             source={boot.content?.logo?.id ? { uri: apiUrl + boot.content.logo.url } : officialLogo}
-            style={{ width: 195, height: 82 }}
-            contentFit="contain"
-            accessibilityLabel="Café René Gloucester"
           />
           <Text style={s.wordmarkSub}>GLOUCESTER · EST. 2003</Text>
         </Pressable>
@@ -586,7 +610,11 @@ function AppContent() {
           color={C.gold}
         />
       )}
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 35 }}>
+      <MotionScroll
+        key={tab}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 35 }}
+      >
         {tab === 'Home' && (
           <>
             <View style={s.hero}>
@@ -623,6 +651,7 @@ function AppContent() {
                     ]}
                     onPress={() => setEvent(e)}
                   >
+                    <NativeEventBackdrop event={e} />
                     <Text style={s.eyebrow}>
                       {e.sample ? 'SAMPLE EVENT' : 'RENÉ LIVE'} · {e.genre.toUpperCase()}
                     </Text>
@@ -952,6 +981,7 @@ function AppContent() {
                   key={e.id}
                   onPress={() => setEvent(e)}
                 >
+                  <NativeEventBackdrop event={e} />
                   <Text style={s.eyebrow}>
                     {e.sample ? 'SAMPLE' : 'OFFICIAL PROGRAMME'} · {e.genre.toUpperCase()}
                   </Text>
@@ -1059,6 +1089,20 @@ function AppContent() {
                     )}
                     {rewards.challenges.map((c: any) => (
                       <View key={c.id} style={s.challenge}>
+                        <Image
+                          source={
+                            c.id === 'menu'
+                              ? foodImages.club
+                              : c.id === 'music'
+                                ? eventImages['nov26-baron-crane']
+                                : c.id === 'festival'
+                                  ? officialPoster
+                                  : venueInterior
+                          }
+                          style={[StyleSheet.absoluteFillObject, { opacity: 0.17 }]}
+                          contentFit="cover"
+                          accessible={false}
+                        />
                         <Text style={s.badge}>{c.progress >= c.target ? '✦' : c.icon}</Text>
                         <View style={{ flex: 1 }}>
                           <Text style={s.menuTitle}>{c.name}</Text>
@@ -1182,7 +1226,10 @@ function AppContent() {
                           onValueChange={(v) =>
                             void run(async () => {
                               setUser(
-                                await api('/preferences', 'PUT', { ...user.preferences, [key]: v }),
+                                await api('/preferences', 'PUT', {
+                                  ...user.preferences,
+                                  [key]: v,
+                                }),
                               );
                               if (key === 'location' && !v) stopLocation();
                             })
@@ -1370,7 +1417,7 @@ function AppContent() {
             </Text>
           </View>
         )}
-      </ScrollView>
+      </MotionScroll>
       <SafeAreaView edges={['bottom']} style={s.tabSafe}>
         <View style={s.tabs}>
           {tabNames.map((t, i) => (
@@ -1717,7 +1764,18 @@ function NativeSnapshot({ rewards }: { rewards: any }) {
           accessible={false}
         />
         <Text style={s.eyebrow}>YOUR RENÉ POINTS</Text>
-        <Text style={[s.heading, { fontSize: 54, color: '#f0ed80' }]}>{rewards.points}</Text>
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.6}
+          accessibilityLabel={rewards.points + ' René Points'}
+          style={[
+            s.heading,
+            { fontSize: 64, lineHeight: 82, paddingTop: 4, marginBottom: 8, color: '#f0ed80' },
+          ]}
+        >
+          {Number(rewards.points).toLocaleString('en-GB')}
+        </Text>
         <Text style={s.title}>René Points</Text>
         <Text style={s.small}>
           Food purchases and sample welcome rewards. No points for alcohol spending.
@@ -2124,6 +2182,7 @@ const s = StyleSheet.create({
   },
   errorText: { fontFamily: 'Roboto_400Regular', color: '#ffe0da', fontSize: 11, flexShrink: 1 },
   challenge: {
+    overflow: 'hidden',
     padding: 20,
     borderWidth: 1,
     borderColor: '#cabb8c2a',
@@ -2200,17 +2259,195 @@ function NativeEventArtwork({ event }: { event: any }) {
     >
       <Image
         source={source}
-        style={[StyleSheet.absoluteFillObject, { opacity: 0.5 }]}
-        contentFit="cover"
-        blurRadius={18}
-        accessible={false}
-      />
-      <Image
-        source={source}
         style={StyleSheet.absoluteFillObject}
         contentFit="contain"
         accessibilityLabel={event.title + ' official programme artwork'}
       />
+    </View>
+  );
+}
+
+function useMotionPreference() {
+  const [reduce, setReduce] = useState(true);
+  useEffect(() => {
+    let active = true;
+    void AccessibilityInfo.isReduceMotionEnabled()
+      .then((value) => {
+        if (active) setReduce(value);
+      })
+      .catch(() => {});
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduce);
+    return () => {
+      active = false;
+      subscription.remove();
+    };
+  }, []);
+  return reduce;
+}
+function AnimatedLogo({
+  source = officialLogo,
+  startup = false,
+}: {
+  source?: any;
+  startup?: boolean;
+}) {
+  const reduce = useMotionPreference();
+  const glow = useRef(new Animated.Value(0.2)).current;
+  useEffect(() => {
+    if (reduce) {
+      glow.setValue(0.2);
+      return;
+    }
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(glow, {
+          toValue: 0.6,
+          duration: 3000,
+          useNativeDriver: true,
+          isInteraction: false,
+        }),
+        Animated.timing(glow, {
+          toValue: 0.2,
+          duration: 3000,
+          useNativeDriver: true,
+          isInteraction: false,
+        }),
+      ]),
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [reduce, glow]);
+  return (
+    <View
+      style={{
+        width: startup ? 215 : 254,
+        maxWidth: '100%',
+        height: startup ? 100 : 108,
+        justifyContent: 'center',
+        backgroundColor: startup ? '#faf7ed' : 'transparent',
+        borderRadius: 18,
+      }}
+    >
+      <Animated.View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          left: 14,
+          right: 14,
+          top: 24,
+          bottom: 20,
+          borderRadius: 40,
+          backgroundColor: '#3976e7',
+          opacity: glow,
+          shadowColor: '#2363d4',
+          shadowOpacity: 0.8,
+          shadowRadius: 22,
+          shadowOffset: { width: 0, height: 0 },
+        }}
+      />
+      <Image
+        source={source}
+        style={{ width: '100%', height: '100%' }}
+        contentFit="contain"
+        accessibilityLabel="Café René Gloucester"
+      />
+    </View>
+  );
+}
+function useArrivalProgress() {
+  const reduce = useMotionPreference();
+  const progress = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (reduce) {
+      progress.setValue(1);
+      return;
+    }
+    progress.setValue(0);
+    const animation = Animated.timing(progress, {
+      toValue: 1,
+      duration: 450,
+      useNativeDriver: true,
+      isInteraction: false,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [reduce, progress]);
+  return progress;
+}
+function MotionScroll({ style, ...props }: React.ComponentProps<typeof ScrollView>) {
+  const progress = useArrivalProgress();
+  return (
+    <Animated.ScrollView
+      {...props}
+      style={[
+        style,
+        {
+          opacity: progress,
+          transform: [
+            { translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) },
+          ],
+        },
+      ]}
+    />
+  );
+}
+function MotionModule({ children }: { children: React.ReactNode }) {
+  const progress = useArrivalProgress();
+  return (
+    <Animated.View
+      style={{
+        opacity: progress,
+        transform: [
+          { translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) },
+        ],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+function StartupScreen({ message, retry }: { message?: string; retry?: () => void }) {
+  return (
+    <SafeAreaView style={[s.safe, { justifyContent: 'center', alignItems: 'center', padding: 30 }]}>
+      <Image
+        source={venueInterior}
+        style={[StyleSheet.absoluteFillObject, { opacity: 0.14 }]}
+        contentFit="cover"
+        accessible={false}
+      />
+      <MotionModule>
+        <AnimatedLogo startup />
+      </MotionModule>
+      <View style={{ paddingTop: 30, gap: 20, alignItems: 'center' }}>
+        <ActivityIndicator color="#66dfed" />
+        <Text
+          accessibilityRole="text"
+          style={{ color: '#d5e9ee', textAlign: 'center', fontSize: 14 }}
+        >
+          {message || 'Getting the good stuff ready…'}
+        </Text>
+        {retry && (
+          <Pressable accessibilityRole="button" onPress={retry} style={s.button}>
+            <Text style={s.buttonText}>Try again</Text>
+          </Pressable>
+        )}
+      </View>
+    </SafeAreaView>
+  );
+}
+function NativeEventBackdrop({ event }: { event: any }) {
+  const source = eventImage(event);
+  if (!source) return null;
+  return (
+    <View pointerEvents="none" style={StyleSheet.absoluteFillObject}>
+      <Image
+        source={source}
+        style={StyleSheet.absoluteFillObject}
+        contentFit="cover"
+        blurRadius={8}
+        accessible={false}
+      />
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#041322', opacity: 0.5 }]} />
     </View>
   );
 }

@@ -239,7 +239,7 @@ export function App() {
   }
   if (!boot)
     return (
-      <div className="loading">
+      <div className="loading" role="status" aria-live="polite">
         <div className="wordmark">
           <img
             className="official-logo"
@@ -248,13 +248,25 @@ export function App() {
           />
           <span>GLOUCESTER · EST. 2003</span>
         </div>
+        <div className="startup-orbit" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </div>
         <p>{error || 'Getting the good stuff ready…'}</p>
         {error && <button onClick={() => location.reload()}>Try again</button>}
       </div>
     );
   const upcoming = boot.events;
   return (
-    <div className={staff ? 'app staff-app' : 'app'}>
+    <div
+      className={staff ? 'app staff-app' : 'app'}
+      style={
+        {
+          '--tab-image': `url("${tab === 'Order' ? '/images/generated/club.webp' : tab === 'What’s On' ? '/images/events/nov26-baron-crane.webp' : tab === 'Rewards' ? '/images/generated/burger.webp' : '/brand/venue-interior.webp'}")`,
+        } as React.CSSProperties
+      }
+    >
       <div className="demo-bar">
         <span className="demo-dot" /> FOOD · LIVE MUSIC · GOOD COMPANY{' '}
         <span className="demo-detail">· GLOUCESTER</span>
@@ -963,7 +975,9 @@ export function App() {
                         </div>
                         <p className="member-name">{user.name}</p>
                         <div className="member-points">
-                          <strong>{rewards.points}</strong>
+                          <strong aria-label={`${rewards.points} René Points`}>
+                            {Number(rewards.points).toLocaleString('en-GB')}
+                          </strong>
                           <span>René Points · member balance</span>
                         </div>
                         <QR value={rewards.membership} />
@@ -1009,6 +1023,11 @@ export function App() {
                         <div
                           className={'challenge ' + (c.progress >= c.target ? 'complete' : '')}
                           key={c.id}
+                          style={
+                            {
+                              '--achievement-image': `url("${c.id === 'menu' ? '/images/generated/club.webp' : c.id === 'music' ? '/images/events/nov26-baron-crane.webp' : c.id === 'festival' ? '/programme/november-2026.webp' : '/brand/venue-interior.webp'}")`,
+                            } as React.CSSProperties
+                          }
                         >
                           <span className="badge-icon">{c.icon}</span>
                           <h3>{c.name}</h3>
@@ -1673,6 +1692,15 @@ function EventCard({
   const date = new Date(e.date);
   return (
     <button className="event-card" onClick={onClick}>
+      {e.imageUrl && (
+        <img
+          className="event-card-background"
+          src={e.imageUrl}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+        />
+      )}
       <div className={'event-art art-' + (index % 3)}>
         {e.imageUrl && (
           <img
@@ -1837,7 +1865,9 @@ function RenéSnapshot({ rewards, user }: { rewards: any; user: any }) {
     <div className="rene-snapshot">
       <div className="points-tile">
         <div className="eyebrow">YOUR RENÉ POINTS</div>
-        <strong>{rewards.points}</strong>
+        <strong aria-label={`${rewards.points} René Points`}>
+          {Number(rewards.points).toLocaleString('en-GB')}
+        </strong>
         <span>René Points</span>
         <small>
           {user.id === 'daniel' ? 'Daniel Woolf · sample member balance' : 'Rewards balance'} ·

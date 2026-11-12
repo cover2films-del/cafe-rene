@@ -70,3 +70,11 @@ Visual assets and generated sheets were inspected; interactive browser/device ch
 ## EAS runtime mismatch follow-up
 
 The first owner-triggered update-enabled iOS cloud build failed in Configure expo-updates. Its provided logs show different fingerprints for config-plugin dependencies and generated native files between the Windows upload and EAS. The runtime is now explicitly `1.0.0-native.1`; the update URL/channel and launch behaviour remain configured. Native compatibility is maintained by incrementing that value alongside native changes, rather than relying on the mismatched fingerprint policy. Actual Expo runtime resolution is checked with managed and generic workflow overrides on both platforms. The owner must retry the signed cloud build; local verification does not prove iOS compilation or installation.
+
+## Startup and rewards visual polish
+
+Added animated startup branding (30% larger logo), a slow blue header glow, native-driven entrance animations and dynamic reduced-motion subscriptions. Artist cards use their artwork behind the entire card including the copy, rather than a solid-colour copy area. All customer tabs have subtle contextual image backgrounds; achievements use food, music/programme or venue images according to their subject.
+
+Fixed native points clipping: the previous 54-point number inherited a 46-point line height. The number now has a dedicated 64/82-point font/line-height pair, scaling for narrow screens, formatted balances and an accessibility label. Browser points tiles now use minimum widths and responsive stacking.
+
+Type checking, lint, the web production build, cold-start rendering test, and both native exports passed. No new native dependencies/configuration were added; runtime remains `1.0.0-native.1`. Motion and layout have not been verified interactively on an actual phone or browser in this workspace.
