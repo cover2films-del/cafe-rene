@@ -7,7 +7,9 @@ export default {
     orientation: 'portrait',
     userInterfaceStyle: 'dark',
     newArchEnabled: true,
-    runtimeVersion: { policy: 'fingerprint' },
+    // Keep build/update compatibility stable across Windows and EAS macOS.
+    // Bump this value and rebuild when native dependencies, plugins or permissions change.
+    runtimeVersion: '1.0.0-native.1',
     updates: {
       url: 'https://u.expo.dev/77d77412-91fc-4ac2-aa57-16abb1aeff1c',
       checkAutomatically: 'ON_LOAD',

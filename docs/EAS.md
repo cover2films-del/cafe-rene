@@ -35,7 +35,7 @@ npx.cmd eas-cli@latest update --channel preview --environment preview --message 
 
 Compatible JavaScript, text, layout and bundled image changes can use EAS Update. The app checks on launch and waits up to three seconds, then uses its cached bundle while downloading if necessary; a completed update is used on a later launch. Offline launches retain the cached version. This is launch-based updating, not a forced refresh of an app left open indefinitely.
 
-Fingerprint runtime compatibility prevents an update for a different native configuration from loading. Native dependencies, entitlements, permissions and other fingerprint-changing changes require another signed EAS build. Keep matching configuration/public environment values between a build and its updates. Test both platforms and EAS rollback behaviour on actual devices before broader distribution.
+The explicit runtime version is `1.0.0-native.1`. Expo only loads updates with the same runtime and platform. Native dependencies, config plugins, entitlements, permissions, Expo/React Native upgrades or other native configuration changes require incrementing this runtime string and making a new signed EAS build before publishing updates. This compatibility version is maintained manually; do not publish native changes under an old runtime. Keep matching configuration/public environment values between a build and its updates. Test both platforms and EAS rollback behaviour on actual devices before broader distribution.
 
 Render backend/web updates are separate and do not require a phone rebuild when their API remains compatible. The current backend still simulates payments and POS delivery; automatic updates do not connect a till or enable live commerce.
 
@@ -46,3 +46,17 @@ Internal preview installs work only on provisioned iPhones. To distribute throug
 Permissions are camera for QR scanning and optional foreground location. No microphone, background location or Contacts access is enabled. Universal links are not configured; private app links use `caferene://`.
 
 No Expo token is stored by this source change. No cloud update, signed build, TestFlight upload or real-device run has been performed here. Authenticate through EAS and GitHub’s secure credential settings; never send Apple/Expo passwords or recovery codes in chat.
+
+## Runtime mismatch fix — 12 November 2026
+
+Build `0c97830e-b898-4528-9fec-f1c4f6a549dd` failed before compilation because the Windows and EAS fingerprints differed in config-plugin dependency files and the generated iOS directory. The former fingerprint policy is replaced with an explicit compatibility string so dependency tracing/prebuild differences do not create different runtime IDs. Update support and preview channel are retained. Pull the change, install from the lockfile, and retry with a cleared EAS cache:
+
+```powershell
+cd C:\Users\Asus\cafe-rene
+git pull origin feat/rene-demo
+npm.cmd ci
+cd apps\mobile
+npx.cmd eas-cli@latest build --platform ios --profile preview --clear-cache
+```
+
+This fixes the identified runtime mismatch; successful signed compilation still needs verification on EAS. Do not disable runtime validation or set a skip-mismatch environment flag.

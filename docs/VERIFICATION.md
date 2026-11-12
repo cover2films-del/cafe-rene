@@ -66,3 +66,7 @@ Full suite passed 20 existing tests; the added source-menu test passed after cor
 The native project now includes expo-updates, its real EAS project URL, preview/production channels and fingerprint runtime compatibility. Launch checks download compatible updates without forced mid-session reload. The GitHub publishing workflow requires the owner’s EXPO_TOKEN secret and EAS environment setup. No cloud update, signed binary, real-device update, rollback, payment or EPOS transaction was performed.
 
 Visual assets and generated sheets were inspected; interactive browser/device checks remain unavailable. Reduced-motion CSS disables decorative movement. Actual EAS Update delivery and first-launch/offline behaviour must be checked on the newly installed binary.
+
+## EAS runtime mismatch follow-up
+
+The first owner-triggered update-enabled iOS cloud build failed in Configure expo-updates. Its provided logs show different fingerprints for config-plugin dependencies and generated native files between the Windows upload and EAS. The runtime is now explicitly `1.0.0-native.1`; the update URL/channel and launch behaviour remain configured. Native compatibility is maintained by incrementing that value alongside native changes, rather than relying on the mismatched fingerprint policy. Actual Expo runtime resolution is checked with managed and generic workflow overrides on both platforms. The owner must retry the signed cloud build; local verification does not prove iOS compilation or installation.
