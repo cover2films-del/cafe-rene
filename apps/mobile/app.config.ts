@@ -45,6 +45,7 @@ export default {
       'expo-secure-store',
     ],
     extra: {
+      eas: { projectId: '77d77412-91fc-4ac2-aa57-16abb1aeff1c' },
       apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001',
       webUrl: process.env.EXPO_PUBLIC_WEB_URL || 'http://localhost:5173',
     },
