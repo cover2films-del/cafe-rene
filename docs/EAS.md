@@ -35,7 +35,7 @@ npx.cmd eas-cli@latest update --channel preview --environment preview --message 
 
 Compatible JavaScript, text, layout and bundled image changes can use EAS Update. The app checks on launch and waits up to three seconds, then uses its cached bundle while downloading if necessary; a completed update is used on a later launch. Offline launches retain the cached version. This is launch-based updating, not a forced refresh of an app left open indefinitely.
 
-The explicit runtime version is `1.0.0-native.1`. Expo only loads updates with the same runtime and platform. Native dependencies, config plugins, entitlements, permissions, Expo/React Native upgrades or other native configuration changes require incrementing this runtime string and making a new signed EAS build before publishing updates. This compatibility version is maintained manually; do not publish native changes under an old runtime. Keep matching configuration/public environment values between a build and its updates. Test both platforms and EAS rollback behaviour on actual devices before broader distribution.
+The current explicit runtime version is `1.0.0-native.2` (the CR home-screen icon build). Expo only loads updates with the same runtime and platform. Native dependencies, config plugins, entitlements, permissions, Expo/React Native upgrades or other native configuration changes require incrementing this runtime string and making a new signed EAS build before publishing updates. This compatibility version is maintained manually; do not publish native changes under an old runtime. Keep matching configuration/public environment values between a build and its updates. Test both platforms and EAS rollback behaviour on actual devices before broader distribution.
 
 Render backend/web updates are separate and do not require a phone rebuild when their API remains compatible. The current backend still simulates payments and POS delivery; automatic updates do not connect a till or enable live commerce.
 
@@ -60,3 +60,9 @@ npx.cmd eas-cli@latest build --platform ios --profile preview --clear-cache
 ```
 
 This fixes the identified runtime mismatch; successful signed compilation still needs verification on EAS. Do not disable runtime validation or set a skip-mismatch environment flag.
+
+## CR icon and phone label
+
+The app now includes an opaque 1024×1024 CR monogram in the venue’s royal blue and cream colours, and the display name **Café René**. Android has a separate foreground asset with safe margins for adaptive icon masks. The Expo project and bundle identifier are unchanged, so a correctly signed new build updates the same app rather than creating another identity. Preview builds now automatically increment their build number.
+
+Icon/display-name changes are native configuration: runtime is intentionally bumped to `1.0.0-native.2`. Pull this commit and make/install a new EAS preview build to get the icon. EAS Update alone cannot replace the installed native app icon or display name. Subsequent compatible JavaScript updates must target runtime 2; older runtime-1 installations do not receive runtime-2 updates.

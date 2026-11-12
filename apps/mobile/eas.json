@@ -10,6 +10,7 @@
       "environment": "development"
     },
     "preview": {
+      "autoIncrement": true,
       "channel": "preview",
       "distribution": "internal",
       "environment": "preview",

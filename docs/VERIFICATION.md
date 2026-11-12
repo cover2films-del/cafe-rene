@@ -92,3 +92,7 @@ Refined the home hero around actual venue photography and added four full-image 
 Native navigation/basket now use vector icons drawn with the already-installed SVG library, larger labels and active capsules. Native home cards navigate through the existing tab state; button presses give restrained feedback. No new native dependency, permission or runtime version is introduced. Reduced-motion users retain static imagery and readable controls.
 
 API/shared/native type checks, lint, web production build and branded cold-start test passed. iOS/Android exports are checked separately. Interactive visual QA and real-device tap/keyboard checks still need to be performed on the installed build; no screenshot-based verification is claimed.
+
+## CR app identity
+
+Added a blue/cream CR monogram and explicit Café René iOS display name, shared Expo app icon, Android adaptive foreground and website favicon. Native assets are validated as 1024×1024 opaque sRGB PNGs. Preview build numbers auto-increment; runtime advances to `1.0.0-native.2` because the icon is native configuration. Runtime/config resolution and TypeScript/lint checks are run locally; a new signed EAS build and phone installation remain necessary.
