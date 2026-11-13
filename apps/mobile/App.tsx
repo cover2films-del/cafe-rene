@@ -376,6 +376,11 @@ function AppContent() {
     scanLock.current = true;
     setScanner(false);
     try {
+      // Expo Go passes its own exp:// Metro launch URL through Linking on some
+      // iOS versions. It is not a René table/check-in reference and must not
+      // be sent to the rewards endpoint (which produces “QR reference invalid”).
+      const scheme = String(Linking.parse(url).scheme || '').toLowerCase();
+      if (scheme === 'exp' || scheme === 'exps' || scheme === 'expo') return;
       const parsed = Linking.parse(url);
       const q = parsed.queryParams;
       const printed = q?.checkin || q?.code;
@@ -407,6 +412,10 @@ function AppContent() {
         setCollection(false);
         setTab('Order');
       } else {
+        if (!q?.ref && !/^https?:\/\//i.test(url)) {
+          notify('That QR code is not a René table or check-in code.');
+          return;
+        }
         const ref = q?.ref ? String(q.ref) : url;
         if (!sessionToken) {
           notify('Sign in before verifying your visit.');
