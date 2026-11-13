@@ -848,15 +848,19 @@ function AppContent() {
         )}
         {tab === 'Order' && (
           <View style={s.content}>
-            <View style={s.wrap}>
+            <Text style={s.orderModeLabel}>WHAT ARE YOU ORDERING?</Text>
+            <View style={s.orderSwitcher} accessibilityRole="tablist">
               {['Food', 'Drinks'].map((mode) => (
                 <Pressable
                   key={mode}
-                  style={[s.chip, orderMode === mode && s.selected]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: orderMode === mode }}
+                  style={[s.orderChoice, orderMode === mode && s.orderChoiceSelected]}
                   onPress={() => setOrderMode(mode)}
                 >
-                  <Text style={s.chipText}>
-                    {mode === 'Drinks' ? 'Beers, cocktails & more' : 'Food menu'}
+                  <Text style={s.orderChoiceTitle}>{mode === 'Drinks' ? 'DRINKS' : 'FOOD'}</Text>
+                  <Text style={s.orderChoiceText}>
+                    {mode === 'Drinks' ? 'Beers, cocktails & more' : 'Menu and table ordering'}
                   </Text>
                 </Pressable>
               ))}
@@ -2351,6 +2355,36 @@ const s = StyleSheet.create({
     minHeight: 40,
     justifyContent: 'center',
   },
+  orderModeLabel: {
+    fontFamily: 'Roboto_700Bold',
+    fontSize: 10,
+    letterSpacing: 2,
+    color: C.gold,
+    marginBottom: 8,
+  },
+  orderSwitcher: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 20,
+    padding: 5,
+    backgroundColor: '#081d2b',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#68d8e544',
+  },
+  orderChoice: {
+    flex: 1,
+    minHeight: 64,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  orderChoiceSelected: { backgroundColor: '#d01f6f', borderColor: '#ff8fbe' },
+  orderChoiceTitle: { fontFamily: 'Roboto_700Bold', fontSize: 14, color: C.cream },
+  orderChoiceText: { fontFamily: 'Roboto_400Regular', fontSize: 10, color: '#c7dce0', marginTop: 3 },
   selected: { backgroundColor: '#d6b27620', borderColor: '#d6b27688' },
   chipText: { fontFamily: 'Roboto_400Regular', fontSize: 10, color: C.gold },
   warning: {

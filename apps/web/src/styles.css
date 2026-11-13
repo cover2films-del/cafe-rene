@@ -5855,7 +5855,42 @@ header .official-logo {
   }
 }
 .order-mode {
-  margin-bottom: 28px;
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  margin: 8px 0 28px;
+  max-width: 620px;
+  background: #081d2b;
+  border: 1px solid #68d8e544;
+  border-radius: 14px;
+}
+.order-mode-label {
+  margin-bottom: 8px;
+}
+.order-mode .order-choice {
+  flex: 1;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 10px;
+  border-color: transparent;
+  text-align: left;
+}
+.order-mode .order-choice strong {
+  color: var(--cream);
+  font-size: 1rem;
+  letter-spacing: .08em;
+}
+.order-mode .order-choice span {
+  color: #c7dce0;
+  font-size: .72rem;
+}
+.order-mode .order-choice.selected {
+  background: #d01f6f;
+  border-color: #ff8fbe;
 }
 .bar-tabs {
   flex-wrap: wrap;

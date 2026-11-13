@@ -649,15 +649,17 @@ export function App() {
           )}
           {tab === 'Order' && (
             <section className="section order-page">
-              <div className="chips order-mode">
+              <div className="eyebrow order-mode-label">WHAT ARE YOU ORDERING?</div>
+              <div className="chips order-mode" role="tablist" aria-label="Order type">
                 {['Food', 'Drinks'].map((mode) => (
                   <button
                     key={mode}
-                    className={orderMode === mode ? 'selected' : ''}
+                    className={orderMode === mode ? 'selected order-choice' : 'order-choice'}
                     aria-pressed={orderMode === mode}
                     onClick={() => setOrderMode(mode)}
                   >
-                    {mode === 'Drinks' ? 'Beers, cocktails & more' : 'Food menu'}
+                    <strong>{mode === 'Drinks' ? 'DRINKS' : 'FOOD'}</strong>
+                    <span>{mode === 'Drinks' ? 'Beers, cocktails & more' : 'Menu and table ordering'}</span>
                   </button>
                 ))}
               </div>
