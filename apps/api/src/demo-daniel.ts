@@ -28,14 +28,14 @@ export async function seedDaniel(db: DB) {
       day: 10,
       items: [
         ['burger', 1, 1495, 'Desperate Dan Burger'],
-        ['ale', 1, 500, 'Guest ale'],
+        ['peroni', 1, 500, 'Peroni Nastro Azzurro'],
       ],
     },
     {
       day: 6,
       items: [
         ['cod', 1, 1895, 'Beer-Battered Cod & Chips'],
-        ['soft', 1, 300, 'Sparkling soft drink'],
+        ['mojito', 1, 850, 'Mojito'],
       ],
     },
     {
@@ -53,7 +53,7 @@ export async function seedDaniel(db: DB) {
     date.setUTCHours(18, 30, 0, 0);
     const total = visit.items.reduce((n, l) => n + Number(l[1]) * Number(l[2]), 0),
       food = visit.items
-        .filter((l) => !['ale', 'soft'].includes(String(l[0])))
+        .filter((l) => !['ale', 'soft', 'peroni', 'guinness', 'negroni', 'mojito', 'espresso'].includes(String(l[0])))
         .reduce((n, l) => n + Number(l[1]) * Number(l[2]), 0);
     await db.query(
       "INSERT INTO orders(id,user_id,request_key,table_id,total,payment,status,notes,alcohol,age_checked,pos_ref,created_at) VALUES($1,'daniel',$2,'table-2',$3,'paid','completed',$4,$5,true,$6,$7) ON CONFLICT DO NOTHING",

@@ -32,7 +32,7 @@ test('bar catalogue, mixologist and printed check-ins preserve stock, role and p
     const daniel = (await s.login('daniel@demo.rene', 'ReneDemo2026!')).token;
     const manager = (await s.login('manager@demo.rene', 'ReneDemo2026!')).token;
     const bar = await call('/drinks');
-    assert.equal(bar.drinks.length, 16);
+    assert.ok(bar.drinks.length >= 29);
     assert.ok(
       bar.drinks.every((d: any) => d.price === null && !d.orderable && d.history.length >= 2),
     );

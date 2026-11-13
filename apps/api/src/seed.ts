@@ -57,6 +57,11 @@ async function seedDefaults(db: DB) {
   for (const [id, name] of [
     ['soft', 'Soft drink'],
     ['ale', 'Guest ale'],
+    ['peroni', 'Peroni Nastro Azzurro'],
+    ['guinness', 'Guinness Draught'],
+    ['negroni', 'Negroni'],
+    ['mojito', 'Mojito'],
+    ['espresso', 'Espresso Martini'],
   ])
     await db.query('INSERT INTO menu VALUES($1,$2) ON CONFLICT DO NOTHING', [
       id,
@@ -65,12 +70,12 @@ async function seedDefaults(db: DB) {
         name,
         description: 'Ask the bar team for the current selection and price.',
         category: 'Drinks',
-        price: id === 'ale' ? 500 : 300,
+        price: ['ale', 'peroni', 'guinness'].includes(id) ? 500 : id === 'soft' ? 300 : 850,
         dietary: [],
         modifiers: [],
         available: false,
         approved: false,
-        alcohol: id === 'ale',
+        alcohol: id !== 'soft',
         allergens: null,
       },
     ]);

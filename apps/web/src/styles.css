@@ -2738,6 +2738,19 @@ header nav button:hover {
   font-weight: 600;
   letter-spacing: -0.2px;
 }
+.hero-pint {
+  position: absolute;
+  width: 86px !important;
+  height: 112px !important;
+  right: -30px;
+  bottom: -44px;
+  object-fit: cover !important;
+  border: 3px solid #ead7ac;
+  border-radius: 12px;
+  transform: rotate(8deg);
+  z-index: 2;
+  box-shadow: 0 14px 32px #0009;
+}
 .hero-food-small {
   position: absolute;
   width: 61%;
@@ -3803,11 +3816,24 @@ p {
   gap: 18px;
 }
 .social-post {
+  position: relative;
+  isolation: isolate;
   overflow: hidden;
   border: 1px solid #09bec654;
   background: #163447;
   border-radius: 7px;
   box-shadow: 4px 5px #061b2a;
+}
+.social-post::before,
+.board-note::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, #082738e8, #092d3ac4), var(--feed-image);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.34;
+  z-index: -1;
 }
 .social-post > img {
   width: 100%;
@@ -3845,6 +3871,16 @@ p {
   margin: 0 20px 20px;
   color: #ecec7f;
   font-size: 11px;
+}
+.artist-links {
+  display: flex;
+  gap: 12px;
+  margin: 10px 20px 20px;
+  font-size: 11px;
+}
+.artist-links a {
+  color: #8ce9dc;
+  text-decoration: none;
 }
 .social-post > small {
   padding: 0 20px 20px;
@@ -3900,6 +3936,8 @@ p {
   font: bold 95px Arial;
 }
 .board-note {
+  position: relative;
+  isolation: isolate;
   padding: 30px;
   background: #e9ed74;
   color: #092e4c;

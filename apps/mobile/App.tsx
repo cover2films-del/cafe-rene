@@ -6,6 +6,7 @@ import Svg, { Path } from 'react-native-svg';
 import { socialIconPaths } from '../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../packages/shared/src/venue-menu';
 import { CircleNative } from './CircleNative';
+import { HistoryNative } from './HistoryNative';
 import { useFonts } from 'expo-font';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
 import { RobotoSlab_700Bold } from '@expo-google-fonts/roboto-slab/700Bold';
@@ -124,6 +125,10 @@ const foodImages: Record<string, any> = {
   'kids-sausage': require('../../packages/assets/food/generated/kids-sausage.webp'),
   'kids-chicken': require('../../packages/assets/food/generated/kids-chicken.webp'),
   sirloin: require('../../packages/assets/food/generated/sirloin.webp'),
+};
+const drinkImages: Record<string, any> = {
+  negroni: require('../../packages/assets/drinks/negroni.webp'),
+  'old-fashioned': require('../../packages/assets/drinks/old-fashioned.webp'),
 };
 const eventImages: Record<string, any> = {
   'nov26-alex-comaish': require('../../packages/assets/events/nov26-alex-comaish.webp'),
@@ -1262,8 +1267,14 @@ function AppContent() {
                           source={
                             c.id === 'menu'
                               ? foodImages.club
+                              : c.id === 'food'
+                                ? foodImages.burger
                               : c.id === 'music'
                                 ? eventImages['nov26-baron-crane']
+                                : c.id === 'quiz'
+                                  ? drinkImages.negroni
+                                  : c.id === 'history'
+                                    ? drinkImages['old-fashioned']
                                 : c.id === 'festival'
                                   ? officialPoster
                                   : venueInterior
@@ -1293,6 +1304,7 @@ function AppContent() {
                         </View>
                       </View>
                     ))}
+                    <Text style={s.small}>{rewards.challengeNote}</Text>
                     <Text style={s.title}>A treat for next time.</Text>
                     {rewards.offers.map((o: any) => (
                       <View style={s.panel} key={o.id}>
@@ -1464,6 +1476,7 @@ function AppContent() {
                     }
                   }}
                 />
+                <HistoryNative images={foodImages} />
                 <CircleNative
                   key={user.id}
                   user={user}
@@ -1891,6 +1904,8 @@ function AppContent() {
                 'Official event information ↗',
                 () => void Linking.openURL(event.sourceUrl || programmeSource),
               )}
+            {button('Find the artist on Spotify ↗', () => void Linking.openURL(`https://open.spotify.com/search/${encodeURIComponent(event.title)}`), true)}
+            {button('Find the artist on social ↗', () => void Linking.openURL(`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(event.title)}`), true)}
             {event.sample &&
               button('Save event details', () =>
                 user

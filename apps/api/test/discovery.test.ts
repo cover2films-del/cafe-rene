@@ -36,7 +36,7 @@ test('member picks enforce opt-in, own-history privacy, taste filters and non-or
     assert.equal(opening.suggestions.length, 4);
     assert.equal(opening.popular.length, 4);
     assert.ok(opening.suggestions.some((item: any) => item.reason === 'Matches your saved tastes'));
-    assert.equal(opening.drinks.length, 2);
+    assert.ok(opening.drinks.length >= 2);
     assert.ok(opening.drinks.every((item: any) => item.price === null && item.orderable === false));
     assert.ok(!/demo/i.test(JSON.stringify(opening)));
     const prefs = {

@@ -7,7 +7,7 @@ export async function seedDiscovery(db: DB) {
     'discovery-picks-v1',
     {
       food: defaults,
-      drinks: ['ale', 'soft'],
+      drinks: ['peroni', 'negroni', 'mojito', 'espresso'],
       provenance: 'seeded-curation',
       verifiedSales: false,
     },
@@ -47,7 +47,7 @@ export async function memberDiscovery(db: DB, userId: string) {
   const tastes: string[] = personalised ? prefs.tastes || [] : [];
   const menu: MenuItem[] = (await db.query('SELECT data FROM menu')).rows.map((r) => r.data);
   const config = (await db.query("SELECT data FROM settings WHERE id='discovery-picks-v1'")).rows[0]
-    ?.data || { food: defaults, drinks: ['ale', 'soft'] };
+    ?.data || { food: defaults, drinks: ['peroni', 'negroni', 'mojito', 'espresso'] };
   const food = menu.filter(
     (m) =>
       m.available &&

@@ -505,23 +505,52 @@ export class Service {
   }
   async rewards(user: any) {
     demand(user, 'Sign in to see your rewards', 401);
-    const visits = (await this.db.query('SELECT * FROM visits WHERE user_id=$1', [user.id])).rows;
+    const now = new Date();
+    const cycleStart = venueDay(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)));
+    const visits = (await this.db.query('SELECT * FROM visits WHERE user_id=$1 AND day >= $2', [user.id, cycleStart])).rows;
     const vals = (await this.db.query('SELECT * FROM validations WHERE user_id=$1', [user.id]))
       .rows;
     const foods = (
       await this.db.query(
-        "SELECT DISTINCT oi.item_id FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN menu m ON m.id=oi.item_id WHERE o.user_id=$1 AND o.status='completed' AND o.payment='paid' AND (m.data->>'alcohol')::boolean=false AND m.data->>'category'<>'Drinks'",
-        [user.id],
+        "SELECT DISTINCT oi.item_id FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN menu m ON m.id=oi.item_id WHERE o.user_id=$1 AND o.created_at >= $2 AND o.status='completed' AND o.payment='paid' AND (m.data->>'alcohol')::boolean=false AND m.data->>'category'<>'Drinks'",
+        [user.id, cycleStart],
       )
     ).rows;
     const offers = (await this.db.query('SELECT data FROM offers')).rows.map((r) => r.data);
     const used = (await this.db.query('SELECT * FROM redemptions WHERE user_id=$1', [user.id]))
       .rows;
+    const definitions =
+      (await this.one('SELECT data FROM settings WHERE id=$1', ['challenges']))?.data || challenges;
+    const challengeResults = definitions.map((c: any) => ({
+      ...c,
+      progress: Math.min(
+        c.target,
+        c.kind === 'visit'
+          ? visits.length
+          : c.kind === 'food'
+            ? foods.length
+            : vals.filter((v) => v.kind === c.kind && String(v.created_at || '').slice(0, 7) === cycleStart.slice(0, 7)).length,
+      ),
+      bonusPoints: 25 + Number(c.target || 1) * 10,
+      cycle: cycleStart.slice(0, 7),
+    }));
+    await this.db.query('DELETE FROM loyalty WHERE user_id=$1 AND id LIKE $2', [
+      user.id,
+      `achievement-${user.id}-${cycleStart.slice(0, 7)}-%`,
+    ]);
+    for (const c of challengeResults)
+      if (c.progress >= c.target)
+        await this.db.query(
+          'INSERT INTO loyalty(id,user_id,points,reason) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',
+          [`achievement-${user.id}-${c.cycle}-${c.id}`, user.id, c.bonusPoints, `achievement:${c.name}`],
+        );
     const points = await this.points(user.id);
     const stamps = await this.foodStamps(user.id);
     return {
       points,
       pointsName: 'René Points',
+      challengeCycle: cycleStart,
+      challengeNote: 'Challenges refresh on the first of each month. Completed challenges award bonus René Points.',
       stampCard: {
         name: 'The Kitchen Club',
         stamps: Math.min(stamps, 6),
@@ -531,20 +560,7 @@ export class Service {
       },
       visits: visits.length,
       membership: this.reference('member', user.id, 1, 600),
-      challenges: (
-        (await this.one('SELECT data FROM settings WHERE id=$1', ['challenges']))?.data ||
-        challenges
-      ).map((c: any) => ({
-        ...c,
-        progress: Math.min(
-          c.target,
-          c.kind === 'visit'
-            ? visits.length
-            : c.kind === 'food'
-              ? foods.length
-              : vals.filter((v) => v.kind === c.kind).length,
-        ),
-      })),
+      challenges: challengeResults,
       offers: offers.map((o) => ({
         ...o,
         eligible:

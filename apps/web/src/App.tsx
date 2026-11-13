@@ -4,6 +4,7 @@ import { DiscoveryHub } from './DiscoveryHub';
 import { socialIconPaths } from '../../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../../packages/shared/src/venue-menu';
 import { CircleHub } from './CircleHub';
+import { HistoryHub } from './HistoryHub';
 import {
   foodPhotography,
   programmeSource,
@@ -401,10 +402,11 @@ export function App() {
                   </div>
                   <div className="hero-food-small">
                     <img
-                      src="/images/food/cod.webp"
-                      alt="Illustrative fish and chips photography"
+                      src="/images/generated/burger.webp"
+                      alt="Illustrative Café René burger photography"
                     />
                     <span>Something worth settling in for.</span>
+                    <img className="hero-pint" src="/images/drinks/lager.webp" alt="A pint of lager" />
                   </div>
                   <small>Official programme artwork · food photography illustrative</small>
                 </div>
@@ -578,8 +580,8 @@ export function App() {
                 </div>
                 <div className="food-art food-photography">
                   <img
-                    src="/images/food/cod.webp"
-                    alt="Illustrative fish and chips photography"
+                    src="/images/generated/burger.webp"
+                    alt="Illustrative Café René burger photography"
                     loading="lazy"
                   />
                   <div>
@@ -1106,6 +1108,7 @@ export function App() {
                         <div className="eyebrow">MOMENTS WORTH COLLECTING</div>
                         <h2>A little adventure.</h2>
                       </div>
+                      <small className="muted">{rewards.challengeNote}</small>
                     </div>
                     <div className="challenge-grid">
                       {rewards.challenges.map((c: any) => (
@@ -1114,7 +1117,7 @@ export function App() {
                           key={c.id}
                           style={
                             {
-                              '--achievement-image': `url("${c.id === 'menu' ? '/images/generated/club.webp' : c.id === 'music' ? '/images/events/nov26-baron-crane.webp' : c.id === 'festival' ? '/programme/november-2026.webp' : '/brand/venue-interior.webp'}")`,
+                              '--achievement-image': `url("${achievementImage(c)}")`,
                             } as React.CSSProperties
                           }
                         >
@@ -1712,7 +1715,11 @@ function VenueBoard({
         <div className="social-wall">
           {posts.length ? (
             posts.slice(0, 6).map((p: any) => (
-              <article className={'social-post ' + p.platform} key={p.id}>
+              <article
+                className={'social-post ' + p.platform}
+                key={p.id}
+                style={{ '--feed-image': `url("${p.imageUrl || '/brand/venue-interior.webp'}")` } as React.CSSProperties}
+              >
                 <div className="social-byline">
                   <b>
                     <SocialLogo platform={p.platform === 'instagram' ? 'instagram' : 'facebook'} />
@@ -1759,7 +1766,7 @@ function VenueBoard({
                   <b>Visit Café René on Facebook ↗</b>
                 </div>
               </a>
-              <div className="board-note">
+              <div className="board-note" style={{ '--feed-image': `url("/images/generated/burger.webp")` } as React.CSSProperties}>
                 <h3>
                   Real food.
                   <br />
@@ -1896,6 +1903,10 @@ function EventCard({
               ? 'Official programme · Free entry'
               : 'Official programme · See event details'}
         </p>
+        <span className="artist-links" onClick={(ev) => ev.stopPropagation()}>
+          <a href={`https://open.spotify.com/search/${encodeURIComponent(e.title)}`} target="_blank" rel="noreferrer">Spotify ↗</a>
+          <a href={`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(e.title)}`} target="_blank" rel="noreferrer">Social ↗</a>
+        </span>
       </div>
     </button>
   );
@@ -2068,6 +2079,7 @@ function Account({
           run={run}
           onSelect={onDishSelect}
         />
+        <HistoryHub />
         <CircleHub key={user.id} user={user} run={run} toast={toast} />
       </div>
       <div>
@@ -3694,4 +3706,16 @@ function SocialLogo({ platform }: { platform: 'facebook' | 'instagram' }) {
       <path d={socialIconPaths[platform]} />
     </svg>
   );
+}
+function achievementImage(challenge: any) {
+  const images: Record<string, string> = {
+    visit: '/brand/venue-interior.webp',
+    food: '/images/generated/burger.webp',
+    menu: '/images/generated/club.webp',
+    music: '/images/events/nov26-baron-crane.webp',
+    quiz: '/images/drinks/negroni.webp',
+    festival: '/programme/november-2026.webp',
+    history: '/images/drinks/old-fashioned.webp',
+  };
+  return images[challenge.id] || images[challenge.kind] || '/images/generated/burger.webp';
 }
