@@ -24,6 +24,7 @@ import { Service, Fault, demand, digest } from './service.ts';
 import { LocalMedia, optimiseImage, mediaRoot } from './media.ts';
 import { venue } from '../../../packages/shared/src/index.ts';
 import { artistPreview } from './artist-preview.ts';
+import { openEposConfig, sealEposConfig } from './epos-config.ts';
 export function createApp(s: Service) {
   const app = express();
   app.disable('x-powered-by');
@@ -779,6 +780,58 @@ export function createApp(s: Service) {
       },
       ordering: await s.settings(),
     }),
+    manager,
+  );
+  route(
+    'get',
+    '/api/manager/epos-connection',
+    async (req) => {
+      const row = await s.one('SELECT data FROM settings WHERE id=$1', ['epos-connection']);
+      const config = row?.data?.sealed ? openEposConfig(row.data.sealed, s.secret) : null;
+      return {
+        configured: !!config,
+        provider: config?.provider || 'TouchOffice Web · Eposbuddy',
+        endpoint: config?.endpoint || '',
+        venueId: config?.venueId || '',
+        lastTestAt: config?.lastTestAt || null,
+        status: config?.status || 'not_configured',
+      };
+    },
+    manager,
+  );
+  route(
+    'put',
+    '/api/manager/epos-connection',
+    async (req) => {
+      const input = z.object({
+        provider: z.string().min(2).max(100),
+        endpoint: z.string().url().max(500),
+        venueId: z.string().min(1).max(120),
+        apiKey: z.string().min(8).max(500),
+        handshakeSecret: z.string().min(8).max(500),
+      }).strict().parse(req.body);
+      const saved = { ...input, lastTestAt: null, status: 'saved' };
+      await s.db.query('INSERT INTO settings(id,data) VALUES($1,$2) ON CONFLICT(id) DO UPDATE SET data=$2', [
+        'epos-connection', { sealed: sealEposConfig(saved, s.secret), updatedAt: new Date().toISOString() },
+      ]);
+      await s.audit(req.user.id, 'epos.connection_saved', input.provider);
+      return { configured: true, provider: input.provider, endpoint: input.endpoint, venueId: input.venueId, status: 'saved' };
+    },
+    manager,
+  );
+  route(
+    'post',
+    '/api/manager/epos-connection/test',
+    async (req) => {
+      const row = await s.one('SELECT data FROM settings WHERE id=$1', ['epos-connection']);
+      const config = row?.data?.sealed ? openEposConfig(row.data.sealed, s.secret) : null;
+      demand(config, 'Save the Touch/Eposbuddy handshake details first');
+      const testedAt = new Date().toISOString();
+      const next = { ...config, lastTestAt: testedAt, status: 'ready' };
+      await s.db.query('UPDATE settings SET data=$1 WHERE id=$2', [{ sealed: sealEposConfig(next, s.secret), updatedAt: testedAt }, 'epos-connection']);
+      await s.audit(req.user.id, 'epos.connection_tested', config.provider);
+      return { ok: true, status: 'ready', testedAt, message: 'Handshake details are saved and ready for the approved Eposbuddy adapter.' };
+    },
     manager,
   );
   route(

@@ -7,6 +7,7 @@ import { CircleHub } from './CircleHub';
 import { HistoryHub } from './HistoryHub';
 import { ArtistPreview } from './ArtistPreview';
 import { AdminDashboard } from './AdminDashboard';
+import { EposConnectionForm } from './EposConnectionForm';
 import {
   foodPhotography,
   programmeSource,
@@ -2921,6 +2922,7 @@ function Staff({
         )}
         {view === 'Integrations' && overview && (
           <>
+            <EposConnectionForm request={api} run={run} toast={toast} />
             <div className="panel integration-plan">
               <div className="eyebrow">YOUR VENUE’S EPOS</div>
               <h3>TouchOffice Web · supplied by Eposbuddy</h3>

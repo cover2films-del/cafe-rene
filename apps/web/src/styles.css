@@ -4380,7 +4380,15 @@ footer .wordmark span {
 .stock-item { display: flex; justify-content: space-between; gap: 8px; padding: 11px 12px; border-radius: 10px; background: #102b3e99; font-size: 12px; }
 .stock-item b { color: #83e4b4; font-size: 10px; white-space: nowrap; }
 .stock-item.out-stock b { color: #ffaaa0; }
+.epos-connect-panel { border-color: #f1ed8955; }
+.epos-connect-panel > .eyebrow { display: flex; align-items: center; gap: 7px; color: #f1ed89; }
+.epos-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 18px 0; }
+.epos-form-grid label { display: grid; gap: 6px; color: #c2dce1; font-size: 12px; }
+.epos-form-grid input { width: 100%; box-sizing: border-box; }
+.epos-status { display: flex; align-items: center; gap: 8px; margin-top: 16px; color: #8be1b4; }
+.epos-status small { color: #b8d5db; margin-left: auto; }
 @media (max-width: 850px) { .admin-metrics { grid-template-columns: repeat(2, 1fr); } .admin-grid { grid-template-columns: 1fr; } .stock-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 650px) { .epos-form-grid { grid-template-columns: 1fr; } .epos-status { align-items: flex-start; flex-wrap: wrap; } .epos-status small { width: 100%; margin-left: 24px; } }
 .circle-hub > p {
   font-size: 12px;
 }
