@@ -28,8 +28,15 @@ export function DiscoveryHub({
   const [tastes, setTastes] = useState<string[]>(user.preferences.tastes || []),
     [enabled, setEnabled] = useState(!!user.preferences.personalisation);
   const imageFor = (item: any) => {
-    if (item.imageKey !== 'venue-bar') return foodPhotography[item.imageKey]?.path || drinkPhotography[item.imageKey] || '/images/drinks/lager.webp';
     const name = String(item.name).toLowerCase();
+    if (item.category === 'Drinks') {
+      if (drinkPhotography[item.imageKey]) return drinkPhotography[item.imageKey];
+      if (name.includes('ale') || name.includes('cider')) return drinkPhotography.ale;
+      if (name.includes('stout') || name.includes('guinness')) return drinkPhotography.stout;
+      if (name.includes('soft') || name.includes('zero') || name.includes('mock')) return drinkPhotography['zero-beer'];
+      return drinkPhotography.lager;
+    }
+    if (item.imageKey !== 'venue-bar') return foodPhotography[item.imageKey]?.path || drinkPhotography[item.imageKey] || '/images/drinks/lager.webp';
     if (item.category === 'Drinks' || item.alcohol) {
       if (name.includes('ale') || name.includes('cider')) return drinkPhotography.ale;
       if (name.includes('stout') || name.includes('guinness')) return drinkPhotography.stout;

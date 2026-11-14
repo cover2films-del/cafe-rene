@@ -35,8 +35,15 @@ export function DiscoveryNative({
   const [tastes, setTastes] = useState<string[]>(user.preferences.tastes || []),
     [enabled, setEnabled] = useState(!!user.preferences.personalisation);
   const imageFor = (item: any) => {
-    if (item.imageKey !== 'venue-bar') return images[item.imageKey] || drinkArt[item.imageKey] || drinkArt.lager;
     const name = String(item.name).toLowerCase();
+    if (item.category === 'Drinks') {
+      if (drinkArt[item.imageKey]) return drinkArt[item.imageKey];
+      if (name.includes('ale') || name.includes('cider')) return drinkArt.ale;
+      if (name.includes('stout') || name.includes('guinness')) return drinkArt.stout;
+      if (name.includes('soft') || name.includes('zero') || name.includes('mock')) return drinkArt['zero-beer'];
+      return drinkArt.lager;
+    }
+    if (item.imageKey !== 'venue-bar') return images[item.imageKey] || drinkArt[item.imageKey] || drinkArt.lager;
     if (item.category === 'Drinks' || item.alcohol) {
       if (name.includes('ale') || name.includes('cider')) return drinkArt.ale;
       if (name.includes('stout') || name.includes('guinness')) return drinkArt.stout;
