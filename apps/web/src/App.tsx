@@ -260,10 +260,11 @@ export function App() {
           />
           <span>GLOUCESTER · EST. 2003</span>
         </div>
-        <div className="startup-orbit" aria-hidden="true">
-          <i />
-          <i />
-          <i />
+        <div className="pint-pour" aria-label="A pint being poured" role="img">
+          <div className="pour-tap"><span className="tap-handle" /><span className="tap-spout" /></div>
+          <div className="pour-stream" />
+          <div className="pour-glass"><div className="pour-beer"><i /><i /><i /><i /><i /></div><div className="pour-foam"><i /><i /><i /></div><span className="glass-shine" /></div>
+          <small>POURING SOMETHING GOOD</small>
         </div>
         <p>{error || 'Getting the good stuff ready…'}</p>
         {error && <button onClick={() => location.reload()}>Try again</button>}
