@@ -6040,11 +6040,7 @@ header .official-logo {
   letter-spacing: .04em;
   text-transform: uppercase;
 }
-.drink-logo-badge small {
-  color: #f7ef9a;
-  font: 700 7px/1 'Arial', sans-serif;
-  letter-spacing: .12em;
-}
+.drink-logo-badge img { width: 32px; height: 22px; object-fit: contain; justify-self: center; margin-bottom: 3px; }
 .drink-copy {
   padding: 25px;
 }

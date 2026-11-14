@@ -229,6 +229,7 @@ export function DrinksHub({ request, user }: { request: any; user: any }) {
 function DrinkCard({ drink: d }: { drink: any }) {
   const [fact, setFact] = useState(Math.floor(Date.now() / 86400000) % d.history.length);
   const brandLogo = d.brand && d.category !== 'Cocktails' ? d.brand : '';
+  const logoSlug: Record<string, string> = { 'Peroni Nastro Azzurro': 'peroni', Guinness: 'guinness', Thatchers: 'thatchers', 'Camden Town Brewery': 'camdentownbrewery', BrewDog: 'brewdog', 'Corona Extra': 'corona', Beavertown: 'beavertown', 'Old Mout': 'oldmout', 'Lucky Saint': 'luckysaint' };
   return (
     <article
       className="drink-card"
@@ -243,8 +244,8 @@ function DrinkCard({ drink: d }: { drink: any }) {
         />
         {brandLogo && (
           <span className="drink-logo-badge" aria-label={`${brandLogo} logo on the glass`}>
+            {logoSlug[brandLogo] && <img src={`https://cdn.simpleicons.org/${logoSlug[brandLogo]}/FFFFFF`} alt={`${brandLogo} logo`} />}
             <b>{brandLogo}</b>
-            <small>ORIGINAL BRAND</small>
           </span>
         )}
       </div>

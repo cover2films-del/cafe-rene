@@ -131,6 +131,7 @@ function Drink({ drink: d }: { drink: any }) {
   const [expanded, setExpanded] = useState(false),
     [fact, setFact] = useState(Math.floor(Date.now() / 86400000) % d.history.length);
   const brandLogo = d.brand && d.category !== 'Cocktails' ? d.brand : '';
+  const logoSlug: Record<string, string> = { 'Peroni Nastro Azzurro': 'peroni', Guinness: 'guinness', Thatchers: 'thatchers', 'Camden Town Brewery': 'camdentownbrewery', BrewDog: 'brewdog', 'Corona Extra': 'corona', Beavertown: 'beavertown', 'Old Mout': 'oldmout', 'Lucky Saint': 'luckysaint' };
   return (
     <View style={styles.card}>
       <View style={styles.photoWrap}>
@@ -142,8 +143,8 @@ function Drink({ drink: d }: { drink: any }) {
         />
         {!!brandLogo && (
           <View style={styles.logoBadge} accessibilityLabel={`${brandLogo} logo on the glass`}>
+            {!!logoSlug[brandLogo] && <Image source={{ uri: `https://cdn.simpleicons.org/${logoSlug[brandLogo]}/FFFFFF` }} style={styles.logoImage} contentFit="contain" />}
             <Text style={styles.logoName}>{brandLogo}</Text>
-            <Text style={styles.logoSub}>ORIGINAL BRAND</Text>
           </View>
         )}
       </View>
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   logoName: { color: '#fff', fontSize: 15, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
-  logoSub: { color: '#f7ef9a', fontSize: 7, fontWeight: '800', letterSpacing: 1 },
+  logoImage: { width: 32, height: 22, marginBottom: 3 },
   copy: { padding: 22 },
   brand: { color: '#f1ed89', fontSize: 12, letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' },
   link: { color: '#eeef9a', fontSize: 13, lineHeight: 21, marginVertical: 12 },
