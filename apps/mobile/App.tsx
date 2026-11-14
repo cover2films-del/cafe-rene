@@ -1266,7 +1266,11 @@ function AppContent() {
                       <View key={c.id} style={s.challenge}>
                         <Image
                           source={
-                            c.id === 'menu'
+                            c.id === 'first'
+                              ? venueInterior
+                              : c.id === 'regular'
+                                ? foodImages.club
+                                : c.id === 'menu'
                               ? foodImages.club
                               : c.id === 'food'
                                 ? foodImages.burger

@@ -3723,6 +3723,8 @@ function SocialLogo({ platform }: { platform: 'facebook' | 'instagram' }) {
 }
 function achievementImage(challenge: any) {
   const images: Record<string, string> = {
+    first: '/brand/venue-interior.webp',
+    regular: '/images/generated/club.webp',
     visit: '/brand/venue-interior.webp',
     food: '/images/generated/burger.webp',
     menu: '/images/generated/club.webp',
