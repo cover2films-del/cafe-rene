@@ -2121,8 +2121,9 @@ function Account({
               </summary>
               {o.items.map((i: any) => (
                 <div className="list-row" key={i.id}>
-                  <span>
-                    {i.quantity} × {i.name}
+                  <span className="product-history-line">
+                    <img className="product-history-art" src={productImage(i).path} alt={productImage(i).alt} loading="lazy" />
+                    <span>{i.quantity} × {i.name}</span>
                   </span>
                   <b>{money(i.unit_price * i.quantity)}</b>
                 </div>
@@ -3734,4 +3735,17 @@ function achievementImage(challenge: any) {
     history: '/images/drinks/old-fashioned.webp',
   };
   return images[challenge.id] || images[challenge.kind] || '/images/generated/burger.webp';
+}
+function productImage(item: any) {
+  const key = String(item.item_id || item.imageKey || '').toLowerCase();
+  if (foodPhotography[key]) return foodPhotography[key];
+  const drinks: Record<string, { path: string; alt: string }> = {
+    peroni: { path: '/images/drinks/lager.webp', alt: 'Peroni lager artwork' },
+    guinness: { path: '/images/drinks/stout.webp', alt: 'Guinness stout artwork' },
+    thatchers: { path: '/images/drinks/ale.webp', alt: 'Thatchers cider artwork' },
+    'camden-hells': { path: '/images/drinks/lager.webp', alt: 'Camden Hells lager artwork' },
+    'punk-ipa': { path: '/images/drinks/ipa.webp', alt: 'BrewDog Punk IPA artwork' },
+    'negroni-sbagliato': { path: '/images/drinks/negroni.webp', alt: 'Negroni artwork' },
+  };
+  return drinks[key] || { path: '/images/generated/burger.webp', alt: 'Café René product artwork' };
 }

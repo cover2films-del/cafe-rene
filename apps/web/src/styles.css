@@ -4351,6 +4351,20 @@ footer .wordmark span {
   color: #b8f1ec;
   font-size: 12px;
 }
+.product-history-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.product-history-art {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #75dbce55;
+}
 .circle-hub > p {
   font-size: 12px;
 }

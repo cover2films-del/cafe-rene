@@ -130,6 +130,10 @@ const foodImages: Record<string, any> = {
 const drinkImages: Record<string, any> = {
   negroni: require('../../packages/assets/drinks/negroni.webp'),
   'old-fashioned': require('../../packages/assets/drinks/old-fashioned.webp'),
+  lager: require('../../packages/assets/drinks/lager.webp'),
+  ale: require('../../packages/assets/drinks/ale.webp'),
+  ipa: require('../../packages/assets/drinks/ipa.webp'),
+  stout: require('../../packages/assets/drinks/stout.webp'),
 };
 const eventImages: Record<string, any> = {
   'nov26-alex-comaish': require('../../packages/assets/events/nov26-alex-comaish.webp'),
@@ -151,6 +155,16 @@ const officialLogo = require('../../packages/assets/brand/logo.png');
 const venueInterior = require('../../packages/assets/brand/venue-interior.webp');
 const officialPoster = require('../../packages/assets/brand/november-2026.webp');
 /* eslint-enable @typescript-eslint/no-require-imports */
+function productArtwork(item: any) {
+  const key = String(item.item_id || item.imageKey || '').toLowerCase();
+  if (foodImages[key]) return foodImages[key];
+  if (key === 'peroni' || key === 'camden-hells') return drinkImages.lager;
+  if (key === 'guinness') return drinkImages.stout;
+  if (key === 'thatchers') return drinkImages.ale;
+  if (key === 'punk-ipa') return drinkImages.ipa;
+  if (key.includes('negroni')) return drinkImages.negroni;
+  return foodImages.burger;
+}
 function eventImage(e: any) {
   if (e.imageUrl?.startsWith('/api/')) return { uri: apiUrl + e.imageUrl };
   return (
@@ -1502,9 +1516,10 @@ function AppContent() {
                           · {money(o.total)}
                         </Text>
                         {o.items.map((i: any) => (
-                          <Text key={i.id} style={s.body}>
-                            {i.quantity} × {i.name}
-                          </Text>
+                          <View key={i.id} style={s.productHistoryLine}>
+                            <Image source={productArtwork(i)} style={s.productHistoryArt} contentFit="cover" />
+                            <Text style={[s.body, { flex: 1 }]}>{i.quantity} × {i.name}</Text>
+                          </View>
                         ))}
                       </View>
                     ))}
@@ -2513,6 +2528,8 @@ const s = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: C.panel,
   },
+  productHistoryLine: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 4 },
+  productHistoryArt: { width: 42, height: 42, borderRadius: 9 },
   badge: {
     fontFamily: 'Roboto_400Regular',
     fontSize: 33,
