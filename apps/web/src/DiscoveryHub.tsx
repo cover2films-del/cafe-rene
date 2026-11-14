@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { foodTastes } from '../../../packages/shared/src/tastes';
 import { money } from '../../../packages/shared/src/index';
 import { foodPhotography } from '../../../packages/shared/src/content';
+const drinkPhotography: Record<string, string> = {
+  lager: '/images/drinks/lager.webp', ale: '/images/drinks/ale.webp', ipa: '/images/drinks/ipa.webp',
+  stout: '/images/drinks/stout.webp', negroni: '/images/drinks/negroni.webp', margarita: '/images/drinks/margarita.webp',
+  passionfruit: '/images/drinks/passionfruit.webp', sour: '/images/drinks/sour.webp', b52: '/images/drinks/b52.webp',
+  'lemon-drop': '/images/drinks/lemon-drop.webp', 'old-fashioned': '/images/drinks/old-fashioned.webp',
+  mojito: '/images/drinks/mojito.webp', 'zero-beer': '/images/drinks/zero-beer.webp', espresso: '/images/drinks/espresso.webp',
+};
 export function DiscoveryHub({
   user,
   setUser,
@@ -55,11 +62,7 @@ export function DiscoveryHub({
       {items.map((item) => (
         <article className="discovery-card" key={item.id}>
           <img
-            src={
-              item.imageKey === 'venue-bar'
-                ? '/brand/venue-interior.webp'
-                : foodPhotography[item.imageKey]?.path
-            }
+            src={item.imageKey === 'venue-bar' ? '/brand/venue-interior.webp' : foodPhotography[item.imageKey]?.path || drinkPhotography[item.imageKey] || '/images/drinks/lager.webp'}
             alt={
               item.imageKey === 'venue-bar'
                 ? 'The Café René bar'

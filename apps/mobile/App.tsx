@@ -1283,9 +1283,9 @@ function AppContent() {
                             c.id === 'first'
                               ? venueInterior
                               : c.id === 'regular'
-                                ? foodImages.club
+                                ? foodImages.chips
                                 : c.id === 'menu'
-                              ? foodImages.club
+                              ? foodImages['steak-pie']
                               : c.id === 'food'
                                 ? foodImages.burger
                               : c.id === 'music'

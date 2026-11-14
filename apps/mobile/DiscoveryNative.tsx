@@ -3,6 +3,15 @@ import { View, Text, Pressable, ScrollView, Switch, StyleSheet, AppState } from 
 import { Image } from 'expo-image';
 import { foodTastes } from '../../packages/shared/src/tastes';
 import { money } from '../../packages/shared/src/index';
+const drinkArt: Record<string, any> = {
+  lager: require('../../packages/assets/drinks/lager.webp'), ale: require('../../packages/assets/drinks/ale.webp'),
+  ipa: require('../../packages/assets/drinks/ipa.webp'), stout: require('../../packages/assets/drinks/stout.webp'),
+  negroni: require('../../packages/assets/drinks/negroni.webp'), margarita: require('../../packages/assets/drinks/margarita.webp'),
+  passionfruit: require('../../packages/assets/drinks/passionfruit.webp'), sour: require('../../packages/assets/drinks/sour.webp'),
+  b52: require('../../packages/assets/drinks/b52.webp'), 'lemon-drop': require('../../packages/assets/drinks/lemon-drop.webp'),
+  'old-fashioned': require('../../packages/assets/drinks/old-fashioned.webp'), mojito: require('../../packages/assets/drinks/mojito.webp'),
+  'zero-beer': require('../../packages/assets/drinks/zero-beer.webp'), espresso: require('../../packages/assets/drinks/espresso.webp'),
+};
 export function DiscoveryNative({
   user,
   setUser,
@@ -61,7 +70,7 @@ export function DiscoveryNative({
       {items.map((item) => (
         <View style={styles.card} key={item.id}>
           <Image
-            source={item.imageKey === 'venue-bar' ? barImage : images[item.imageKey]}
+            source={item.imageKey === 'venue-bar' ? barImage : images[item.imageKey] || drinkArt[item.imageKey] || drinkArt.lager}
             style={styles.photo}
             contentFit="cover"
             accessibilityLabel={

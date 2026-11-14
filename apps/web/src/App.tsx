@@ -3735,10 +3735,10 @@ function SocialLogo({ platform }: { platform: 'facebook' | 'instagram' }) {
 function achievementImage(challenge: any) {
   const images: Record<string, string> = {
     first: '/brand/venue-interior.webp',
-    regular: '/images/generated/club.webp',
+    regular: '/images/generated/chips.webp',
     visit: '/brand/venue-interior.webp',
     food: '/images/generated/burger.webp',
-    menu: '/images/generated/club.webp',
+    menu: '/images/generated/steak-pie.webp',
     music: '/images/events/nov26-baron-crane.webp',
     quiz: '/images/drinks/negroni.webp',
     festival: '/programme/november-2026.webp',
