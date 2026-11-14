@@ -747,6 +747,14 @@ export function createApp(s: Service) {
     'get',
     '/api/manager/overview',
     async () => ({
+      customers: (await s.db.query("SELECT count(*)::int AS total FROM users WHERE role='customer' AND deleted=false")).rows[0],
+      stock: (await s.menu()).map((m: any) => ({
+        id: m.id,
+        name: m.name,
+        category: m.category,
+        available: m.available,
+        price: m.price,
+      })),
       sales: (
         await s.db.query(
           "SELECT COALESCE(sum(total) FILTER(WHERE payment='paid'),0) AS sales,COALESCE(sum(total) FILTER(WHERE payment='refunded'),0) AS refunds,count(*) AS orders FROM orders",
@@ -760,6 +768,9 @@ export function createApp(s: Service) {
       bookings: (await s.db.query('SELECT * FROM bookings ORDER BY created_at DESC')).rows,
       integrations: {
         plan: posPlan,
+        provider: 'Touch office · Eposbuddy',
+        connection: 'demo',
+        lastSync: new Date().toISOString(),
         payment: 'mock',
         pos: 'mock',
         jobs: (await s.db.query('SELECT * FROM jobs ORDER BY next_at')).rows,

@@ -6,6 +6,7 @@ import { menuSources, seasonalMenu, menuChecked } from '../../../packages/shared
 import { CircleHub } from './CircleHub';
 import { HistoryHub } from './HistoryHub';
 import { ArtistPreview } from './ArtistPreview';
+import { AdminDashboard } from './AdminDashboard';
 import {
   foodPhotography,
   programmeSource,
@@ -268,6 +269,7 @@ export function App() {
       </div>
     );
   const upcoming = boot.events;
+  const manager = user && ['manager', 'admin'].includes(user.role);
   return (
     <div
       className={staff ? 'app staff-app' : 'app'}
@@ -310,6 +312,11 @@ export function App() {
               {t}
             </button>
           ))}
+          {manager && (
+            <button className={!staff && tab === 'Admin' ? 'active' : ''} onClick={() => go('Admin')}>
+              <ShieldCheck size={17} /> Admin
+            </button>
+          )}
         </nav>
         <div className="header-actions">
           <button className="icon-button" aria-label="Your basket" onClick={() => setDrawer(true)}>
@@ -1271,6 +1278,7 @@ export function App() {
               )}
             </section>
           )}
+          {tab === 'Admin' && manager && <AdminDashboard request={api} run={run} />}
           <footer>
             <div className="wordmark">
               <img
