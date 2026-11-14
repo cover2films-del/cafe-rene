@@ -5967,6 +5967,17 @@ header .official-logo {
     serif;
   margin: 12px 0;
 }
+.drink-brand {
+  display: inline-block;
+  color: #f1ed89;
+  border: 1px solid #f1ed8966;
+  border-radius: 999px;
+  padding: 4px 9px;
+  margin: 0 0 10px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
 .drink-copy p {
   font-size: 14px;
   color: #c2dce1;

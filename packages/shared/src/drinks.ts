@@ -6,7 +6,7 @@ export const drinkCategories = [
   'Shooters',
   'Alcohol-free',
 ] as const;
-export const cocktailTastes = ['Any', 'Citrus', 'Fruity', 'Bitter', 'Coffee', 'Malty', 'Sweet', 'Herbal', 'Spiced', 'Refreshing'] as const;
+export const cocktailTastes = ['Any', 'Citrus', 'Fruity', 'Bitter', 'Coffee', 'Malty', 'Sweet', 'Herbal', 'Spiced', 'Refreshing', 'Tropical'] as const;
 export const cocktailBases = ['Any', 'Rum', 'Gin', 'Vodka', 'Tequila', 'Whisky', 'Liqueur', 'Brandy', 'Cider', 'None'] as const;
 export const drinkLibrary = items;
 export function mixologist(drinks: typeof items, taste: string, base: string) {

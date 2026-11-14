@@ -244,6 +244,7 @@ function DrinkCard({ drink: d }: { drink: any }) {
           {d.category} · {d.taste}
         </span>
         <h3>{d.name}</h3>
+        <span className="drink-brand">{d.brand || (d.category === 'Cocktails' ? 'Classic bar serve' : 'René bar board')}</span>
         <p>{d.description}</p>
         <b className="drink-status">
           {

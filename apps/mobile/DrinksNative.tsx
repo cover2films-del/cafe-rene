@@ -143,6 +143,7 @@ function Drink({ drink: d }: { drink: any }) {
           {d.category} · {d.taste}
         </Text>
         <Text style={styles.title}>{d.name}</Text>
+        <Text style={styles.brand}>{d.brand || (d.category === 'Cocktails' ? 'Classic bar serve' : 'René bar board')}</Text>
         <Text style={styles.body}>{d.description}</Text>
         <Text style={styles.link}>
           {
@@ -225,6 +226,7 @@ const styles = StyleSheet.create({
   },
   photo: { width: '100%', height: 260 },
   copy: { padding: 22 },
+  brand: { color: '#f1ed89', fontSize: 12, letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' },
   link: { color: '#eeef9a', fontSize: 13, lineHeight: 21, marginVertical: 12 },
   history: { borderTopWidth: 1, borderTopColor: '#65d9cf44', marginTop: 10 },
 });
