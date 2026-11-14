@@ -27,6 +27,17 @@ export function DiscoveryHub({
     [revision, setRevision] = useState(0);
   const [tastes, setTastes] = useState<string[]>(user.preferences.tastes || []),
     [enabled, setEnabled] = useState(!!user.preferences.personalisation);
+  const imageFor = (item: any) => {
+    if (item.imageKey !== 'venue-bar') return foodPhotography[item.imageKey]?.path || drinkPhotography[item.imageKey] || '/images/drinks/lager.webp';
+    const name = String(item.name).toLowerCase();
+    if (item.category === 'Drinks' || item.alcohol) {
+      if (name.includes('ale') || name.includes('cider')) return drinkPhotography.ale;
+      if (name.includes('stout') || name.includes('guinness')) return drinkPhotography.stout;
+      if (name.includes('soft') || name.includes('zero') || name.includes('mock')) return drinkPhotography['zero-beer'];
+      return drinkPhotography.lager;
+    }
+    return '/brand/venue-interior.webp';
+  };
   useEffect(() => {
     setTastes(user.preferences.tastes || []);
     setEnabled(!!user.preferences.personalisation);
@@ -62,7 +73,7 @@ export function DiscoveryHub({
       {items.map((item) => (
         <article className="discovery-card" key={item.id}>
           <img
-            src={item.imageKey === 'venue-bar' ? '/brand/venue-interior.webp' : foodPhotography[item.imageKey]?.path || drinkPhotography[item.imageKey] || '/images/drinks/lager.webp'}
+            src={imageFor(item)}
             alt={
               item.imageKey === 'venue-bar'
                 ? 'The Café René bar'

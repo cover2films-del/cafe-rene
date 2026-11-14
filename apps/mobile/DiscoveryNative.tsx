@@ -34,6 +34,17 @@ export function DiscoveryNative({
     [revision, setRevision] = useState(0);
   const [tastes, setTastes] = useState<string[]>(user.preferences.tastes || []),
     [enabled, setEnabled] = useState(!!user.preferences.personalisation);
+  const imageFor = (item: any) => {
+    if (item.imageKey !== 'venue-bar') return images[item.imageKey] || drinkArt[item.imageKey] || drinkArt.lager;
+    const name = String(item.name).toLowerCase();
+    if (item.category === 'Drinks' || item.alcohol) {
+      if (name.includes('ale') || name.includes('cider')) return drinkArt.ale;
+      if (name.includes('stout') || name.includes('guinness')) return drinkArt.stout;
+      if (name.includes('soft') || name.includes('zero') || name.includes('mock')) return drinkArt['zero-beer'];
+      return drinkArt.lager;
+    }
+    return barImage;
+  };
   useEffect(() => {
     setTastes(user.preferences.tastes || []);
     setEnabled(!!user.preferences.personalisation);
@@ -70,7 +81,7 @@ export function DiscoveryNative({
       {items.map((item) => (
         <View style={styles.card} key={item.id}>
           <Image
-            source={item.imageKey === 'venue-bar' ? barImage : images[item.imageKey] || drinkArt[item.imageKey] || drinkArt.lager}
+            source={imageFor(item)}
             style={styles.photo}
             contentFit="cover"
             accessibilityLabel={
