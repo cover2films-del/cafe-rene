@@ -6040,7 +6040,15 @@ header .official-logo {
   letter-spacing: .04em;
   text-transform: uppercase;
 }
-.drink-logo-badge img { width: 32px; height: 22px; object-fit: contain; justify-self: center; margin-bottom: 3px; }
+.drink-logo-badge.brand-peroni-nastro-azzurro { background: #071f49e8; }
+.drink-logo-badge.brand-guinness { background: #11100de8; color: #f5d27d; }
+.drink-logo-badge.brand-thatchers { background: #9b2a1ee8; }
+.drink-logo-badge.brand-camden-town-brewery { background: #164b69e8; }
+.drink-logo-badge.brand-brewdog { background: #161616e8; color: #f1d64b; }
+.drink-logo-badge.brand-corona-extra { background: #075f71e8; color: #f5dd72; }
+.drink-logo-badge.brand-beavertown { background: #e65d20e8; }
+.drink-logo-badge.brand-old-mout { background: #3c6a38e8; }
+.drink-logo-badge.brand-lucky-saint { background: #d5ab39e8; color: #17233b; }
 .drink-copy {
   padding: 25px;
 }
