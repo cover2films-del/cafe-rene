@@ -7,6 +7,7 @@ import { socialIconPaths } from '../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../packages/shared/src/venue-menu';
 import { CircleNative } from './CircleNative';
 import { HistoryNative } from './HistoryNative';
+import { ArtistPreviewNative } from './ArtistPreviewNative';
 import { useFonts } from 'expo-font';
 import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
 import { RobotoSlab_700Bold } from '@expo-google-fonts/roboto-slab/700Bold';
@@ -1907,6 +1908,7 @@ function AppContent() {
             {button('Find the artist on Spotify ↗', () => void Linking.openURL(`https://open.spotify.com/search/${encodeURIComponent(event.title)}`), true)}
             {button('Find the artist on social ↗', () => void Linking.openURL(`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(event.title)}`), true)}
             {button('Find the artist on Facebook ↗', () => void Linking.openURL(`https://www.facebook.com/search/top?q=${encodeURIComponent(event.title)}`), true)}
+            <ArtistPreviewNative artist={event.title} request={api} />
             {event.sample &&
               button('Save event details', () =>
                 user

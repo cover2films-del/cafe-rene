@@ -23,6 +23,7 @@ import { randomUUID } from 'node:crypto';
 import { Service, Fault, demand, digest } from './service.ts';
 import { LocalMedia, optimiseImage, mediaRoot } from './media.ts';
 import { venue } from '../../../packages/shared/src/index.ts';
+import { artistPreview } from './artist-preview.ts';
 export function createApp(s: Service) {
   const app = express();
   app.disable('x-powered-by');
@@ -903,6 +904,7 @@ export function createApp(s: Service) {
   });
   route('get', '/api/public-content', () => publicVenueContent(s.db));
   route('get', '/api/drinks', () => drinkCatalogue(s.db));
+  route('get', '/api/artist-preview', (req) => artistPreview(String(req.query.q || '')));
   route(
     'put',
     '/api/manager/drinks/:id',

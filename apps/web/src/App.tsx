@@ -5,6 +5,7 @@ import { socialIconPaths } from '../../../packages/shared/src/social-icons';
 import { menuSources, seasonalMenu, menuChecked } from '../../../packages/shared/src/venue-menu';
 import { CircleHub } from './CircleHub';
 import { HistoryHub } from './HistoryHub';
+import { ArtistPreview } from './ArtistPreview';
 import {
   foodPhotography,
   programmeSource,
@@ -1626,6 +1627,7 @@ export function App() {
               Facebook ↗
             </a>
           </div>
+          <ArtistPreview artist={event.title} />
         </Modal>
       )}
       {booking && (

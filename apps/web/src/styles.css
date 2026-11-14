@@ -3887,6 +3887,18 @@ p {
   flex-wrap: wrap;
   padding-top: 4px;
 }
+.artist-preview {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid #68d8e544;
+  border-radius: 10px;
+  background: #092d3a99;
+}
+.artist-audio { display: grid; gap: 7px; }
+.artist-audio small { color: #b9d8da; }
+.artist-audio audio { width: 100%; }
 .social-post > small {
   padding: 0 20px 20px;
   display: block;
