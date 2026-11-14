@@ -5280,6 +5280,16 @@ header .official-logo {
 .pint-pour > small { position: absolute; left: 0; right: 0; bottom: -2px; color: #f1ed89; text-align: center; letter-spacing: .16em; font-size: 9px; }
 @keyframes pint-bubble { from { transform: translateY(0); opacity: .2; } 50% { opacity: .9; } to { transform: translateY(-88px); opacity: 0; } }
 @keyframes pint-stream { 0%, 100% { transform: scaleX(.75); } 50% { transform: scaleX(1.12); } }
+/* Compact startup mark: a glass fills in place, without a large dispenser illustration. */
+.pint-pour { width: 150px; height: 190px; margin: 4px auto 0; filter: drop-shadow(0 12px 18px #0006); }
+.pour-tap, .pour-stream { display: none; }
+.pour-glass { left: 25px; top: 12px; width: 100px; height: 142px; border-width: 3px; border-radius: 5px 5px 17px 17px; }
+.pour-beer { inset: auto 5px 5px; height: 0; border-radius: 2px 2px 12px 12px; animation: pint-fill 2.6s cubic-bezier(.2,.75,.3,1) infinite; }
+.pour-foam { left: 5px; right: 5px; top: auto; bottom: 127px; height: 22px; opacity: 0; animation: pint-foam 2.6s cubic-bezier(.2,.75,.3,1) infinite; }
+.glass-shine { left: 13px; top: 18px; width: 6px; height: 105px; }
+.pint-pour > small { bottom: -1px; font-size: 8px; letter-spacing: .13em; }
+@keyframes pint-fill { 0%, 12% { height: 0; } 72%, 100% { height: 127px; } }
+@keyframes pint-foam { 0%, 62% { opacity: 0; transform: scale(.7); } 78%, 100% { opacity: 1; transform: scale(1); } }
 .app .section,
 .app .page-title {
   background-image:
