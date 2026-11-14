@@ -1614,6 +1614,18 @@ export function App() {
               {event.sample ? 'Save event details' : 'Official event information'}
             </button>
           </div>
+          <div className="artist-links event-artist-links">
+            <span className="micro">FIND THE ARTIST</span>
+            <a href={`https://open.spotify.com/search/${encodeURIComponent(event.title)}`} target="_blank" rel="noreferrer">
+              Spotify ↗
+            </a>
+            <a href={`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(event.title)}`} target="_blank" rel="noreferrer">
+              Instagram ↗
+            </a>
+            <a href={`https://www.facebook.com/search/top?q=${encodeURIComponent(event.title)}`} target="_blank" rel="noreferrer">
+              Facebook ↗
+            </a>
+          </div>
         </Modal>
       )}
       {booking && (

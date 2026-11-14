@@ -1906,6 +1906,7 @@ function AppContent() {
               )}
             {button('Find the artist on Spotify ↗', () => void Linking.openURL(`https://open.spotify.com/search/${encodeURIComponent(event.title)}`), true)}
             {button('Find the artist on social ↗', () => void Linking.openURL(`https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(event.title)}`), true)}
+            {button('Find the artist on Facebook ↗', () => void Linking.openURL(`https://www.facebook.com/search/top?q=${encodeURIComponent(event.title)}`), true)}
             {event.sample &&
               button('Save event details', () =>
                 user

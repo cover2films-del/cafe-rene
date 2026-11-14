@@ -3882,6 +3882,11 @@ p {
   color: #8ce9dc;
   text-decoration: none;
 }
+.event-artist-links {
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
 .social-post > small {
   padding: 0 20px 20px;
   display: block;
