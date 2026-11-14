@@ -130,14 +130,23 @@ export function DrinksNative({ request, apiUrl }: { request: any; apiUrl: string
 function Drink({ drink: d }: { drink: any }) {
   const [expanded, setExpanded] = useState(false),
     [fact, setFact] = useState(Math.floor(Date.now() / 86400000) % d.history.length);
+  const brandLogo = d.brand && d.category !== 'Cocktails' ? d.brand : '';
   return (
     <View style={styles.card}>
-      <Image
-        source={art[d.imageKey]}
-        style={styles.photo}
-        contentFit="cover"
-        accessibilityLabel={'Illustration of ' + d.name}
-      />
+      <View style={styles.photoWrap}>
+        <Image
+          source={art[d.imageKey]}
+          style={styles.photo}
+          contentFit="cover"
+          accessibilityLabel={'Illustration of ' + d.name}
+        />
+        {!!brandLogo && (
+          <View style={styles.logoBadge} accessibilityLabel={`${brandLogo} logo on the glass`}>
+            <Text style={styles.logoName}>{brandLogo}</Text>
+            <Text style={styles.logoSub}>ORIGINAL BRAND</Text>
+          </View>
+        )}
+      </View>
       <View style={styles.copy}>
         <Text style={styles.eyebrow}>
           {d.category} · {d.taste}
@@ -225,6 +234,26 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   photo: { width: '100%', height: 260 },
+  photoWrap: { position: 'relative' },
+  logoBadge: {
+    position: 'absolute',
+    top: 150,
+    left: '50%',
+    transform: [{ translateX: -65 }, { rotate: '-4deg' }],
+    minWidth: 130,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 7,
+    borderWidth: 1,
+    borderColor: '#f7ef9a',
+    backgroundColor: '#071923dd',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.45,
+    shadowRadius: 8,
+  },
+  logoName: { color: '#fff', fontSize: 15, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
+  logoSub: { color: '#f7ef9a', fontSize: 7, fontWeight: '800', letterSpacing: 1 },
   copy: { padding: 22 },
   brand: { color: '#f1ed89', fontSize: 12, letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' },
   link: { color: '#eeef9a', fontSize: 13, lineHeight: 21, marginVertical: 12 },

@@ -228,17 +228,26 @@ export function DrinksHub({ request, user }: { request: any; user: any }) {
 }
 function DrinkCard({ drink: d }: { drink: any }) {
   const [fact, setFact] = useState(Math.floor(Date.now() / 86400000) % d.history.length);
+  const brandLogo = d.brand && d.category !== 'Cocktails' ? d.brand : '';
   return (
     <article
       className="drink-card"
       style={{ '--drink-image': `url('/images/drinks/${d.imageKey}.webp')` } as React.CSSProperties}
     >
-      <img
-        className="drink-hero"
-        src={'/images/drinks/' + d.imageKey + '.webp'}
-        alt={'Illustration of ' + d.name}
-        loading="lazy"
-      />
+      <div className="drink-hero-wrap">
+        <img
+          className="drink-hero"
+          src={'/images/drinks/' + d.imageKey + '.webp'}
+          alt={'Illustration of ' + d.name}
+          loading="lazy"
+        />
+        {brandLogo && (
+          <span className="drink-logo-badge" aria-label={`${brandLogo} logo on the glass`}>
+            <b>{brandLogo}</b>
+            <small>ORIGINAL BRAND</small>
+          </span>
+        )}
+      </div>
       <div className="drink-copy">
         <span className="eyebrow">
           {d.category} · {d.taste}

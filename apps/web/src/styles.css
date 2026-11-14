@@ -5975,6 +5975,38 @@ header .official-logo {
   aspect-ratio: 1;
   object-fit: cover;
 }
+.drink-hero-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.drink-logo-badge {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  display: grid;
+  gap: 2px;
+  min-width: 108px;
+  padding: 8px 12px 7px;
+  text-align: center;
+  color: #fff;
+  background: #071923d9;
+  border: 1px solid #f7ef9a;
+  border-radius: 7px;
+  box-shadow: 0 3px 12px #0009, inset 0 0 0 2px #ffffff22;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+.drink-logo-badge b {
+  font: 700 15px/1 'Arial Narrow', Arial, sans-serif;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.drink-logo-badge small {
+  color: #f7ef9a;
+  font: 700 7px/1 'Arial', sans-serif;
+  letter-spacing: .12em;
+}
 .drink-copy {
   padding: 25px;
 }
