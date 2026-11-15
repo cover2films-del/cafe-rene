@@ -7,7 +7,7 @@ const curated = [
 ];
 export function AlbumHub({ request, user, run, toast }: { request: any; user: any; run: any; toast: any }) {
   const [photos, setPhotos] = useState<any[]>(curated), [url, setUrl] = useState(''), [caption, setCaption] = useState('');
-  const load = async () => { const r = await request('/albums'); setPhotos([...curated, ...(r.photos || [])]); };
+  const load = async () => { const r = await request('/albums'); setPhotos([...curated, ...(r.photos || []).map((p: any) => ({ ...p, imageUrl: p.imageUrl || p.cachedImageUrl, caption: p.caption || p.text?.slice(0, 120) }))]); };
   useEffect(() => { void run(load); }, []);
   return <section className="album-hub"><div className="section-heading"><div><div className="eyebrow">THE RENÉ ALBUM</div><h2>Good times, captured.</h2></div><small className="muted">Photographer galleries and community moments.</small></div>
     <div className="album-grid">{photos.map((p) => <figure className="album-photo" key={p.id}><img src={p.imageUrl} alt={p.caption || 'Café René album photo'} loading="lazy" /><figcaption><b>{p.caption}</b><small>Photo by {p.credit || 'René community'}</small></figcaption></figure>)}</div>

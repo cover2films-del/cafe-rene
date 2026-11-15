@@ -122,6 +122,8 @@ export async function refreshSocial(
               autoPublished,
               cachedImageUrl,
               cachedImageId,
+              album: !!imageSourceUrl,
+              credit: channel.channel === 'facebook' ? 'Facebook · Café René' : 'Instagram · Café René',
               confidence: 'authorised_venue_account',
               imageSourceUrl:
                 post.full_picture ?? (post.media_type === 'IMAGE' ? post.media_url : null),
