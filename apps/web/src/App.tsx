@@ -14,7 +14,7 @@ import {
   programmeSource,
   eventGenres,
 } from '../../../packages/shared/src/content';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Home,
   UtensilsCrossed,
@@ -107,6 +107,7 @@ export function App() {
     [genre, setGenre] = useState('All'),
     [calendar, setCalendar] = useState(false),
     [checkRef, setCheckRef] = useState('');
+  const startupAt = useRef(Date.now());
   const setUser = (next: any) => {
     if (next?.id !== user?.id) {
       setRewards(null);
@@ -148,6 +149,8 @@ export function App() {
         const r = JSON.parse(saved);
         setOrder(await api('/orders/' + r.id, 'GET', undefined, r.secret));
       }
+      const remaining = 4800 - (Date.now() - startupAt.current);
+      if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, remaining));
     });
   }, []);
   useEffect(() => {
