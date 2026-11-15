@@ -1325,10 +1325,10 @@ function AppContent() {
                     ))}
                     <Text style={s.small}>{rewards.challengeNote}</Text>
                     <Text style={s.title}>A treat for next time.</Text>
-                    {rewards.offers.map((o: any) => (
+                    {rewards.offers.map((o: any, offerIndex: number) => (
                       <View style={s.panel} key={o.id}>
                         <Image
-                          source={o.id === 'kitchen-six' ? foodImages.club : foodImages.burger}
+                          source={foodImages[['lasagne', 'curry', 'cheeseboard', 'roast-beef'][offerIndex % 4]]}
                           style={[StyleSheet.absoluteFillObject, { opacity: 0.15 }]}
                           contentFit="cover"
                           accessible={false}

@@ -1146,13 +1146,13 @@ export function App() {
                     </div>
                     <h2>A treat for next time.</h2>
                     <div className="offers">
-                      {rewards.offers.map((o: any) => (
+                      {rewards.offers.map((o: any, offerIndex: number) => (
                         <div
                           className="offer"
                           key={o.id}
                           style={
                             {
-                              '--offer-image': `url("/images/generated/${o.id === 'kitchen-six' ? 'club' : 'burger'}.webp")`,
+                              '--offer-image': `url("/images/generated/${offerArtwork[offerIndex % offerArtwork.length]}.webp")`,
                             } as React.CSSProperties
                           }
                         >
@@ -3749,6 +3749,7 @@ function achievementImage(challenge: any) {
   };
   return images[challenge.id] || images[challenge.kind] || '/images/generated/burger.webp';
 }
+const offerArtwork = ['lasagne', 'curry', 'cheeseboard', 'roast-beef'];
 function productImage(item: any) {
   const key = String(item.item_id || item.imageKey || '').toLowerCase();
   if (foodPhotography[key]) return foodPhotography[key];
