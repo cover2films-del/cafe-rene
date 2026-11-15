@@ -4387,6 +4387,18 @@ footer .wordmark span {
 .epos-form-grid input { width: 100%; box-sizing: border-box; }
 .epos-status { display: flex; align-items: center; gap: 8px; margin-top: 16px; color: #8be1b4; }
 .epos-status small { color: #b8d5db; margin-left: auto; }
+.album-hub { max-width: 1280px; margin: 0 auto; padding: 42px 5vw 90px; }
+.album-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.album-photo { position: relative; overflow: hidden; min-height: 250px; margin: 0; border: 1px solid #63ddcc55; border-radius: 18px; background: #153447; }
+.album-photo img { display: block; width: 100%; height: 280px; object-fit: cover; transition: transform .5s ease; }
+.album-photo:hover img { transform: scale(1.05); }
+.album-photo figcaption { display: grid; gap: 5px; padding: 14px; }
+.album-photo figcaption small { color: #b7d8dd; }
+.album-submit { margin-top: 28px; padding: 18px; border: 1px solid #63ddcc44; border-radius: 16px; background: #123449cc; }
+.album-submit summary { cursor: pointer; color: #f1ed89; font-weight: 700; }
+.album-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+@media (max-width: 900px) { .album-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .album-form { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .album-grid { grid-template-columns: 1fr; } }
 @media (max-width: 850px) { .admin-metrics { grid-template-columns: repeat(2, 1fr); } .admin-grid { grid-template-columns: 1fr; } .stock-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 650px) { .epos-form-grid { grid-template-columns: 1fr; } .epos-status { align-items: flex-start; flex-wrap: wrap; } .epos-status small { width: 100%; margin-left: 24px; } }
 .circle-hub > p {

@@ -967,6 +967,17 @@ export function createApp(s: Service) {
     res.sendFile(req.params.id + '.webp', { root: mediaRoot });
   });
   route('get', '/api/public-content', () => publicVenueContent(s.db));
+  route('get', '/api/albums', async () => ({
+    photos: (await s.db.query("SELECT id,data,created_at FROM content WHERE status='approved' AND data->>'album'='true' ORDER BY created_at DESC LIMIT 80")).rows.map((r) => ({ id: r.id, ...r.data, createdAt: r.created_at })),
+  }));
+  route('post', '/api/albums/submissions', async (req) => {
+    s.role(req.user, customer);
+    const d = z.object({ imageUrl: z.string().url().max(1000), caption: z.string().max(240).default(''), credit: z.string().max(120).default('') }).strict().parse(req.body);
+    const id = randomUUID();
+    await s.db.query('INSERT INTO content(id,data,status) VALUES($1,$2,$3)', [id, { ...d, album: true, source: 'community', submittedBy: req.user.id }, 'needs_review']);
+    await s.audit(req.user.id, 'album.photo_submitted', id);
+    return { submitted: true, message: 'Photo submitted for René team review.' };
+  }, customer);
   route('get', '/api/drinks', () => drinkCatalogue(s.db));
   route('get', '/api/artist-preview', (req) => artistPreview(String(req.query.q || '')));
   route(

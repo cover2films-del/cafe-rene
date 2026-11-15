@@ -8,6 +8,7 @@ import { HistoryHub } from './HistoryHub';
 import { ArtistPreview } from './ArtistPreview';
 import { AdminDashboard } from './AdminDashboard';
 import { EposConnectionForm } from './EposConnectionForm';
+import { AlbumHub } from './AlbumHub';
 import {
   foodPhotography,
   programmeSource,
@@ -40,6 +41,7 @@ import {
   AlertCircle,
   Download,
   Ticket,
+  Images,
   Mail,
   Phone,
   Leaf,
@@ -53,6 +55,7 @@ const tabs = [
   ['What’s On', Music],
   ['Rewards', Gift],
   ['My René', User],
+  ['Albums', Images],
 ] as const;
 const nextStatus: Record<string, string> = {
   awaiting_acceptance: 'accepted',
@@ -1279,6 +1282,7 @@ export function App() {
             </section>
           )}
           {tab === 'Admin' && manager && <AdminDashboard request={api} run={run} />}
+          {tab === 'Albums' && <AlbumHub request={api} user={user} run={run} toast={toast} />}
           <footer>
             <div className="wordmark">
               <img
