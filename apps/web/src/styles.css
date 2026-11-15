@@ -4395,6 +4395,7 @@ footer .wordmark span {
 .album-photo figcaption { display: grid; gap: 5px; padding: 14px; }
 .album-photo figcaption small { color: #b7d8dd; }
 .album-submit { margin-top: 28px; padding: 18px; border: 1px solid #63ddcc44; border-radius: 16px; background: #123449cc; }
+.album-source { margin-top: 22px; text-align: center; }
 .album-submit summary { cursor: pointer; color: #f1ed89; font-weight: 700; }
 .album-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
 @media (max-width: 900px) { .album-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .album-form { grid-template-columns: 1fr; } }
